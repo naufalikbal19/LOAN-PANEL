@@ -85,6 +85,23 @@ dashboard/layout.tsx
 - UI dalam Bahasa Melayu (utama) + English
 - Istilah: Nombor Telefon, Kata Laluan, Daftar, Log Masuk, Dompet, Akaun
 
+## Deployment Architecture
+
+**Platform:** AAPanel
+**2 Domain, 1 Database dikongsi:**
+
+| Domain | Fungsi |
+|---|---|
+| `pinjamanbarakah.my` | Client-facing panel (projek ini) |
+| `backend.pinjamanbarakah.my` | Staff / Admin dashboard (projek berasingan) |
+
+**Implikasi untuk Backend API:**
+- Gunakan **1 API** yang dikongsi oleh kedua frontend — bukan 2 API berasingan
+- Auth berbasis **JWT dengan field `role`**: `client` vs `staff` / `admin`
+- **CORS** mesti allow kedua-dua domain
+- Rancang endpoint supaya boleh serve keperluan client **dan** admin
+- Admin dashboard adalah projek Next.js berasingan atau dalam monorepo
+
 ## Fitur Belum Dibuat (potential next steps)
 - Halaman-halaman dalam menu Account (Personal Info, Change Password, dll)
 - Fungsi Apply Now / permohonan pinjaman
