@@ -1,6 +1,9 @@
 "use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, User, Lock, Banknote, FileText, CalendarClock, History, MessageSquare, LogOut } from "lucide-react";
 import Link from "next/link";
+import { useSettings } from "@/context/SettingsContext";
 
 const menu = [
   { icon: User,          label: "Personal Information", href: "#", color: "#c9a84c" },
@@ -26,6 +29,21 @@ function Gauge({ score }: { score: number }) {
 }
 
 export default function AccountPage() {
+  const router = useRouter();
+  const { company_name } = useSettings();
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    setUserName(localStorage.getItem("user_name") || "");
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_name");
+    localStorage.removeItem("user_phone");
+    router.push("/sign-in");
+  };
+
   return (
     <div>
       <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "20px 20px 16px", animation: "fadeInUp 0.4s ease both" }}>
@@ -34,7 +52,7 @@ export default function AccountPage() {
             <ChevronLeft size={18} />
           </button>
         </Link>
-        <div><p style={{ fontSize: 18, fontWeight: 800 }}>MY ACCOUNT</p><p style={{ fontSize: 10, letterSpacing: 1.5, color: "var(--text-secondary)", textTransform: "uppercase" }}>Secure Page</p></div>
+        <div><p style={{ fontSize: 18, fontWeight: 800 }}>{userName || "MY ACCOUNT"}</p><p style={{ fontSize: 10, letterSpacing: 1.5, color: "var(--text-secondary)", textTransform: "uppercase" }}>{company_name}</p></div>
         <div style={{ marginLeft: "auto", width: 8, height: 8, borderRadius: "50%", background: "var(--accent-blue)", boxShadow: "0 0 8px rgba(201,168,76,0.6)" }} />
       </div>
 
@@ -69,7 +87,7 @@ export default function AccountPage() {
       </div>
 
       <div style={{ padding: "20px 20px 8px", animation: "fadeInUp 0.4s ease 0.3s both" }}>
-        <button style={{ width: "100%", background: "transparent", border: "1.5px solid rgba(239,68,68,0.4)", borderRadius: 14, padding: 16, color: "#ef4444", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: "inherit", letterSpacing: 1 }}>
+        <button onClick={handleLogout} style={{ width: "100%", background: "transparent", border: "1.5px solid rgba(239,68,68,0.4)", borderRadius: 14, padding: 16, color: "#ef4444", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: "inherit", letterSpacing: 1 }}>
           <LogOut size={16} /> LOG KELUAR AKAUN
         </button>
       </div>

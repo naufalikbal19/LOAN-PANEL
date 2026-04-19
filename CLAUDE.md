@@ -7,33 +7,49 @@
 ```
 loan-panel/           ← repo root
 ├── client/           → pinjamanbarakah.my (Next.js, client panel)
-├── admin/            → backend.pinjamanbarakah.my (admin dashboard, belum dibina)
-├── api/              → shared backend API (belum dibina)
+├── admin/            → backend.pinjamanbarakah.my (Next.js, admin dashboard)
+├── api/              → shared backend API (Express.js + TypeScript)
 ├── CLAUDE.md
 └── AGENTS.md
 ```
 
-Semua kerja Next.js ada dalam `client/`. Bila nak run dev server: `cd client && npm run dev`
-
-Projek panel pinjaman untuk syarikat lending Malaysia. UI dirujuk dari https://apps.mysolutionlending.com/
+Run dev servers:
+- Client: `cd client && npm run dev` → http://localhost:3000
+- Admin:  `cd admin && npm run dev`  → http://localhost:3001
+- API:    `cd api && npm run dev`    → http://localhost:4000
 
 ## Tech Stack
-- Next.js (TypeScript, App Router, `src/` dir, `@/*` alias)
+
+### Client & Admin (Next.js)
+- Next.js 16 (TypeScript, App Router, `src/` dir, `@/*` alias)
 - Tailwind CSS v4
-- shadcn/ui — Nova preset (Radix + Lucide icons + Geist font)
-- lucide-react + framer-motion
+- lucide-react
 - Node.js v24
+
+### API (Express)
+- Express.js + TypeScript
+- `tsx watch` for dev (no compile step)
+- mysql2 + bcryptjs + jsonwebtoken + express-validator
+- `npm run build` → compiles to `dist/`
+
+### Database
+- MySQL (Laragon lokal: `D:\laragon\bin\mysql\mysql-8.4.3-winx64\bin\mysql.exe`)
+- Database: `loan_panel`
+- Schema: `api/schema.sql`
+
+---
 
 ## Design System
 
-**Tema: Hitam & Gold (mobile-first, max-width 430px)**
+**Tema: Hitam & Gold**
 
-CSS variables (globals.css):
+### Client (mobile-first, max-width 430px)
+CSS variables (`client/src/app/globals.css`):
 - `--bg-primary: #080808`
 - `--bg-secondary: #0f0f0f`
 - `--bg-card: #161616`
 - `--bg-card-inner: #1e1e1e`
-- `--accent-blue: #c9a84c` (gold — main accent, variable name kept for compatibility)
+- `--accent-blue: #c9a84c` ← GOLD, bukan biru (kept for compat)
 - `--accent-blue-light: #e2c060`
 - `--accent-blue-hover: #a88a38`
 - `--accent-green: #22c55e`
@@ -42,81 +58,215 @@ CSS variables (globals.css):
 - `--text-muted: #484848`
 - `--border-color: #242424`
 - `--border-light: #2e2e2e`
-- `--nav-bg: #0c0c0c`
 - Font: Plus Jakarta Sans (Google Fonts)
 
-**Penting:** Warna accent utama adalah GOLD (`#c9a84c`), bukan biru. Variable `--accent-blue` mengandungi nilai gold — ini disengajakan untuk keserasian.
+**Penting:** `--accent-blue` mengandungi nilai GOLD — disengajakan untuk keserasian.
+Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 
-Hardcoded colors yang digunakan dalam components:
-- Gradient cards: `linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)`
-- Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
+### Admin (desktop-first, full width)
+- Sidebar kiri fixed (collapsible), header top
+- CSS variables dalam `admin/src/app/globals.css` (sama tema hitam & gold)
+- Background admin: `#0c0c0c` sidebar, `#080808` main, `#111` cards
 
-## Halaman yang Sudah Dibuat
+---
 
-| Route | File | Nama |
+## Database Schema (`api/schema.sql`)
+
+### Table: `users`
+| Column | Type | Notes |
 |---|---|---|
-| `/` | `src/app/page.tsx` | Redirect ke `/sign-in` |
-| `/sign-in` | `src/app/sign-in/page.tsx` | Login (Nombor Telefon + Kata Laluan) |
-| `/register` | `src/app/register/page.tsx` | Daftar (Nama, IC, Telefon, Password) |
-| `/dashboard` | `src/app/dashboard/page.tsx` | Laman Utama |
-| `/dashboard/wallet` | `src/app/dashboard/wallet/page.tsx` | Dompet |
-| `/dashboard/account` | `src/app/dashboard/account/page.tsx` | SAYA (My Account) |
-| `/dashboard/support` | `src/app/dashboard/support/page.tsx` | Perkhidmatan Pelanggan |
+| id | INT PK AUTO_INCREMENT | |
+| name | VARCHAR(255) | |
+| ic | VARCHAR(20) UNIQUE | Kad Pengenalan |
+| phone | VARCHAR(20) UNIQUE | Format `01xxxxxxxx` (normalized) |
+| email | VARCHAR(255) UNIQUE | Untuk admin/staff login |
+| password | VARCHAR(255) | bcrypt hash |
+| role | ENUM('client','staff','admin') | DEFAULT 'client' |
+| is_active | TINYINT(1) | DEFAULT 1 |
+| status | ENUM('pending','active','rejected') | DEFAULT 'pending' |
+| created_at | TIMESTAMP | |
+| updated_at | TIMESTAMP | |
 
-## Components
+### Table: `settings`
+Key-value store. Keys: `company_name`, `company_tagline`, `logo_url`, `favicon_url`, `support_phone`, `support_whatsapp`
 
-- `src/components/BottomNav.tsx` — 4-tab bottom nav (Laman Utama, Dompet, Sokongan, Saya)
-- `src/components/ui/button.tsx` — shadcn button
-- `src/lib/utils.ts` — shadcn utils
+### Seed admin default
+- Email: `admin@pinjamanbarakah.my`
+- Password: `Admin@1234`
 
-## Custom CSS Classes (globals.css)
+---
 
-`.card`, `.btn-primary`, `.btn-outline`, `.input-field`, `.input-label`, `.bottom-nav`, `.nav-item`, `.badge-verified`, `.badge-excellent`, `.badge-available`, `.menu-item`, `.menu-item-left`, `.menu-icon-box`, `.apply-btn`, `.payment-grid`, `.payment-item`, `.payment-logo`, `.info-banner`, `.page-header`, `.page-title`, `.page-subtitle`, `.section-label`, `.app-shell`, `.page-content`
+## API Endpoints (`api/src/`)
 
-Animations: `.animate-fade-in-up`, `.animate-delay-1` hingga `.animate-delay-5`
+Base URL lokal: `http://localhost:4000`
 
-## Layout Structure
+### Auth (`/auth`)
+| Method | Endpoint | Auth | Notes |
+|---|---|---|---|
+| POST | `/auth/login` | — | `{ phone, password }` atau `{ email, password }` |
+| POST | `/auth/register` | — | Client sahaja, status → `pending` |
+| GET | `/auth/me` | JWT | Info user semasa |
 
+### Settings (`/settings`)
+| Method | Endpoint | Auth | Notes |
+|---|---|---|---|
+| GET | `/settings` | — | Public, returns key-value object |
+| PUT | `/settings` | JWT admin/staff | `{ settings: { key: value } }` |
+
+### Users/Members (`/users`)
+| Method | Endpoint | Auth | Notes |
+|---|---|---|---|
+| GET | `/users` | JWT admin/staff | Query: `?status=pending\|active\|rejected\|all`, `?search=` |
+| GET | `/users/:id` | JWT admin/staff | Single client detail |
+| PUT | `/users/:id` | JWT admin/staff | Edit `{ name, phone, ic, status }` |
+| DELETE | `/users/:id` | JWT admin only | Delete client |
+| PUT | `/users/:id/approve` | JWT admin/staff | Set status → `active` (must be pending) |
+| PUT | `/users/:id/reject` | JWT admin/staff | Set status → `rejected` (must be pending) |
+
+### Auth logic
+- Login dengan `phone` → role mesti `client`
+- Login dengan `email` → role mesti `admin` atau `staff`
+- Status `pending` → 403 "Akaun anda belum diverifikasi. Sila hubungi Khidmat Pelanggan."
+- Status `rejected` → 403 "Permohonan akaun anda telah ditolak."
+- JWT payload: `{ id, name, role }`
+
+---
+
+## Client (`client/src/`)
+
+### Pages
+| Route | File | Status |
+|---|---|---|
+| `/` | `app/page.tsx` | Redirect → `/sign-in` |
+| `/sign-in` | `app/sign-in/page.tsx` | ✅ Connect ke API |
+| `/register` | `app/register/page.tsx` | ✅ Wishlist flow (pending approval) |
+| `/dashboard` | `app/dashboard/page.tsx` | ✅ Guna settings context |
+| `/dashboard/wallet` | `app/dashboard/wallet/page.tsx` | UI sahaja |
+| `/dashboard/account` | `app/dashboard/account/page.tsx` | ✅ Logout berfungsi |
+| `/dashboard/support` | `app/dashboard/support/page.tsx` | UI sahaja |
+
+### Components & Lib
+- `src/components/BottomNav.tsx` — 4-tab bottom nav
+- `src/components/CompanyLogo.tsx` — Dynamic logo (guna `logo_url` dari settings; fallback ke gold bar chart)
+- `src/context/SettingsContext.tsx` — Fetch `/settings` sekali, provide ke semua pages. Update favicon dinamik.
+- `src/lib/phone.ts` — `normalizePhone()` + `validatePhone()` shared utility
+- `src/lib/utils.ts` — shadcn cn()
+
+### Phone Normalization (client + API)
+Terima: `01x`, `1x`, `+60x`, `60x` → normalize ke `01xxxxxxxx`
+Minimum: 5 digit selepas normalisasi
+
+### localStorage keys (client)
+- `token` — JWT
+- `user_name` — nama user
+- `user_phone` — nombor telefon
+
+### Register flow
+1. User daftar → API simpan dengan `status='pending'`
+2. Tiada token diberikan — redirect ke success page
+3. Admin approve di admin dashboard → status jadi `active`
+4. Baru boleh login
+
+---
+
+## Admin (`admin/src/`)
+
+### Layout
+- `app/dashboard/layout.tsx` — Sidebar + Header, redirect ke `/login` jika tiada token
+- Sidebar collapsible, sub-menus untuk Admin Management dan Loans
+
+### Pages
+| Route | File | Status |
+|---|---|---|
+| `/login` | `app/login/page.tsx` | ✅ Connect ke API |
+| `/dashboard` | `app/dashboard/page.tsx` | Redirect → `/dashboard/console` |
+| `/dashboard/console` | `app/dashboard/console/page.tsx` | ✅ Stats + recent loans (mock data) |
+| `/dashboard/admin-management/admin-list` | `...page.tsx` | ✅ UI + mock data |
+| `/dashboard/admin-management/admin-log` | `...page.tsx` | ✅ UI + mock data |
+| `/dashboard/withdrawal` | `app/dashboard/withdrawal/page.tsx` | 🔲 Skeleton (struktur jadual belum diset) |
+| `/dashboard/loans/orderer` | `app/dashboard/loans/orderer/page.tsx` | 🔲 Skeleton (struktur jadual belum diset) |
+| `/dashboard/member/member-list` | `app/dashboard/member/member-list/page.tsx` | ✅ Connect ke API (search, filter, view, edit, delete) |
+| `/dashboard/member/member-approval` | `app/dashboard/member/member-approval/page.tsx` | ✅ Connect ke API (approve/reject pending) |
+| `/dashboard/settings` | `app/dashboard/settings/page.tsx` | ✅ Connect ke API (GET+PUT /settings) |
+
+### Components
+- `src/components/Sidebar.tsx` — Collapsible sidebar dengan sub-menus (termasuk Member)
+- `src/components/Header.tsx` — Top bar dengan admin name + bell
+- `src/components/StatsCard.tsx` — Card statistik untuk console
+
+### localStorage keys (admin)
+- `admin_token` — JWT
+- `admin_role` — 'admin' atau 'staff'
+- `admin_name` — nama admin
+
+---
+
+## Environment Files
+
+### `client/.env.local`
 ```
-layout.tsx
-  <html>
-    <body>
-      <div class="app-shell">   ← max-width 430px, centered
-        {children}
-      </div>
-    </body>
-  </html>
-
-dashboard/layout.tsx
-  <div class="page-content">   ← padding-bottom 90px (space for BottomNav)
-    {children}
-  </div>
-  <BottomNav />
+NEXT_PUBLIC_API_URL=http://localhost:4000
 ```
 
-## Bahasa
-- UI dalam Bahasa Melayu (utama) + English
-- Istilah: Nombor Telefon, Kata Laluan, Daftar, Log Masuk, Dompet, Akaun
+### `admin/.env.local`
+```
+NEXT_PUBLIC_API_URL=http://localhost:4000
+```
+
+### `api/.env`
+```
+PORT=4000
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=loan_panel
+JWT_SECRET=dev_secret_tukar_di_production_12345
+JWT_EXPIRES_IN=7d
+CLIENT_ORIGIN=https://pinjamanbarakah.my
+ADMIN_ORIGIN=https://backend.pinjamanbarakah.my
+```
+
+---
 
 ## Deployment Architecture
 
 **Platform:** AAPanel
-**2 Domain, 1 Database dikongsi:**
+**2 Domain, 1 Database:**
 
-| Domain | Fungsi |
-|---|---|
-| `pinjamanbarakah.my` | Client-facing panel (projek ini) |
-| `backend.pinjamanbarakah.my` | Staff / Admin dashboard (projek berasingan) |
+| Domain | Folder | Port |
+|---|---|---|
+| `pinjamanbarakah.my` | `client/` | 3000 |
+| `backend.pinjamanbarakah.my` | `admin/` | 3001 |
+| `api.pinjamanbarakah.my` | `api/` | 4000 |
 
-**Implikasi untuk Backend API:**
-- Gunakan **1 API** yang dikongsi oleh kedua frontend — bukan 2 API berasingan
-- Auth berbasis **JWT dengan field `role`**: `client` vs `staff` / `admin`
-- **CORS** mesti allow kedua-dua domain
-- Rancang endpoint supaya boleh serve keperluan client **dan** admin
-- Admin dashboard adalah projek Next.js berasingan atau dalam monorepo
+Tukar `.env.local` kedua-dua client & admin kepada `NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my` untuk production.
 
-## Fitur Belum Dibuat (potential next steps)
-- Halaman-halaman dalam menu Account (Personal Info, Change Password, dll)
-- Fungsi Apply Now / permohonan pinjaman
-- Backend / auth sebenar
-- Multilanguage toggle (Melayu / English / Chinese)
+---
+
+## Fitur Belum Dibuat / TODO
+
+### Admin Dashboard
+- [ ] Console: Connect ke API sebenar (sekarang mock data)
+- [ ] Admin List: CRUD sebenar (tambah/edit/padam admin)
+- [ ] Admin Log: Connect ke API (perlu buat log table di DB)
+- [ ] Withdrawal Records: Definisi jadual + CRUD
+- [ ] Loans/Orderer: Definisi jadual + approve/reject pinjaman
+- [x] Member List: Senarai client, search, filter, view detail, edit, delete ✅
+- [x] Member Approval: Approve/reject pendaftaran pending ✅
+
+### Client
+- [ ] Halaman Personal Info, Change Password
+- [ ] Apply Now / permohonan pinjaman
+- [ ] Multilanguage toggle (Melayu / English / Chinese)
+- [ ] Dashboard guna data sebenar dari API (sekarang sebahagian mock)
+
+### API
+- [ ] Admin log middleware (catat semua action admin ke DB)
+- [ ] Loans endpoints
+- [ ] Withdrawal endpoints
+- [x] User management endpoints (GET/PUT/DELETE /users, approve/reject) ✅
+
+## Bahasa
+- UI dalam Bahasa Melayu (utama) + English
+- Istilah: Nombor Telefon, Kata Laluan, Daftar, Log Masuk, Dompet, Akaun

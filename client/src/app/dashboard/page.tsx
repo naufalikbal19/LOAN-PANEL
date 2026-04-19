@@ -1,6 +1,8 @@
 "use client";
+import { useEffect, useState } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useSettings } from "@/context/SettingsContext";
 
 const trustBadges = [
   { label: "PIDM", color: "#1a56db", text: "P" },
@@ -10,11 +12,18 @@ const trustBadges = [
 ];
 
 export default function DashboardPage() {
+  const { company_name, company_tagline } = useSettings();
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    setUserName(localStorage.getItem("user_name") || "");
+  }, []);
+
   return (
     <div>
       <div className="page-header animate-fade-in-up" style={{ paddingTop: 24, paddingBottom: 20 }}>
         <p className="page-subtitle">Premium Membership</p>
-        <h1 className="page-title">Pinjaman peribadi terbaik <span>untuk anda</span></h1>
+        <h1 className="page-title">{company_tagline}</h1>
       </div>
 
       {/* Greeting Card */}
@@ -22,7 +31,7 @@ export default function DashboardPage() {
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <div style={{ padding: "16px 18px 14px", borderBottom: "1px solid var(--border-color)", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent-green)", animation: "pulse-dot 2s ease infinite", flexShrink: 0 }} />
-            <span style={{ fontSize: 15, fontWeight: 600 }}>Hai, 01169624998 👋</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>Hai, {userName || "Pengguna"} 👋</span>
           </div>
           <div style={{ padding: "14px 18px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
@@ -51,7 +60,7 @@ export default function DashboardPage() {
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent-green)", display: "inline-block" }} />
               LIMIT TERSEDIA
             </span>
-            <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4 }}>Hello, 👋</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4 }}>Hello, {userName || "Pengguna"} 👋</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Loan limit up to (RM)</p>
             <p style={{ fontSize: 26, fontWeight: 900, marginBottom: 16 }}>RM 5,000 - 200,000</p>
             <button className="apply-btn">Apply Now <ArrowRight size={16} /></button>
@@ -59,13 +68,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Pinjaman Banner */}
+      {/* Company Banner */}
       <div style={{ padding: "0 20px 20px" }} className="animate-fade-in-up animate-delay-3">
         <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", gap: 16, overflow: "hidden" }}>
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <div style={{ width: 32, height: 32, background: "rgba(201,168,76,0.12)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏢</div>
-              <div><p style={{ fontSize: 9, color: "var(--text-secondary)" }}>MONEY LENDING</p><p style={{ fontSize: 9, color: "var(--text-secondary)" }}>SDN BHD</p></div>
+              <p style={{ fontSize: 10, color: "var(--text-secondary)", lineHeight: 1.4 }}>{company_name}</p>
             </div>
             <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Pinjaman <span style={{ color: "var(--accent-blue-light)" }}>Kakitangan</span><br />Kerajaan</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 14, lineHeight: 1.5 }}>Pinjaman peribadi dengan tempoh bayaran fleksibel sehingga 72 bulan.</p>
