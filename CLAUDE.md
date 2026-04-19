@@ -2,6 +2,19 @@
 
 # Loan Panel — Project Context
 
+## Struktur Monorepo
+
+```
+loan-panel/           ← repo root
+├── client/           → pinjamanbarakah.my (Next.js, client panel)
+├── admin/            → backend.pinjamanbarakah.my (admin dashboard, belum dibina)
+├── api/              → shared backend API (belum dibina)
+├── CLAUDE.md
+└── AGENTS.md
+```
+
+Semua kerja Next.js ada dalam `client/`. Bila nak run dev server: `cd client && npm run dev`
+
 Projek panel pinjaman untuk syarikat lending Malaysia. UI dirujuk dari https://apps.mysolutionlending.com/
 
 ## Tech Stack
