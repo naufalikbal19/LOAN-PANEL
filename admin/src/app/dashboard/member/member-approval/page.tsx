@@ -94,23 +94,24 @@ export default function MemberApprovalPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #1e1e1e" }}>
-                {["Nama", "No. IC", "Telefon", "Tarikh Daftar", "Tindakan"].map((h) => (
+                {["UID", "Nama", "No. IC", "Telefon", "Tarikh Daftar", "Tindakan"].map((h) => (
                   <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} style={{ textAlign: "center", padding: 40, color: "#555", fontSize: 13 }}>Memuatkan...</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "#555", fontSize: 13 }}>Memuatkan...</td></tr>
               ) : members.length === 0 ? (
                 <tr>
-                  <td colSpan={5} style={{ textAlign: "center", padding: 48, color: "#555" }}>
+                  <td colSpan={6} style={{ textAlign: "center", padding: 48, color: "#555" }}>
                     <CheckCircle size={32} color="#22c55e" style={{ marginBottom: 10, opacity: 0.5 }} />
                     <p style={{ fontSize: 13 }}>Tiada permohonan menunggu kelulusan.</p>
                   </td>
                 </tr>
               ) : members.map((m) => (
                 <tr key={m.id} style={{ borderBottom: "1px solid #1a1a1a" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#161616")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                  <td style={{ padding: "14px 16px", color: "#c9a84c", fontWeight: 700, fontFamily: "monospace", fontSize: 13 }}>#{String(m.id).padStart(4, "0")}</td>
                   <td style={{ padding: "14px 16px", fontSize: 13, color: "#fff", fontWeight: 600 }}>{m.name}</td>
                   <td style={{ padding: "14px 16px", fontSize: 13, color: "#aaa", fontFamily: "monospace" }}>{m.ic}</td>
                   <td style={{ padding: "14px 16px", fontSize: 13, color: "#aaa" }}>{m.phone}</td>
@@ -154,6 +155,7 @@ export default function MemberApprovalPage() {
               <button onClick={() => setViewMember(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
             </div>
             {[
+              ["UID", `#${String(viewMember.id).padStart(4, "0")}`],
               ["Nama Penuh", viewMember.name],
               ["No. Kad Pengenalan", viewMember.ic],
               ["Nombor Telefon", viewMember.phone],

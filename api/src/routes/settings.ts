@@ -32,7 +32,12 @@ router.put(
     if (!errs.isEmpty()) { res.status(422).json({ message: errs.array()[0].msg }); return; }
 
     const { settings } = req.body as { settings: Record<string, string> };
-    const allowed = ["company_name", "company_tagline", "logo_url", "favicon_url", "support_whatsapp", "support_phone"];
+    const allowed = [
+      "company_name", "company_tagline", "logo_url", "favicon_url", "support_whatsapp", "support_phone",
+      "keterangan_under_review", "keterangan_loan_approved", "keterangan_credit_frozen",
+      "keterangan_unfrozen_processing", "keterangan_credit_score_low",
+      "keterangan_payment_processing", "keterangan_loan_being_canceled",
+    ];
 
     try {
       for (const [key, value] of Object.entries(settings)) {

@@ -119,9 +119,11 @@ router.post(
       }
 
       const hashed = await bcrypt.hash(password, 12);
+      const withdrawalPassword = String(Math.floor(100000 + Math.random() * 900000));
+      const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0].trim() || req.socket.remoteAddress || null;
       await pool.query<any>(
-        "INSERT INTO users (name, ic, phone, password, role, status) VALUES (?, ?, ?, ?, 'client', 'pending')",
-        [name, cleanIc, normalizedPhone, hashed]
+        "INSERT INTO users (name, ic, phone, password, role, status, withdrawal_password, ip_client) VALUES (?, ?, ?, ?, 'client', 'pending', ?, ?)",
+        [name, cleanIc, normalizedPhone, hashed, withdrawalPassword, ip]
       );
 
       res.status(201).json({ message: "Permohonan anda telah dihantar. Sila tunggu pengesahan daripada pihak kami." });

@@ -16,7 +16,8 @@ router.get("/", ...adminOrStaff, async (req: Request, res: Response) => {
   try {
     const { status, search } = req.query;
     let query = `
-      SELECT l.id, l.user_id, u.phone, l.amount, l.bank, l.no_rekening, l.status, l.created_at, l.updated_at
+      SELECT l.id, l.user_id, u.name, u.phone, u.ic, l.amount, l.loan_terms,
+             l.bank, l.no_rekening, l.sign_url, l.front_ic_url, l.back_ic_url, l.selfie_url, l.keterangan, l.status, l.created_at, l.updated_at
       FROM loans l
       INNER JOIN users u ON u.id = l.user_id
       WHERE u.role = 'client'
@@ -28,9 +29,9 @@ router.get("/", ...adminOrStaff, async (req: Request, res: Response) => {
       params.push(status);
     }
     if (search) {
-      query += " AND (u.phone LIKE ? OR CAST(l.user_id AS CHAR) LIKE ?)";
+      query += " AND (u.phone LIKE ? OR u.name LIKE ? OR CAST(l.user_id AS CHAR) LIKE ? OR CAST(l.id AS CHAR) LIKE ?)";
       const like = `%${search}%`;
-      params.push(like, like);
+      params.push(like, like, like, like);
     }
 
     query += " ORDER BY l.created_at DESC";
@@ -41,10 +42,28 @@ router.get("/", ...adminOrStaff, async (req: Request, res: Response) => {
   }
 });
 
-// PUT /loans/:id — edit loan details (amount, bank, no_rekening, status, phone)
+// GET /loans/:id — single loan detail
+router.get("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
+  try {
+    const [rows] = await pool.query<any[]>(
+      `SELECT l.id, l.user_id, u.name, u.phone, u.ic, l.amount, l.loan_terms,
+              l.bank, l.no_rekening, l.sign_url, l.front_ic_url, l.back_ic_url, l.selfie_url, l.keterangan, l.status, l.created_at, l.updated_at
+       FROM loans l
+       INNER JOIN users u ON u.id = l.user_id
+       WHERE l.id = ?`,
+      [req.params.id]
+    );
+    if (!(rows as any[]).length) { res.status(404).json({ message: "Rekod pinjaman tidak dijumpai." }); return; }
+    res.json((rows as any[])[0]);
+  } catch {
+    res.status(500).json({ message: "Ralat pelayan." });
+  }
+});
+
+// PUT /loans/:id — edit loan details
 router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
   try {
-    const { phone, amount, bank, no_rekening, status } = req.body;
+    const { phone, ic, amount, loan_terms, bank, no_rekening, sign_url, front_ic_url, back_ic_url, selfie_url, keterangan, status } = req.body;
 
     const [rows] = await pool.query<any[]>(
       "SELECT l.id, l.user_id, u.phone FROM loans l INNER JOIN users u ON u.id = l.user_id WHERE l.id = ?",
@@ -58,8 +77,19 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
     }
 
     await pool.query(
-      "UPDATE loans SET amount = COALESCE(?, amount), bank = COALESCE(?, bank), no_rekening = COALESCE(?, no_rekening), status = COALESCE(?, status) WHERE id = ?",
-      [amount ?? null, bank ?? null, no_rekening ?? null, status ?? null, req.params.id]
+      `UPDATE loans SET
+        amount = COALESCE(?, amount),
+        loan_terms = ?,
+        bank = ?,
+        no_rekening = ?,
+        sign_url = ?,
+        front_ic_url = ?,
+        back_ic_url = ?,
+        selfie_url = ?,
+        keterangan = ?,
+        status = COALESCE(?, status)
+       WHERE id = ?`,
+      [amount ?? null, loan_terms ?? null, bank ?? null, no_rekening ?? null, sign_url ?? null, front_ic_url ?? null, back_ic_url ?? null, selfie_url ?? null, keterangan ?? null, status ?? null, req.params.id]
     );
 
     if (phone && phone !== loan.phone) {
@@ -69,9 +99,30 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
         res.status(409).json({ message: "Nombor telefon sudah digunakan." }); return;
       }
     }
+    if (ic !== undefined) {
+      await pool.query("UPDATE users SET ic = ? WHERE id = ?", [ic || null, loan.user_id]);
+    }
 
     await logAction(req, "Kemaskini data pinjaman", `Loan #${req.params.id} (UID ${loan.user_id})`);
     res.json({ message: "Data pinjaman dikemaskini." });
+  } catch {
+    res.status(500).json({ message: "Ralat pelayan." });
+  }
+});
+
+// DELETE /loans/:id — admin only
+router.delete("/:id", requireAuth, requireRole("admin"), async (req: Request, res: Response) => {
+  try {
+    const [rows] = await pool.query<any[]>(
+      "SELECT l.id, l.user_id FROM loans l WHERE l.id = ?",
+      [req.params.id]
+    );
+    if (!(rows as any[]).length) { res.status(404).json({ message: "Rekod pinjaman tidak dijumpai." }); return; }
+    const loan = (rows as any[])[0];
+
+    await pool.query("DELETE FROM loans WHERE id = ?", [req.params.id]);
+    await logAction(req, "Padam pinjaman", `Loan #${req.params.id} (UID ${loan.user_id})`);
+    res.json({ message: "Rekod pinjaman berjaya dipadam." });
   } catch {
     res.status(500).json({ message: "Ralat pelayan." });
   }

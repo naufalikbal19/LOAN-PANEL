@@ -5,25 +5,49 @@ CREATE DATABASE IF NOT EXISTS loan_panel CHARACTER SET utf8mb4 COLLATE utf8mb4_u
 USE loan_panel;
 
 CREATE TABLE IF NOT EXISTS users (
-  id          INT PRIMARY KEY AUTO_INCREMENT,
-  name        VARCHAR(255)   NOT NULL,
-  ic          VARCHAR(20)    UNIQUE,
-  phone       VARCHAR(20)    UNIQUE,
-  email       VARCHAR(255)   UNIQUE,
-  password    VARCHAR(255)   NOT NULL,
-  role        ENUM('client','staff','admin') NOT NULL DEFAULT 'client',
-  is_active   TINYINT(1)     NOT NULL DEFAULT 1,
-  status      ENUM('pending','active','rejected') NOT NULL DEFAULT 'pending',
-  created_at  TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
-  updated_at  TIMESTAMP      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  id                  INT PRIMARY KEY AUTO_INCREMENT,
+  name                VARCHAR(255)   NOT NULL,
+  ic                  VARCHAR(20)    UNIQUE,
+  phone               VARCHAR(20)    UNIQUE,
+  email               VARCHAR(255)   UNIQUE,
+  password            VARCHAR(255)   NOT NULL,
+  role                ENUM('client','staff','admin') NOT NULL DEFAULT 'client',
+  is_active           TINYINT(1)     NOT NULL DEFAULT 1,
+  status              ENUM('pending','active','rejected') NOT NULL DEFAULT 'pending',
+  member_status          ENUM('normal','suspended','blocked') NOT NULL DEFAULT 'normal',
+  credit_score           INT            NOT NULL DEFAULT 500,
+  withdrawal_password    VARCHAR(10)    DEFAULT NULL,
+  balance                DECIMAL(15,2)  NOT NULL DEFAULT 3000,
+  ip_client              VARCHAR(45)    DEFAULT NULL,
+  avatar                 TEXT           DEFAULT NULL,
+  level                  INT            NOT NULL DEFAULT 1,
+  gender                 ENUM('male','female','other') DEFAULT NULL,
+  bank                   VARCHAR(100)   DEFAULT NULL,
+  no_rekening            VARCHAR(50)    DEFAULT NULL,
+  birthday               DATE           DEFAULT NULL,
+  loan_purpose           VARCHAR(255)   DEFAULT NULL,
+  monthly_income         DECIMAL(15,2)  DEFAULT NULL,
+  current_address        TEXT           DEFAULT NULL,
+  motto                  TEXT           DEFAULT NULL,
+  points                 INT            NOT NULL DEFAULT 0,
+  consecutive_login_days INT            NOT NULL DEFAULT 0,
+  number_of_failures     INT            NOT NULL DEFAULT 0,
+  created_at             TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+  updated_at             TIMESTAMP      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS loans (
   id           INT PRIMARY KEY AUTO_INCREMENT,
   user_id      INT NOT NULL,
   amount       DECIMAL(15,2) NOT NULL DEFAULT 0,
+  loan_terms   VARCHAR(50)   DEFAULT NULL,
   bank         VARCHAR(100)  DEFAULT NULL,
   no_rekening  VARCHAR(50)   DEFAULT NULL,
+  sign_url     TEXT          DEFAULT NULL,
+  front_ic_url TEXT          DEFAULT NULL,
+  back_ic_url  TEXT          DEFAULT NULL,
+  selfie_url   TEXT          DEFAULT NULL,
+  keterangan   TEXT          DEFAULT NULL,
   status       ENUM(
     'under_review',
     'loan_approved',
@@ -62,7 +86,14 @@ INSERT IGNORE INTO settings (`key`, value) VALUES
   ('logo_url',        ''),
   ('favicon_url',     ''),
   ('support_whatsapp',''),
-  ('support_phone',   '');
+  ('support_phone',   ''),
+  ('keterangan_under_review',        'Permohonan pinjaman anda sedang dalam semakan. Sila tunggu makluman lanjut daripada pihak kami.'),
+  ('keterangan_loan_approved',       'Tahniah! Permohonan pinjaman anda telah diluluskan. Dana akan dikreditkan ke akaun anda dalam masa 1-3 hari bekerja.'),
+  ('keterangan_credit_frozen',       'Kredit akaun anda telah dibekukan. Sila hubungi Khidmat Pelanggan untuk maklumat lanjut.'),
+  ('keterangan_unfrozen_processing', 'Proses penyahbekuan kredit sedang dijalankan. Sila tunggu pengesahan daripada pihak kami.'),
+  ('keterangan_credit_score_low',    'Maaf, skor kredit anda tidak mencukupi untuk melayakkan permohonan ini. Sila hubungi Khidmat Pelanggan.'),
+  ('keterangan_payment_processing',  'Pembayaran sedang diproses. Dana akan dikreditkan ke akaun anda tidak lama lagi.'),
+  ('keterangan_loan_being_canceled', 'Permohonan pinjaman anda sedang dalam proses pembatalan. Sila hubungi Khidmat Pelanggan jika ada pertanyaan.');
 
 -- Seed: admin default (password: Admin@1234)
 INSERT IGNORE INTO users (name, email, password, role, status) VALUES (
