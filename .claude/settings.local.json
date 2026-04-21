@@ -4,7 +4,17 @@
       "Bash(git mv *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "Bash(npx tsx *)",
+      "Bash(npx next *)",
+      "Bash(npx tsc *)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(\"D:/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root loan_panel)",
+      "Read(//d//**)",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel)",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e \"ALTER TABLE users ADD COLUMN occupation VARCHAR\\(100\\) DEFAULT NULL; ALTER TABLE loans ADD COLUMN emergency_name VARCHAR\\(100\\) DEFAULT NULL; ALTER TABLE loans ADD COLUMN emergency_phone VARCHAR\\(20\\) DEFAULT NULL;\")",
+      "Bash(taskkill //F //PID 170336)"
     ]
   }
 }

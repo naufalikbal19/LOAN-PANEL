@@ -63,7 +63,7 @@ router.post(
       }
 
       const payload: JwtPayload = { id: user.id, name: user.name, role: user.role };
-      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as string });
+      const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as any });
 
       // Log admin/staff login only
       if (user.role !== "client") {
@@ -137,12 +137,49 @@ router.post(
 // GET /auth/me
 router.get("/me", requireAuth, async (req: Request, res: Response) => {
   try {
-    const [rows] = await pool.query<any>("SELECT id, name, ic, phone, email, role, status, created_at FROM users WHERE id = ? LIMIT 1", [req.user!.id]);
+    const [rows] = await pool.query<any>(
+      `SELECT id, name, ic, phone, email, role, status, member_status,
+              credit_score, balance, withdrawal_password, bank, no_rekening,
+              avatar, level, points, gender, birthday, occupation,
+              monthly_income, loan_purpose, current_address, created_at
+       FROM users WHERE id = ? LIMIT 1`,
+      [req.user!.id]
+    );
     const user = (rows as any[])[0];
     if (!user) { res.status(404).json({ message: "Pengguna tidak dijumpai." }); return; }
     res.json(user);
   } catch (err) {
     console.error("[me]", err);
+    res.status(500).json({ message: "Ralat pelayan." });
+  }
+});
+
+// PUT /auth/profile — client updates own profile
+router.put("/profile", requireAuth, async (req: Request, res: Response) => {
+  try {
+    const { name, ic, gender, birthday, occupation, monthly_income, loan_purpose, current_address } = req.body;
+    // Convert DD/MM/YYYY → YYYY-MM-DD for MySQL DATE field
+    let birthdayVal: string | null = null;
+    if (birthday) {
+      const m = (birthday as string).match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      birthdayVal = m ? `${m[3]}-${m[2]}-${m[1]}` : null;
+    }
+    await pool.query(
+      `UPDATE users SET
+         name = COALESCE(?, name),
+         ic = COALESCE(?, ic),
+         gender = COALESCE(?, gender),
+         birthday = COALESCE(?, birthday),
+         occupation = ?,
+         monthly_income = COALESCE(?, monthly_income),
+         loan_purpose = ?,
+         current_address = ?
+       WHERE id = ?`,
+      [name || null, ic || null, gender || null, birthdayVal, occupation || null, monthly_income || null, loan_purpose || null, current_address || null, req.user!.id]
+    );
+    res.json({ message: "Profil dikemaskini." });
+  } catch (err) {
+    console.error("[profile]", err);
     res.status(500).json({ message: "Ralat pelayan." });
   }
 });

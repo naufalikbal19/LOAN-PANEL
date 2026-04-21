@@ -4,21 +4,29 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, User, Lock, Banknote, FileText, CalendarClock, History, MessageSquare, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useSettings } from "@/context/SettingsContext";
+import { apiFetch } from "@/lib/api";
 
 const menu = [
-  { icon: User,          label: "Personal Information", href: "#", color: "#c9a84c" },
-  { icon: Lock,          label: "Change Password",      href: "#", color: "#7c3aed" },
-  { icon: Banknote,      label: "Withdrawal Account",   href: "#", color: "#059669" },
+  { icon: User,          label: "Personal Information", href: "/dashboard/account/personal-info", color: "#c9a84c" },
+  { icon: Lock,          label: "Change Password",      href: "/dashboard/account/change-password", color: "#7c3aed" },
+  { icon: Banknote,      label: "Withdrawal Account",   href: "/dashboard/account/withdrawal", color: "#059669" },
   { icon: FileText,      label: "Loan Contract",        href: "#", color: "#f59e0b" },
   { icon: CalendarClock, label: "Repayment",            href: "#", color: "#0891b2" },
   { icon: History,       label: "Transaction History",  href: "#", color: "#6366f1" },
   { icon: MessageSquare, label: "Messages",             href: "#", color: "#ec4899" },
 ];
 
-function Gauge({ score }: { score: number }) {
-  const pct = score / 850;
+function scoreBadge(score: number): { label: string; color: string } {
+  if (score >= 580) return { label: "EXCELLENT", color: "#22c55e" };
+  if (score >= 450) return { label: "BAIK",      color: "#c9a84c" };
+  if (score >= 300) return { label: "SEDERHANA", color: "#f59e0b" };
+  return                     { label: "LEMAH",    color: "#ef4444" };
+}
+
+function Gauge({ score, max = 600 }: { score: number; max?: number }) {
+  const pct = Math.min(score / max, 1);
   const r = 36, circ = Math.PI * r, dash = pct * circ;
-  const color = pct > 0.7 ? "#22c55e" : pct > 0.4 ? "#f59e0b" : "#ef4444";
+  const { color } = scoreBadge(score);
   return (
     <svg width="90" height="54" viewBox="0 0 90 54">
       <path d="M 9 45 A 36 36 0 0 1 81 45" fill="none" stroke="#1e2a50" strokeWidth="8" strokeLinecap="round" />
@@ -32,9 +40,13 @@ export default function AccountPage() {
   const router = useRouter();
   const { company_name } = useSettings();
   const [userName, setUserName] = useState("");
+  const [creditScore, setCreditScore] = useState<number | null>(null);
 
   useEffect(() => {
     setUserName(localStorage.getItem("user_name") || "");
+    apiFetch("/auth/me")
+      .then((u) => setCreditScore(u.credit_score ?? 500))
+      .catch(() => setCreditScore(500));
   }, []);
 
   const handleLogout = () => {
@@ -43,6 +55,8 @@ export default function AccountPage() {
     localStorage.removeItem("user_phone");
     router.push("/sign-in");
   };
+
+  const badge = scoreBadge(creditScore ?? 500);
 
   return (
     <div>
@@ -60,12 +74,14 @@ export default function AccountPage() {
         <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-secondary)", marginBottom: 8 }}>Credit Score</p>
-            <p style={{ fontSize: 44, fontWeight: 900, lineHeight: 1, marginBottom: 10 }}>500</p>
-            <span className="badge-excellent">EXCELLENT</span>
+            <p style={{ fontSize: 44, fontWeight: 900, lineHeight: 1, marginBottom: 10, color: creditScore === null ? "var(--text-muted)" : "inherit" }}>
+              {creditScore === null ? "..." : creditScore}
+            </p>
+            <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1.5, background: `${badge.color}22`, color: badge.color, borderRadius: 6, padding: "3px 10px" }}>{badge.label}</span>
             <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 10 }}>Terakhir dikemaskini hari ini</p>
           </div>
           <div style={{ width: 72, height: 72, background: "var(--bg-card-inner)", borderRadius: 18, display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-light)" }}>
-            <Gauge score={500} />
+            <Gauge score={creditScore ?? 500} />
           </div>
         </div>
       </div>

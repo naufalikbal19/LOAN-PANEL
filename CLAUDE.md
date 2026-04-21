@@ -6,9 +6,9 @@
 
 ```
 loan-panel/           ← repo root
-├── client/           → pinjamanbarakah.my (Next.js, client panel)
-├── admin/            → backend.pinjamanbarakah.my (Next.js, admin dashboard)
-├── api/              → shared backend API (Express.js + TypeScript)
+├── client/           → apps.pinjamanbarakah.my (Next.js, client panel)
+├── admin/            → backendtest.pinjamanbarakah.my (Next.js, admin dashboard)
+├── api/              → api.pinjamanbarakah.my (Express.js + TypeScript)
 ├── CLAUDE.md
 └── AGENTS.md
 ```
@@ -96,6 +96,7 @@ Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 | bank | VARCHAR(100) | NULL | |
 | no_rekening | VARCHAR(50) | NULL | |
 | birthday | DATE | NULL | |
+| occupation | VARCHAR(100) | NULL | Pekerjaan semasa (tambah via migration.sql) |
 | loan_purpose | VARCHAR(255) | NULL | |
 | monthly_income | DECIMAL(15,2) | NULL | |
 | current_address | TEXT | NULL | |
@@ -119,6 +120,8 @@ Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 | front_ic_url | TEXT | NULL | URL gambar IC depan |
 | back_ic_url | TEXT | NULL | URL gambar IC belakang |
 | selfie_url | TEXT | NULL | URL gambar selfie |
+| emergency_name | VARCHAR(100) | NULL | Nama kenalan kecemasan (tambah via migration.sql) |
+| emergency_phone | VARCHAR(20) | NULL | Telefon kenalan kecemasan (tambah via migration.sql) |
 | keterangan | TEXT | NULL | Nota/keterangan status, auto-fill dari settings template |
 | status | ENUM(...) | 'under_review' | Lihat nilai di bawah |
 | created_at | TIMESTAMP | CURRENT_TIMESTAMP | |
@@ -159,7 +162,8 @@ Base URL lokal: `http://localhost:4000`
 |---|---|---|---|
 | POST | `/auth/login` | — | `{ phone, password }` atau `{ email, password }` |
 | POST | `/auth/register` | — | Client sahaja → status `pending`, auto-gen `withdrawal_password` (6 digit), catat `ip_client` |
-| GET | `/auth/me` | JWT | Info user semasa |
+| GET | `/auth/me` | JWT | Info user semasa (termasuk `occupation`, `gender`, `birthday`, dll) |
+| PUT | `/auth/profile` | JWT client | Kemaskini profil sendiri: `name, ic, gender, birthday, occupation, monthly_income, loan_purpose, current_address`. Birthday format masuk: `DD/MM/YYYY`, disimpan sebagai `YYYY-MM-DD` |
 
 ### Settings (`/settings`)
 | Method | Endpoint | Auth | Notes |
@@ -180,11 +184,20 @@ Base URL lokal: `http://localhost:4000`
 ### Loans (`/loans`)
 | Method | Endpoint | Auth | Notes |
 |---|---|---|---|
+| GET | `/loans/my` | JWT client | Senarai pinjaman sendiri (semua kolum termasuk `emergency_name`, `emergency_phone`, url gambar) |
+| POST | `/loans/apply` | JWT client | Submit permohonan: `{ amount, loan_terms, bank?, no_rekening?, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name?, emergency_phone? }` → status `under_review`. Juga update `users.bank` & `users.no_rekening` jika diisi |
 | GET | `/loans` | JWT admin/staff | Query: `?status=`, `?search=` — JOIN dengan users (ambil `name`, `phone`, `ic`) |
 | GET | `/loans/:id` | JWT admin/staff | Single loan detail |
 | PUT | `/loans/:id` | JWT admin/staff | Edit semua medan; jika `phone` berubah → update `users.phone`; jika `ic` dihantar → update `users.ic` |
 | DELETE | `/loans/:id` | JWT admin only | Delete loan record |
 | PUT | `/loans/:id/status` | JWT admin/staff | Update status sahaja |
+
+### Upload (`/upload`)
+| Method | Endpoint | Auth | Notes |
+|---|---|---|---|
+| POST | `/upload` | JWT | Upload satu imej (field: `file`). Max 5MB. Returns `{ url: "/uploads/filename.ext" }`. File disimpan di `api/uploads/`. URL penuh = `${API_URL}/uploads/filename.ext` |
+
+Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folder `api/uploads/`.
 
 ### Auth logic
 - Login dengan `phone` → role mesti `client`
@@ -203,15 +216,26 @@ Base URL lokal: `http://localhost:4000`
 | `/` | `app/page.tsx` | Redirect → `/sign-in` |
 | `/sign-in` | `app/sign-in/page.tsx` | ✅ Connect ke API |
 | `/register` | `app/register/page.tsx` | ✅ Isi: nama, IC, telefon, password → status `pending` |
-| `/dashboard` | `app/dashboard/page.tsx` | ✅ Guna settings context |
-| `/dashboard/wallet` | `app/dashboard/wallet/page.tsx` | UI sahaja |
+| `/dashboard` | `app/dashboard/page.tsx` | ✅ Data sebenar dari API — papar status & jumlah pinjaman terkini |
+| `/dashboard/wallet` | `app/dashboard/wallet/page.tsx` | ✅ Balance sebenar dari API + sejarah pinjaman |
+| `/dashboard/apply` | `app/dashboard/apply/page.tsx` | ✅ Borang 4 langkah: Pinjaman → Dokumen (upload IC+selfie) → Maklumat Pribadi → Tandatangan virtual |
 | `/dashboard/account` | `app/dashboard/account/page.tsx` | ✅ Logout berfungsi |
-| `/dashboard/support` | `app/dashboard/support/page.tsx` | UI sahaja |
+| `/dashboard/account/personal-info` | `app/dashboard/account/personal-info/page.tsx` | ✅ View profil + dokumen pinjaman (IC, selfie) |
+| `/dashboard/account/change-password` | `app/dashboard/account/change-password/page.tsx` | ✅ Redirect ke khidmat pelanggan (WhatsApp/Telefon dari settings) |
+| `/dashboard/account/withdrawal` | `app/dashboard/account/withdrawal/page.tsx` | ✅ Papar maklumat bank pengeluaran (dari users + loans) |
+| `/dashboard/support` | `app/dashboard/support/page.tsx` | ✅ Papar maklumat sokongan dari settings |
+
+### Apply Now — Flow (4 Langkah)
+1. **Langkah 1 — Pinjaman**: Pilih jumlah (RM 3,000–200,000 slider), tempoh (6–120 bulan), bank, nombor akaun
+2. **Langkah 2 — Dokumen**: Upload Hadapan IC, Belakang IC, Selfie (imej, max 5MB each via `POST /upload`)
+3. **Langkah 3 — Maklumat Pribadi**: Nama, IC, Jantina, Tarikh Lahir, Pekerjaan, Pendapatan, Tujuan Pinjaman, Alamat, Kenalan Kecemasan (auto-fill dari `/auth/me`)
+4. **Langkah 4 — Tandatangan**: Canvas virtual signature → submit semua ke `PUT /auth/profile` + `POST /loans/apply`
 
 ### Components & Lib
 - `src/components/BottomNav.tsx` — 4-tab bottom nav
 - `src/components/CompanyLogo.tsx` — Dynamic logo (guna `logo_url` dari settings; fallback ke gold bar chart)
 - `src/context/SettingsContext.tsx` — Fetch `/settings` sekali, provide ke semua pages. Update favicon dinamik.
+- `src/lib/api.ts` — `apiFetch<T>(path, init?)` helper: auto-attach JWT dari `localStorage.token`, throw on non-OK
 - `src/lib/phone.ts` — `normalizePhone()` + `validatePhone()` shared utility
 - `src/lib/utils.ts` — shadcn cn()
 
@@ -293,12 +317,18 @@ Edit modal: 4 input URL dengan preview gambar kecil
 
 ### `client/.env.local`
 ```
+# Lokal:
 NEXT_PUBLIC_API_URL=http://localhost:4000
+# Production (semasa di server):
+NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my
 ```
 
 ### `admin/.env.local`
 ```
+# Lokal:
 NEXT_PUBLIC_API_URL=http://localhost:4000
+# Production (semasa di server):
+NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my
 ```
 
 ### `api/.env`
@@ -311,24 +341,40 @@ DB_PASSWORD=
 DB_NAME=loan_panel
 JWT_SECRET=dev_secret_tukar_di_production_12345
 JWT_EXPIRES_IN=7d
-CLIENT_ORIGIN=https://pinjamanbarakah.my
-ADMIN_ORIGIN=https://backend.pinjamanbarakah.my
+CLIENT_ORIGIN=https://apps.pinjamanbarakah.my
+ADMIN_ORIGIN=https://backendtest.pinjamanbarakah.my
 ```
 
 ---
 
 ## Deployment Architecture
 
-**Platform:** AAPanel
-**2 Domain, 1 Database:**
+**Platform:** AAPanel (Linux VPS, ~961MB RAM + 4GB swap)
+**3 Domain, 1 Database, 3 PM2 processes:**
 
-| Domain | Folder | Port |
-|---|---|---|
-| `pinjamanbarakah.my` | `client/` | 3000 |
-| `backend.pinjamanbarakah.my` | `admin/` | 3001 |
-| `api.pinjamanbarakah.my` | `api/` | 4000 |
+| Domain | Folder | PM2 Name | Port |
+|---|---|---|---|
+| `apps.pinjamanbarakah.my` | `client/` | `loan-client` | 3000 |
+| `backendtest.pinjamanbarakah.my` | `admin/` | `loan-admin` | 3001 |
+| `api.pinjamanbarakah.my` | `api/` | `loan-api` | 4000 |
 
-Tukar `.env.local` kedua-dua client & admin kepada `NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my` untuk production.
+Nginx reverse proxy di AAPanel — semua request diproxy ke port masing-masing. **Jangan** letak `location ~ .*\.(js|css)?$` atau static file rules untuk Next.js — biarkan Next.js serve sendiri melalui proxy.
+
+### Update deployment (setiap kali ada perubahan):
+```bash
+git pull origin master
+
+# API sahaja berubah:
+cd api && npm install && pm2 restart loan-api
+
+# Client berubah (RAM terhad — stop dulu):
+pm2 stop loan-admin loan-api
+cd client && npm install && NODE_OPTIONS="--max-old-space-size=512" npm run build
+pm2 restart loan-client && pm2 restart loan-admin loan-api
+
+# Schema DB berubah:
+mysql -u loan_panel -p[password] loan_panel < api/migration.sql && pm2 restart loan-api
+```
 
 ---
 
@@ -345,16 +391,20 @@ Tukar `.env.local` kedua-dua client & admin kepada `NEXT_PUBLIC_API_URL=https://
 - [x] Settings: ✅ Syarikat + logo + sokongan + keterangan templates
 
 ### Client
-- [ ] Halaman Personal Info (view/edit profil)
-- [ ] Change Password
-- [ ] Apply Now — borang permohonan pinjaman (mencipta rekod `loans` dengan status `under_review`; termasuk upload tanda tangan virtual, gambar IC depan/belakang, selfie)
-- [ ] Paparan status pinjaman di dashboard (semak `keterangan` dari API)
+- [x] Halaman Personal Info ✅ — view profil + dokumen IC/selfie dari pinjaman terkini
+- [x] Change Password page ✅ — redirect ke khidmat pelanggan (WhatsApp/Telefon dari settings)
+- [x] Apply Now ✅ — borang 4-langkah dengan upload dokumen + tandatangan virtual
+- [x] Paparan status pinjaman di dashboard ✅ — data sebenar dari `/loans/my`
+- [x] Dashboard data sebenar ✅ — balance, loan status, order number dari API
+- [x] Wallet ✅ — balance sebenar + sejarah pinjaman dari API
+- [x] Withdrawal account page ✅ — maklumat bank dari users + loans
 - [ ] Multilanguage toggle (Melayu / English / Chinese)
-- [ ] Dashboard guna data sebenar dari API (sekarang sebahagian mock)
+- [ ] Loan Contract, Repayment, Transaction History, Messages pages (masih `href="#"`)
 
 ### API
-- [ ] Loans — endpoint untuk client (submit permohonan, semak status sendiri)
-- [ ] Upload gambar (sign, IC, selfie) — perlu storage solution (local atau S3/Cloudinary)
+- [x] Client loan endpoints ✅ — `GET /loans/my`, `POST /loans/apply`
+- [x] Upload gambar ✅ — `POST /upload` (multer, local storage di `api/uploads/`, max 5MB)
+- [x] Client profile update ✅ — `PUT /auth/profile`
 - [x] User management endpoints ✅
 - [x] Loans admin endpoints ✅
 - [x] Settings keterangan templates ✅

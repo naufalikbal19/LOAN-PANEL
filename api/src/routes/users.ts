@@ -7,7 +7,7 @@ import { logAction } from "../middleware/logger";
 const router = Router();
 const adminOrStaff = [requireAuth, requireRole("admin", "staff")];
 
-async function getMemberName(id: string): Promise<string> {
+async function getMemberName(id: string | string[]): Promise<string> {
   const [rows] = await pool.query<any[]>("SELECT name FROM users WHERE id = ? LIMIT 1", [id]);
   return (rows as any[])[0]?.name ?? `#${id}`;
 }
