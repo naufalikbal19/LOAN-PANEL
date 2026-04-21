@@ -140,6 +140,16 @@ Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 | ip_address | VARCHAR(45) | |
 | created_at | TIMESTAMP | |
 
+### Table: `transactions`
+| Column | Type | Default | Notes |
+|---|---|---|---|
+| id | INT PK AUTO_INCREMENT | — | |
+| user_id | INT FK | — | References users.id |
+| type | ENUM('withdrawal','credit','debit','adjustment') | 'withdrawal' | |
+| amount | DECIMAL(15,2) | — | |
+| description | VARCHAR(255) | NULL | |
+| created_at | TIMESTAMP | CURRENT_TIMESTAMP | |
+
 ### Table: `settings`
 Key-value store. Keys yang dibenarkan:
 - `company_name`, `company_tagline`, `logo_url`, `favicon_url`, `support_phone`, `support_whatsapp`
@@ -163,7 +173,7 @@ Base URL lokal: `http://localhost:4000`
 | POST | `/auth/login` | — | `{ phone, password }` atau `{ email, password }` |
 | POST | `/auth/register` | — | Client sahaja → status `pending`, auto-gen `withdrawal_password` (6 digit), catat `ip_client` |
 | GET | `/auth/me` | JWT | Info user semasa (termasuk `occupation`, `gender`, `birthday`, dll) |
-| PUT | `/auth/profile` | JWT client | Kemaskini profil sendiri: `name, ic, gender, birthday, occupation, monthly_income, loan_purpose, current_address`. Birthday format masuk: `DD/MM/YYYY`, disimpan sebagai `YYYY-MM-DD` |
+| PUT | `/auth/profile` | JWT client | Kemaskini profil sendiri (balance default 0 semasa register): `name, ic, gender, birthday, occupation, monthly_income, loan_purpose, current_address`. Birthday format masuk: `DD/MM/YYYY`, disimpan sebagai `YYYY-MM-DD` |
 
 ### Settings (`/settings`)
 | Method | Endpoint | Auth | Notes |
@@ -185,7 +195,7 @@ Base URL lokal: `http://localhost:4000`
 | Method | Endpoint | Auth | Notes |
 |---|---|---|---|
 | GET | `/loans/my` | JWT client | Senarai pinjaman sendiri (semua kolum termasuk `emergency_name`, `emergency_phone`, url gambar) |
-| POST | `/loans/apply` | JWT client | Submit permohonan: `{ amount, loan_terms, bank?, no_rekening?, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name?, emergency_phone? }` → status `under_review`. Juga update `users.bank` & `users.no_rekening` jika diisi |
+| POST | `/loans/apply` | JWT client | Submit permohonan → status `under_review`. **Juga set `users.balance = amount`** (balance boleh dilihat tapi withdraw hanya boleh bila loan_approved) |
 | GET | `/loans` | JWT admin/staff | Query: `?status=`, `?search=` — JOIN dengan users (ambil `name`, `phone`, `ic`) |
 | GET | `/loans/:id` | JWT admin/staff | Single loan detail |
 | PUT | `/loans/:id` | JWT admin/staff | Edit semua medan; jika `phone` berubah → update `users.phone`; jika `ic` dihantar → update `users.ic` |
@@ -198,6 +208,18 @@ Base URL lokal: `http://localhost:4000`
 | POST | `/upload` | JWT | Upload satu imej (field: `file`). Max 5MB. Returns `{ url: "/uploads/filename.ext" }`. File disimpan di `api/uploads/`. URL penuh = `${API_URL}/uploads/filename.ext` |
 
 Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folder `api/uploads/`.
+
+### Transactions (`/transactions`)
+| Method | Endpoint | Auth | Notes |
+|---|---|---|---|
+| GET | `/transactions/my` | JWT client | Senarai transaksi sendiri |
+| POST | `/transactions/withdraw` | JWT client | Withdraw baki: verifikasi `withdrawal_password`, check `loan_approved`, deduct balance, insert transaction. Returns `{ amount }` |
+| GET | `/transactions` | JWT admin/staff | Semua transaksi + user info. Query `?user_id=`, `?search=` |
+| POST | `/transactions` | JWT admin/staff | Manual add transaction — juga adjust `users.balance` |
+| PUT | `/transactions/:id` | JWT admin/staff | Edit type/amount/description |
+| DELETE | `/transactions/:id` | JWT admin/staff | Delete transaction |
+
+**Withdraw rules:** hanya boleh jika ada loan dengan status `loan_approved` DAN `users.balance > 0`. Balance menjadi 0 selepas withdraw.
 
 ### Auth logic
 - Login dengan `phone` → role mesti `client`
@@ -223,6 +245,7 @@ Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folde
 | `/dashboard/account/personal-info` | `app/dashboard/account/personal-info/page.tsx` | ✅ View profil + dokumen pinjaman (IC, selfie) |
 | `/dashboard/account/change-password` | `app/dashboard/account/change-password/page.tsx` | ✅ Redirect ke khidmat pelanggan (WhatsApp/Telefon dari settings) |
 | `/dashboard/account/withdrawal` | `app/dashboard/account/withdrawal/page.tsx` | ✅ Papar maklumat bank pengeluaran (dari users + loans) |
+| `/dashboard/account/transaction-history` | `app/dashboard/account/transaction-history/page.tsx` | ✅ Senarai transaksi klien + summary |
 | `/dashboard/support` | `app/dashboard/support/page.tsx` | ✅ Papar maklumat sokongan dari settings |
 
 ### Apply Now — Flow (4 Langkah)
@@ -230,6 +253,13 @@ Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folde
 2. **Langkah 2 — Dokumen**: Upload Hadapan IC, Belakang IC, Selfie (imej, max 5MB each via `POST /upload`)
 3. **Langkah 3 — Maklumat Pribadi**: Nama, IC, Jantina, Tarikh Lahir, Pekerjaan, Pendapatan, Tujuan Pinjaman, Alamat, Kenalan Kecemasan (auto-fill dari `/auth/me`)
 4. **Langkah 4 — Tandatangan**: Canvas virtual signature → submit semua ke `PUT /auth/profile` + `POST /loans/apply`
+
+### Theme System (Light/Dark Mode)
+- Toggle button (☀/🌙) floating di sudut kanan atas setiap halaman dashboard
+- State disimpan di `localStorage.theme` (`"dark"` atau `"light"`)
+- Toggle menambah/buang class `.light` pada `<html>`
+- CSS variables di `globals.css`: `:root {}` = dark mode, `.light {}` = light mode (background putih, teks hitam, gold lebih gelap)
+- Context: `src/context/ThemeContext.tsx` — `useTheme()` hook → `{ theme, toggle }`
 
 ### Components & Lib
 - `src/components/BottomNav.tsx` — 4-tab bottom nav
@@ -276,6 +306,7 @@ Minimum: 5 digit selepas normalisasi
 | `/dashboard/member/member-list` | `app/dashboard/member/member-list/page.tsx` | ✅ Semua status (filter dropdown), 23+ medan di View & Edit modal, password boleh ditukar, reg status badge |
 | `/dashboard/member/member-approval` | `app/dashboard/member/member-approval/page.tsx` | ✅ UID column, approve/reject pending |
 | `/dashboard/settings` | `app/dashboard/settings/page.tsx` | ✅ Maklumat syarikat + logo + sokongan + **7 template keterangan pinjaman** |
+| `/dashboard/transaction` | `app/dashboard/transaction/page.tsx` | ✅ CRUD sejarah transaksi semua klien — tambah/edit/padam, filter nama/telefon/UID |
 
 ### UID Format Convention
 - **User UID**: `#${String(id).padStart(4, "0")}` → `#0001`
@@ -402,9 +433,10 @@ mysql -u loan_panel -p[password] loan_panel < api/migration.sql && pm2 restart l
 - [ ] Loan Contract, Repayment, Transaction History, Messages pages (masih `href="#"`)
 
 ### API
-- [x] Client loan endpoints ✅ — `GET /loans/my`, `POST /loans/apply`
+- [x] Client loan endpoints ✅ — `GET /loans/my`, `POST /loans/apply` (set balance = amount)
 - [x] Upload gambar ✅ — `POST /upload` (multer, local storage di `api/uploads/`, max 5MB)
 - [x] Client profile update ✅ — `PUT /auth/profile`
+- [x] Transactions CRUD ✅ — `GET/POST/PUT/DELETE /transactions` (admin), `GET /transactions/my` + `POST /transactions/withdraw` (client)
 - [x] User management endpoints ✅
 - [x] Loans admin endpoints ✅
 - [x] Settings keterangan templates ✅

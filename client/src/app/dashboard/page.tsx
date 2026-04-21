@@ -49,7 +49,7 @@ export default function DashboardPage() {
   useEffect(() => {
     setUserName(localStorage.getItem("user_name") || "");
     apiFetch<Loan[]>("/loans/my")
-      .then((loans) => setLoan(loans[0] ?? null))
+      .then((loans) => setLoan(Array.isArray(loans) ? (loans[0] ?? null) : null))
       .catch(() => setLoan(null));
   }, []);
 

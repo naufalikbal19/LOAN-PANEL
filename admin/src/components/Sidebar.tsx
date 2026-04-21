@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Users, ClipboardList, Wallet, Settings,
-  ChevronDown, ChevronRight, LogOut, Shield, UserCheck,
+  ChevronDown, ChevronRight, LogOut, Shield, UserCheck, ArrowLeftRight,
 } from "lucide-react";
 
 interface NavItem {
@@ -37,6 +37,7 @@ const nav: NavItem[] = [
       { label: "Member Approval", href: "/dashboard/member/member-approval" },
     ],
   },
+  { label: "Transaction",         icon: ArrowLeftRight, href: "/dashboard/transaction" },
   { label: "Settings",           icon: Settings,       href: "/dashboard/settings" },
 ];
 

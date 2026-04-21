@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
   member_status          ENUM('normal','suspended','blocked') NOT NULL DEFAULT 'normal',
   credit_score           INT            NOT NULL DEFAULT 500,
   withdrawal_password    VARCHAR(10)    DEFAULT NULL,
-  balance                DECIMAL(15,2)  NOT NULL DEFAULT 3000,
+  balance                DECIMAL(15,2)  NOT NULL DEFAULT 0,
   ip_client              VARCHAR(45)    DEFAULT NULL,
   avatar                 TEXT           DEFAULT NULL,
   level                  INT            NOT NULL DEFAULT 1,
@@ -62,6 +62,16 @@ CREATE TABLE IF NOT EXISTS loans (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS transactions (
+  id          INT PRIMARY KEY AUTO_INCREMENT,
+  user_id     INT NOT NULL,
+  type        ENUM('withdrawal','credit','debit','adjustment') NOT NULL DEFAULT 'withdrawal',
+  amount      DECIMAL(15,2) NOT NULL,
+  description VARCHAR(255) DEFAULT NULL,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS admin_logs (
   id          INT PRIMARY KEY AUTO_INCREMENT,
   admin_id    INT NOT NULL,
@@ -93,7 +103,11 @@ INSERT IGNORE INTO settings (`key`, value) VALUES
   ('keterangan_unfrozen_processing', 'Proses penyahbekuan kredit sedang dijalankan. Sila tunggu pengesahan daripada pihak kami.'),
   ('keterangan_credit_score_low',    'Maaf, skor kredit anda tidak mencukupi untuk melayakkan permohonan ini. Sila hubungi Khidmat Pelanggan.'),
   ('keterangan_payment_processing',  'Pembayaran sedang diproses. Dana akan dikreditkan ke akaun anda tidak lama lagi.'),
-  ('keterangan_loan_being_canceled', 'Permohonan pinjaman anda sedang dalam proses pembatalan. Sila hubungi Khidmat Pelanggan jika ada pertanyaan.');
+  ('keterangan_loan_being_canceled', 'Permohonan pinjaman anda sedang dalam proses pembatalan. Sila hubungi Khidmat Pelanggan jika ada pertanyaan.'),
+  ('accent_color',  '#c9a84c'),
+  ('bg_primary',    '#080808'),
+  ('bg_card',       '#161616'),
+  ('bg_image_url',  '');
 
 -- Seed: admin default (password: Admin@1234)
 INSERT IGNORE INTO users (name, email, password, role, status) VALUES (

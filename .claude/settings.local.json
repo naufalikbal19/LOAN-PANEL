@@ -14,7 +14,21 @@
       "Read(//d//**)",
       "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel)",
       "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e \"ALTER TABLE users ADD COLUMN occupation VARCHAR\\(100\\) DEFAULT NULL; ALTER TABLE loans ADD COLUMN emergency_name VARCHAR\\(100\\) DEFAULT NULL; ALTER TABLE loans ADD COLUMN emergency_phone VARCHAR\\(20\\) DEFAULT NULL;\")",
-      "Bash(taskkill //F //PID 170336)"
+      "Bash(taskkill //F //PID 170336)",
+      "Bash(\"/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe\" -u root loan_panel)",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'ALTER TABLE users ADD COLUMN occupation VARCHAR\\(100\\) DEFAULT NULL;')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'ALTER TABLE loans ADD COLUMN emergency_name VARCHAR\\(100\\) DEFAULT NULL;')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'ALTER TABLE loans ADD COLUMN emergency_phone VARCHAR\\(20\\) DEFAULT NULL;')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'ALTER TABLE users MODIFY COLUMN balance DECIMAL\\(15,2\\) NOT NULL DEFAULT 0;')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'CREATE TABLE IF NOT EXISTS transactions \\(id INT PRIMARY KEY AUTO_INCREMENT, user_id INT NOT NULL, type ENUM\\('\\\\''withdrawal'\\\\'','\\\\''credit'\\\\'','\\\\''debit'\\\\'','\\\\''adjustment'\\\\''\\) NOT NULL DEFAULT '\\\\''withdrawal'\\\\'', amount DECIMAL\\(15,2\\) NOT NULL, description VARCHAR\\(255\\) DEFAULT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY \\(user_id\\) REFERENCES users\\(id\\) ON DELETE CASCADE\\);')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'DESCRIBE transactions;')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SHOW COLUMNS FROM users LIKE '\\\\''balance'\\\\'';')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e ' *)",
+      "Bash(taskkill //F //PID 89140)",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT id, name, balance FROM users WHERE role = '\\\\''client'\\\\'';')",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT user_id, amount, status FROM loans ORDER BY created_at DESC LIMIT 10;')",
+      "Bash(echo \"Update balance done: $?\")",
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT id, name, balance FROM users WHERE role='\\\\''client'\\\\'';')"
     ]
   }
 }

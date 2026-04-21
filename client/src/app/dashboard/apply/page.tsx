@@ -58,6 +58,15 @@ export default function ApplyPage() {
   const [step, setStep]   = useState<Step>("form");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [existingLoan, setExistingLoan] = useState<any>(null);
+  const [checkingLoan, setCheckingLoan] = useState(true);
+
+  useEffect(() => {
+    apiFetch("/loans/my")
+      .then((loans: any[]) => { if (Array.isArray(loans) && loans.length > 0) setExistingLoan(loans[0]); })
+      .catch(() => {})
+      .finally(() => setCheckingLoan(false));
+  }, []);
 
   /* Step 1 */
   const [amount, setAmount]     = useState(3000);
@@ -238,6 +247,73 @@ export default function ApplyPage() {
       setLoading(false);
     }
   };
+
+  const statusLabel: Record<string, string> = {
+    under_review: "Sedang Semakan", loan_approved: "Diluluskan",
+    credit_frozen: "Kredit Dibekukan", unfrozen_processing: "Proses Pencairan",
+    credit_score_low: "Skor Kredit Rendah", payment_processing: "Proses Pembayaran",
+    loan_being_canceled: "Dalam Pembatalan",
+  };
+
+  /* ─── LOADING CHECK ─── */
+  if (checkingLoan) return (
+    <div style={{ padding: "60px 20px", textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>
+      Memeriksa status pinjaman...
+    </div>
+  );
+
+  /* ─── ALREADY HAS LOAN ─── */
+  if (existingLoan) return (
+    <div>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "20px 20px 16px" }}>
+        <Link href="/dashboard">
+          <button style={{ width: 36, height: 36, borderRadius: 10, background: "var(--bg-card)", border: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-primary)" }}>
+            <ChevronLeft size={18} />
+          </button>
+        </Link>
+        <p style={{ fontSize: 18, fontWeight: 800 }}>Mohon Pinjaman</p>
+      </div>
+      <div style={{ padding: "20px 20px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 20, animation: "fadeInUp 0.4s ease both" }}>
+        <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(245,158,11,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32 }}>
+          📋
+        </div>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>Anda Sudah Ada Permohonan</p>
+          <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.7 }}>
+            Anda tidak boleh membuat permohonan baru selagi permohonan sebelumnya masih aktif.
+          </p>
+        </div>
+        <div className="card" style={{ width: "100%", background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Jumlah</span>
+            <span style={{ fontSize: 13, fontWeight: 700 }}>RM {Number(existingLoan.amount).toLocaleString("ms-MY")}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Tempoh</span>
+            <span style={{ fontSize: 13, fontWeight: 700 }}>{existingLoan.loan_terms || "—"}</span>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Status</span>
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#c9a84c", background: "rgba(201,168,76,0.12)", borderRadius: 6, padding: "2px 8px" }}>
+              {statusLabel[existingLoan.status] ?? existingLoan.status}
+            </span>
+          </div>
+        </div>
+        <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 10 }}>
+          <Link href="/dashboard/wallet" style={{ width: "100%" }}>
+            <button style={{ width: "100%", background: "var(--accent-blue)", border: "none", borderRadius: 14, padding: 16, color: "white", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+              Lihat Status di Dompet
+            </button>
+          </Link>
+          <Link href="/dashboard/support" style={{ width: "100%" }}>
+            <button style={{ width: "100%", background: "transparent", border: "1.5px solid var(--border-light)", borderRadius: 14, padding: 16, color: "var(--text-secondary)", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+              Hubungi Khidmat Pelanggan
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 
   /* ─── SUCCESS ─── */
   if (step === "success") return (

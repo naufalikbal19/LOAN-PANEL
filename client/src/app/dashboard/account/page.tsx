@@ -12,7 +12,7 @@ const menu = [
   { icon: Banknote,      label: "Withdrawal Account",   href: "/dashboard/account/withdrawal", color: "#059669" },
   { icon: FileText,      label: "Loan Contract",        href: "#", color: "#f59e0b" },
   { icon: CalendarClock, label: "Repayment",            href: "#", color: "#0891b2" },
-  { icon: History,       label: "Transaction History",  href: "#", color: "#6366f1" },
+  { icon: History,       label: "Transaction History",  href: "/dashboard/account/transaction-history", color: "#6366f1" },
   { icon: MessageSquare, label: "Messages",             href: "#", color: "#ec4899" },
 ];
 

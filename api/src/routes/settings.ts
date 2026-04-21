@@ -37,6 +37,14 @@ router.put(
       "keterangan_under_review", "keterangan_loan_approved", "keterangan_credit_frozen",
       "keterangan_unfrozen_processing", "keterangan_credit_score_low",
       "keterangan_payment_processing", "keterangan_loan_being_canceled",
+      // Tema dark mode
+      "dark_accent","dark_bg_primary","dark_bg_secondary","dark_bg_card","dark_bg_card_inner",
+      "dark_text_primary","dark_text_secondary","dark_text_muted",
+      "dark_border_color","dark_border_light","dark_nav_bg","dark_bg_image",
+      // Tema light mode
+      "light_accent","light_bg_primary","light_bg_secondary","light_bg_card","light_bg_card_inner",
+      "light_text_primary","light_text_secondary","light_text_muted",
+      "light_border_color","light_border_light","light_nav_bg","light_bg_image",
     ];
 
     try {

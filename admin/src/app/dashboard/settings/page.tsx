@@ -1,38 +1,88 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Save, Image, Globe, Phone, MessageCircle, FileText } from "lucide-react";
+import { Save, Image, Globe, Phone, MessageCircle, FileText, Palette, Moon, Sun } from "lucide-react";
 
+const API = process.env.NEXT_PUBLIC_API_URL!;
+
+// ─── All settings keys ────────────────────────────────────────────────────────
 interface Settings {
-  company_name: string;
-  company_tagline: string;
-  logo_url: string;
-  favicon_url: string;
-  support_phone: string;
-  support_whatsapp: string;
-  keterangan_under_review: string;
-  keterangan_loan_approved: string;
-  keterangan_credit_frozen: string;
-  keterangan_unfrozen_processing: string;
-  keterangan_credit_score_low: string;
-  keterangan_payment_processing: string;
+  company_name: string; company_tagline: string;
+  logo_url: string; favicon_url: string;
+  support_phone: string; support_whatsapp: string;
+  keterangan_under_review: string; keterangan_loan_approved: string;
+  keterangan_credit_frozen: string; keterangan_unfrozen_processing: string;
+  keterangan_credit_score_low: string; keterangan_payment_processing: string;
   keterangan_loan_being_canceled: string;
+  // Dark
+  dark_accent: string;
+  dark_bg_primary: string; dark_bg_secondary: string;
+  dark_bg_card: string;    dark_bg_card_inner: string;
+  dark_text_primary: string; dark_text_secondary: string; dark_text_muted: string;
+  dark_border_color: string; dark_border_light: string;
+  dark_nav_bg: string;     dark_bg_image: string;
+  // Light
+  light_accent: string;
+  light_bg_primary: string; light_bg_secondary: string;
+  light_bg_card: string;    light_bg_card_inner: string;
+  light_text_primary: string; light_text_secondary: string; light_text_muted: string;
+  light_border_color: string; light_border_light: string;
+  light_nav_bg: string;    light_bg_image: string;
 }
 
-const defaultSettings: Settings = {
-  company_name: "",
-  company_tagline: "",
-  logo_url: "",
-  favicon_url: "",
-  support_phone: "",
-  support_whatsapp: "",
-  keterangan_under_review: "",
-  keterangan_loan_approved: "",
-  keterangan_credit_frozen: "",
-  keterangan_unfrozen_processing: "",
-  keterangan_credit_score_low: "",
-  keterangan_payment_processing: "",
-  keterangan_loan_being_canceled: "",
+const DEFAULTS: Settings = {
+  company_name: "", company_tagline: "", logo_url: "", favicon_url: "",
+  support_phone: "", support_whatsapp: "",
+  keterangan_under_review: "", keterangan_loan_approved: "", keterangan_credit_frozen: "",
+  keterangan_unfrozen_processing: "", keterangan_credit_score_low: "",
+  keterangan_payment_processing: "", keterangan_loan_being_canceled: "",
+  dark_accent: "#c9a84c",
+  dark_bg_primary: "#080808", dark_bg_secondary: "#0f0f0f",
+  dark_bg_card: "#161616",    dark_bg_card_inner: "#1e1e1e",
+  dark_text_primary: "#ffffff", dark_text_secondary: "#888888", dark_text_muted: "#484848",
+  dark_border_color: "#242424", dark_border_light: "#2e2e2e",
+  dark_nav_bg: "#0c0c0c",     dark_bg_image: "",
+  light_accent: "#b8882a",
+  light_bg_primary: "#f4f4f5", light_bg_secondary: "#e4e4e7",
+  light_bg_card: "#ffffff",    light_bg_card_inner: "#f1f1f1",
+  light_text_primary: "#111111", light_text_secondary: "#555555", light_text_muted: "#999999",
+  light_border_color: "#e0e0e0", light_border_light: "#d4d4d4",
+  light_nav_bg: "#ffffff",    light_bg_image: "",
 };
+
+// ─── Theme variable groups ───────────────────────────────────────────────────
+const THEME_GROUPS = [
+  {
+    title: "Warna Aksen",
+    vars: [
+      { key: "accent",         label: "Warna Aksen (Gold)",    hint: "Butang, border aktif, badge, teks highlighted" },
+    ],
+  },
+  {
+    title: "Warna Teks",
+    vars: [
+      { key: "text_primary",   label: "Teks Utama (Title)",    hint: "Judul, nama, angka penting" },
+      { key: "text_secondary", label: "Teks Sekunder",         hint: "Label, keterangan, subtitle" },
+      { key: "text_muted",     label: "Teks Pudar (Muted)",    hint: "Placeholder, teks tidak aktif" },
+    ],
+  },
+  {
+    title: "Warna Latar Belakang",
+    vars: [
+      { key: "bg_primary",     label: "Latar Utama",           hint: "Background halaman utama" },
+      { key: "bg_secondary",   label: "Latar Sekunder",        hint: "Background bahagian sekunder" },
+      { key: "bg_card",        label: "Latar Kad",             hint: "Background card & panel" },
+      { key: "bg_card_inner",  label: "Latar Dalam Kad",       hint: "Background input, inner section" },
+      { key: "nav_bg",         label: "Latar Bottom Nav",      hint: "Background navigasi bawah" },
+    ],
+  },
+  {
+    title: "Warna Border",
+    vars: [
+      { key: "border_color",   label: "Border Utama",          hint: "Garisan sempadan kad" },
+      { key: "border_light",   label: "Border Ringan",         hint: "Garisan sempadan halus" },
+    ],
+  },
+];
 
 const KETERANGAN_FIELDS: { key: keyof Settings; label: string; badgeBg: string; badgeColor: string }[] = [
   { key: "keterangan_under_review",        label: "Under Review",        badgeBg: "rgba(201,168,76,0.15)",  badgeColor: "#c9a84c" },
@@ -45,44 +95,66 @@ const KETERANGAN_FIELDS: { key: keyof Settings; label: string; badgeBg: string; 
 ];
 
 type SaveStatus = "idle" | "saving" | "success" | "error";
+type ThemeTab = "dark" | "light";
 
-function SettingsField({ label, value, onChange, placeholder, icon: Icon, focused, onFocus, onBlur }: {
-  label: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string; icon: React.ElementType; focused: boolean; onFocus: () => void; onBlur: () => void;
-}) {
+// ─── Sub-components ──────────────────────────────────────────────────────────
+function ColorRow({ label, hint, value, onChange }: { label: string; hint: string; value: string; onChange: (v: string) => void }) {
+  const isValid = /^#[0-9a-fA-F]{6}$/.test(value);
   return (
-    <div style={{ marginBottom: 20 }}>
-      <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#888", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-        <Icon size={12} /> {label}
-      </label>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #1a1a1a" }}>
+      <div style={{ position: "relative", flexShrink: 0 }}>
+        <input
+          type="color"
+          value={isValid ? value : "#888888"}
+          onChange={(e) => onChange(e.target.value)}
+          style={{ width: 40, height: 40, borderRadius: 10, border: "1px solid #2e2e2e", cursor: "pointer", padding: 2, background: "none" }}
+        />
+      </div>
+      <div style={{ flex: 1 }}>
+        <p style={{ fontSize: 13, fontWeight: 600, color: "#ddd", marginBottom: 2 }}>{label}</p>
+        <p style={{ fontSize: 11, color: "#555" }}>{hint}</p>
+      </div>
       <input
+        type="text"
         value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        style={{ background: "#1e1e1e", border: `1px solid ${focused ? "#c9a84c" : "#2e2e2e"}`, borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", fontFamily: "inherit", transition: "border-color 0.2s" }}
+        onChange={(e) => onChange(e.target.value)}
+        maxLength={7}
+        placeholder="#000000"
+        style={{
+          width: 90, background: "#1a1a1a",
+          border: `1px solid ${isValid ? "#2e2e2e" : "#ef4444"}`,
+          borderRadius: 8, padding: "7px 10px", color: "#fff",
+          fontSize: 13, outline: "none", fontFamily: "monospace", textAlign: "center",
+        }}
       />
     </div>
   );
 }
 
+// ─── Main page ───────────────────────────────────────────────────────────────
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
-  const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState<SaveStatus>("idle");
+  const [settings, setSettings] = useState<Settings>(DEFAULTS);
+  const [loading, setLoading]   = useState(true);
+  const [status, setStatus]     = useState<SaveStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [themeTab, setThemeTab] = useState<ThemeTab>("dark");
   const [focusedField, setFocusedField] = useState<keyof Settings | null>(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings`)
+    fetch(`${API}/settings`)
       .then((r) => r.json())
-      .then((data) => { setSettings({ ...defaultSettings, ...data }); setLoading(false); })
+      .then((data) => { setSettings({ ...DEFAULTS, ...data }); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
 
-  const set = (key: keyof Settings) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setSettings((p) => ({ ...p, [key]: e.target.value }));
+  const set = (key: keyof Settings) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setSettings((p) => ({ ...p, [key]: e.target.value }));
+      if (status !== "idle") setStatus("idle");
+    };
+
+  const setColor = (key: keyof Settings) => (v: string) => {
+    setSettings((p) => ({ ...p, [key]: v }));
     if (status !== "idle") setStatus("idle");
   };
 
@@ -90,7 +162,7 @@ export default function SettingsPage() {
     setStatus("saving"); setErrorMsg("");
     try {
       const token = localStorage.getItem("admin_token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/settings`, {
+      const res = await fetch(`${API}/settings`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ settings }),
@@ -100,59 +172,151 @@ export default function SettingsPage() {
       setStatus("success");
       setTimeout(() => setStatus("idle"), 3000);
     } catch {
-      setStatus("error");
-      setErrorMsg("Ralat sambungan. Sila cuba semula.");
+      setStatus("error"); setErrorMsg("Ralat sambungan. Sila cuba semula.");
     }
   };
 
-  const fp = (key: keyof Settings, label: string, placeholder: string, icon: React.ElementType) => ({
-    label, value: settings[key], onChange: set(key) as any, placeholder, icon,
-    focused: focusedField === key, onFocus: () => setFocusedField(key), onBlur: () => setFocusedField(null),
+  const inputStyle: React.CSSProperties = {
+    background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 10,
+    padding: "12px 14px", color: "#fff", fontSize: 14, width: "100%",
+    outline: "none", fontFamily: "inherit", transition: "border-color 0.2s",
+  };
+  const focusedInputStyle = (key: keyof Settings): React.CSSProperties => ({
+    ...inputStyle, border: `1px solid ${focusedField === key ? "#c9a84c" : "#2e2e2e"}`,
   });
 
   if (loading) return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300, color: "#888" }}>Memuatkan tetapan...</div>
   );
 
+  const p = themeTab; // "dark" | "light"
+
   return (
-    <div style={{ maxWidth: 700 }}>
+    <div style={{ maxWidth: 740 }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Settings</h1>
-        <p style={{ color: "#888", fontSize: 13 }}>Konfigurasi maklumat dan rupa syarikat</p>
+        <p style={{ color: "#888", fontSize: 13 }}>Konfigurasi maklumat, rupa syarikat, dan tema klien</p>
       </div>
 
-      {/* Company */}
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: "24px", marginBottom: 20 }}>
-        <h2 style={sectionTitle}>Maklumat Syarikat</h2>
-        <SettingsField {...fp("company_name", "Nama Syarikat", "Pinjaman Barakah", Globe)} />
-        <SettingsField {...fp("company_tagline", "Tagline", "Pinjaman peribadi terbaik untuk anda", Globe)} />
-      </div>
+      {/* ── Company ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><Globe size={13} style={iconInline} />Maklumat Syarikat</h2>
+        <Field label="Nama Syarikat" icon={Globe}>
+          <input value={settings.company_name} onChange={set("company_name")} placeholder="Pinjaman Barakah" style={focusedInputStyle("company_name")} onFocus={() => setFocusedField("company_name")} onBlur={() => setFocusedField(null)} />
+        </Field>
+        <Field label="Tagline">
+          <input value={settings.company_tagline} onChange={set("company_tagline")} placeholder="Pinjaman peribadi terbaik..." style={focusedInputStyle("company_tagline")} onFocus={() => setFocusedField("company_tagline")} onBlur={() => setFocusedField(null)} />
+        </Field>
+      </section>
 
-      {/* Logo */}
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: "24px", marginBottom: 20 }}>
-        <h2 style={sectionTitle}>Logo & Favicon</h2>
-        <SettingsField {...fp("logo_url", "URL Logo", "https://cdn.example.com/logo.png", Image)} />
+      {/* ── Logo ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><Image size={13} style={iconInline} />Logo & Favicon</h2>
+        <Field label="URL Logo" icon={Image}>
+          <input value={settings.logo_url} onChange={set("logo_url")} placeholder="https://..." style={focusedInputStyle("logo_url")} onFocus={() => setFocusedField("logo_url")} onBlur={() => setFocusedField(null)} />
+        </Field>
         {settings.logo_url && (
-          <div style={{ marginBottom: 20, padding: 12, background: "#1a1a1a", borderRadius: 10, display: "inline-block" }}>
-            <img src={settings.logo_url} alt="Preview logo" style={{ height: 48, objectFit: "contain" }} onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
+          <div style={{ marginBottom: 16, padding: 10, background: "#1a1a1a", borderRadius: 8, display: "inline-block" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={settings.logo_url} alt="logo" style={{ height: 44, objectFit: "contain" }} onError={(e) => ((e.target as HTMLImageElement).style.display="none")} />
           </div>
         )}
-        <SettingsField {...fp("favicon_url", "URL Favicon", "https://cdn.example.com/favicon.ico", Image)} />
-      </div>
+        <Field label="URL Favicon" icon={Image}>
+          <input value={settings.favicon_url} onChange={set("favicon_url")} placeholder="https://..." style={focusedInputStyle("favicon_url")} onFocus={() => setFocusedField("favicon_url")} onBlur={() => setFocusedField(null)} />
+        </Field>
+      </section>
 
-      {/* Support */}
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: "24px", marginBottom: 20 }}>
-        <h2 style={sectionTitle}>Maklumat Sokongan</h2>
-        <SettingsField {...fp("support_phone", "Nombor Telefon", "+60123456789", Phone)} />
-        <SettingsField {...fp("support_whatsapp", "WhatsApp", "60123456789", MessageCircle)} />
-      </div>
+      {/* ── Support ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><Phone size={13} style={iconInline} />Maklumat Sokongan</h2>
+        <Field label="Nombor Telefon" icon={Phone}>
+          <input value={settings.support_phone} onChange={set("support_phone")} placeholder="+60123456789" style={focusedInputStyle("support_phone")} onFocus={() => setFocusedField("support_phone")} onBlur={() => setFocusedField(null)} />
+        </Field>
+        <Field label="WhatsApp" icon={MessageCircle}>
+          <input value={settings.support_whatsapp} onChange={set("support_whatsapp")} placeholder="60123456789" style={focusedInputStyle("support_whatsapp")} onFocus={() => setFocusedField("support_whatsapp")} onBlur={() => setFocusedField(null)} />
+        </Field>
+      </section>
 
-      {/* Keterangan Templates */}
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: "24px", marginBottom: 28 }}>
-        <h2 style={sectionTitle}>Template Keterangan Pinjaman</h2>
+      {/* ── Tema Klien ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><Palette size={13} style={iconInline} />Tema Klien</h2>
         <p style={{ fontSize: 12, color: "#666", marginBottom: 20 }}>
-          Teks ini akan auto-diisi dalam medan Keterangan apabila status pinjaman ditukar. Staff boleh edit secara manual.
+          Kustomisasi warna aplikasi klien untuk Dark Mode dan Light Mode secara berasingan. Perubahan aktif serta-merta selepas disimpan.
         </p>
+
+        {/* Tab switcher */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 24, background: "#1a1a1a", borderRadius: 12, padding: 4, width: "fit-content" }}>
+          {(["dark","light"] as ThemeTab[]).map((t) => (
+            <button key={t} onClick={() => setThemeTab(t)} style={{
+              display: "flex", alignItems: "center", gap: 7,
+              padding: "9px 20px", borderRadius: 9, border: "none", cursor: "pointer",
+              fontFamily: "inherit", fontWeight: 700, fontSize: 13,
+              background: themeTab === t ? (t === "dark" ? "#2a2a2a" : "#fff") : "transparent",
+              color: themeTab === t ? (t === "dark" ? "#c9a84c" : "#333") : "#555",
+              boxShadow: themeTab === t ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
+              transition: "all 0.2s",
+            }}>
+              {t === "dark" ? <Moon size={14} /> : <Sun size={14} />}
+              {t === "dark" ? "Dark Mode" : "Light Mode"}
+            </button>
+          ))}
+        </div>
+
+        {/* Color groups */}
+        {THEME_GROUPS.map((group) => (
+          <div key={group.title} style={{ marginBottom: 24 }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#c9a84c", marginBottom: 4 }}>{group.title}</p>
+            <div style={{ background: "#0e0e0e", borderRadius: 12, border: "1px solid #1e1e1e", padding: "0 14px" }}>
+              {group.vars.map(({ key, label, hint }) => {
+                const fullKey = `${p}_${key}` as keyof Settings;
+                return (
+                  <ColorRow key={fullKey} label={label} hint={hint} value={settings[fullKey] as string} onChange={setColor(fullKey)} />
+                );
+              })}
+            </div>
+          </div>
+        ))}
+
+        {/* Background image */}
+        <div style={{ marginBottom: 8 }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#c9a84c", marginBottom: 8 }}>Gambar Latar Belakang</p>
+          <input
+            type="text"
+            value={settings[`${p}_bg_image` as keyof Settings] as string}
+            onChange={set(`${p}_bg_image` as keyof Settings)}
+            placeholder="https://... (kosongkan untuk tiada gambar)"
+            style={{ ...inputStyle, marginBottom: 10 }}
+          />
+          {(settings[`${p}_bg_image` as keyof Settings] as string) && (
+            <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #2e2e2e", height: 90, position: "relative" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={settings[`${p}_bg_image` as keyof Settings] as string} alt="bg preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={(e) => ((e.target as HTMLImageElement).style.display="none")} />
+              <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 11, color: "white", fontWeight: 600 }}>Preview Latar</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Mini preview */}
+        <div style={{ marginTop: 20, borderRadius: 12, overflow: "hidden", border: "1px solid #2e2e2e" }}>
+          <div style={{ background: settings[`${p}_bg_primary` as keyof Settings] as string || "#080808", padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ background: settings[`${p}_bg_card` as keyof Settings] as string || "#161616", borderRadius: 10, padding: "10px 16px", border: `1px solid ${(settings[`${p}_border_color` as keyof Settings] as string) || "#242424"}` }}>
+              <p style={{ fontSize: 12, color: settings[`${p}_text_primary` as keyof Settings] as string || "#fff", fontWeight: 700, margin: 0 }}>Tajuk</p>
+              <p style={{ fontSize: 10, color: settings[`${p}_text_secondary` as keyof Settings] as string || "#888", margin: 0 }}>Keterangan</p>
+              <p style={{ fontSize: 10, color: settings[`${p}_text_muted` as keyof Settings] as string || "#484848", margin: 0 }}>Teks pudar</p>
+            </div>
+            <button style={{ background: settings[`${p}_accent` as keyof Settings] as string || "#c9a84c", border: "none", borderRadius: 8, padding: "10px 16px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>Butang</button>
+            <span style={{ fontSize: 12, color: settings[`${p}_accent` as keyof Settings] as string || "#c9a84c", fontWeight: 600 }}>Teks Aksen</span>
+          </div>
+          <p style={{ fontSize: 10, color: "#555", padding: "5px 12px", background: "#0a0a0a" }}>Preview — hasil sebenar mungkin berbeza sedikit</p>
+        </div>
+      </section>
+
+      {/* ── Keterangan Templates ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><FileText size={13} style={iconInline} />Template Keterangan Pinjaman</h2>
+        <p style={{ fontSize: 12, color: "#666", marginBottom: 20 }}>Teks ini auto-diisi apabila status pinjaman ditukar. Staff boleh edit secara manual.</p>
         {KETERANGAN_FIELDS.map(({ key, label, badgeBg, badgeColor }) => (
           <div key={key} style={{ marginBottom: 20 }}>
             <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "#666", marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
@@ -165,41 +329,43 @@ export default function SettingsPage() {
               onFocus={() => setFocusedField(key)}
               onBlur={() => setFocusedField(null)}
               rows={3}
-              style={{
-                background: "#1e1e1e",
-                border: `1px solid ${focusedField === key ? "#c9a84c" : "#2e2e2e"}`,
-                borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 13,
-                width: "100%", outline: "none", fontFamily: "inherit",
-                resize: "vertical", lineHeight: 1.6, transition: "border-color 0.2s",
-                boxSizing: "border-box",
-              }}
+              style={{ background: "#1e1e1e", border: `1px solid ${focusedField === key ? "#c9a84c" : "#2e2e2e"}`, borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 13, width: "100%", outline: "none", fontFamily: "inherit", resize: "vertical", lineHeight: 1.6, transition: "border-color 0.2s", boxSizing: "border-box" }}
             />
           </div>
         ))}
-      </div>
+      </section>
 
+      {/* Status */}
       {status === "error" && (
-        <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 10, padding: "12px 16px", marginBottom: 16, color: "#ef4444", fontSize: 13 }}>
-          {errorMsg}
-        </div>
+        <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 10, padding: "12px 16px", marginBottom: 16, color: "#ef4444", fontSize: 13 }}>{errorMsg}</div>
       )}
       {status === "success" && (
-        <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 10, padding: "12px 16px", marginBottom: 16, color: "#22c55e", fontSize: 13 }}>
-          ✓ Tetapan berjaya disimpan.
-        </div>
+        <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 10, padding: "12px 16px", marginBottom: 16, color: "#22c55e", fontSize: 13 }}>✓ Tetapan berjaya disimpan.</div>
       )}
 
       <button
         onClick={handleSave}
         disabled={status === "saving"}
-        style={{ display: "flex", alignItems: "center", gap: 8, background: "#c9a84c", color: "#000", border: "none", borderRadius: 10, padding: "12px 24px", fontSize: 14, fontWeight: 700, cursor: status === "saving" ? "not-allowed" : "pointer", opacity: status === "saving" ? 0.7 : 1, fontFamily: "inherit" }}
+        style={{ display: "flex", alignItems: "center", gap: 8, background: "#c9a84c", color: "#000", border: "none", borderRadius: 10, padding: "13px 28px", fontSize: 14, fontWeight: 700, cursor: status === "saving" ? "not-allowed" : "pointer", opacity: status === "saving" ? 0.7 : 1, fontFamily: "inherit", marginBottom: 40 }}
       >
-        <Save size={16} /> {status === "saving" ? "Menyimpan..." : "Simpan Tetapan"}
+        <Save size={16} /> {status === "saving" ? "Menyimpan..." : "Simpan Semua Tetapan"}
       </button>
     </div>
   );
 }
 
-const sectionTitle: React.CSSProperties = {
-  fontSize: 11, fontWeight: 700, marginBottom: 20, color: "#c9a84c", letterSpacing: 1, textTransform: "uppercase",
-};
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function Field({ label, icon: Icon, children }: { label: string; icon?: React.ElementType; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#888", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+        {Icon && <Icon size={12} />} {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const card: React.CSSProperties = { background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: 24, marginBottom: 20 };
+const sectionTitle: React.CSSProperties = { fontSize: 11, fontWeight: 700, marginBottom: 20, color: "#c9a84c", letterSpacing: 1, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 };
+const iconInline: React.CSSProperties = { display: "inline", verticalAlign: "middle" };

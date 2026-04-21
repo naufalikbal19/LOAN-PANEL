@@ -9,6 +9,7 @@ import adminLogsRouter from "./routes/admin-logs";
 import adminsRouter from "./routes/admins";
 import loansRouter from "./routes/loans";
 import uploadRouter from "./routes/upload";
+import transactionsRouter from "./routes/transactions";
 
 dotenv.config();
 
@@ -51,6 +52,7 @@ app.use("/admin-logs", adminLogsRouter);
 app.use("/admins", adminsRouter);
 app.use("/loans", loansRouter);
 app.use("/upload", uploadRouter);
+app.use("/transactions", transactionsRouter);
 
 // 404
 app.use((_, res) => {

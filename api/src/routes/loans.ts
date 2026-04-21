@@ -34,17 +34,24 @@ router.post("/apply", requireAuth, requireRole("client"), async (req: Request, r
     if (!amount || !loan_terms) {
       res.status(400).json({ message: "Jumlah dan tempoh pinjaman wajib diisi." }); return;
     }
+    // Semak jika sudah ada pinjaman aktif
+    const [existing] = await pool.query<any[]>(
+      "SELECT id FROM loans WHERE user_id = ? LIMIT 1",
+      [req.user!.id]
+    );
+    if ((existing as any[]).length > 0) {
+      res.status(409).json({ message: "Anda sudah mempunyai permohonan pinjaman. Sila hubungi khidmat pelanggan untuk maklumat lanjut.", code: "LOAN_EXISTS" }); return;
+    }
     const [result] = await pool.query<any>(
       `INSERT INTO loans (user_id, amount, loan_terms, bank, no_rekening, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name, emergency_phone, status)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'under_review')`,
       [req.user!.id, amount, loan_terms, bank || null, no_rekening || null, front_ic_url || null, back_ic_url || null, selfie_url || null, sign_url || null, emergency_name || null, emergency_phone || null]
     );
-    if (bank || no_rekening) {
-      await pool.query(
-        `UPDATE users SET bank = COALESCE(?, bank), no_rekening = COALESCE(?, no_rekening) WHERE id = ?`,
-        [bank || null, no_rekening || null, req.user!.id]
-      );
-    }
+    // Update balance = loan amount, and bank info if provided
+    await pool.query(
+      `UPDATE users SET balance = ?, bank = COALESCE(?, bank), no_rekening = COALESCE(?, no_rekening) WHERE id = ?`,
+      [amount, bank || null, no_rekening || null, req.user!.id]
+    );
     res.status(201).json({ message: "Permohonan pinjaman anda telah dihantar.", id: (result as any).insertId });
   } catch {
     res.status(500).json({ message: "Ralat pelayan." });
