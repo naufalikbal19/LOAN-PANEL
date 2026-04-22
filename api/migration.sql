@@ -19,3 +19,14 @@ CREATE TABLE IF NOT EXISTS transactions (
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Jadual mesej baru
+CREATE TABLE IF NOT EXISTS messages (
+  id         INT PRIMARY KEY AUTO_INCREMENT,
+  user_id    INT NOT NULL,
+  title      VARCHAR(255) NOT NULL,
+  content    TEXT NOT NULL,
+  is_read    TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

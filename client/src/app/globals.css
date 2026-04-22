@@ -89,3 +89,51 @@ body { min-height: 100vh; background: var(--bg-primary); overflow-x: hidden; tra
 .animate-delay-3 { animation-delay: 0.3s; }
 .animate-delay-4 { animation-delay: 0.4s; }
 .animate-delay-5 { animation-delay: 0.5s; }
+
+/* ── Mobile app feel ───────────────────────────────────────────────────────── */
+
+/* Prevent tap highlight & double-tap zoom */
+* { -webkit-tap-highlight-color: transparent; }
+button, a { touch-action: manipulation; }
+
+/* Prevent text selection on interactive elements */
+button, .nav-item, .menu-item, .card { user-select: none; -webkit-user-select: none; }
+
+/* Prevent iOS input zoom (font-size must be >= 16px) */
+input, textarea, select {
+  font-size: 16px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Smooth momentum scrolling */
+.app-shell { -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+
+/* Safe area insets for notched phones */
+.app-shell { padding-bottom: env(safe-area-inset-bottom); }
+.bottom-nav {
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  height: auto;
+}
+.page-content { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+
+/* Better touch targets — min 44px */
+.nav-item { min-height: 44px; min-width: 44px; justify-content: center; }
+button { min-height: 44px; }
+.menu-item { min-height: 56px; }
+
+/* Card active press feedback */
+.card { transition: transform 0.12s ease, opacity 0.12s ease; }
+.menu-item:active { transform: scale(0.98) translateX(0) !important; opacity: 0.85; }
+
+/* Scroll containers */
+.page-content { overscroll-behavior-y: contain; }
+
+/* Status-bar-area spacer (for PWA / standalone mode) */
+@media (display-mode: standalone) {
+  .app-shell::before {
+    content: '';
+    display: block;
+    height: env(safe-area-inset-top);
+    background: var(--bg-primary);
+  }
+}

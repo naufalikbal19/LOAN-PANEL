@@ -150,12 +150,24 @@ Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 | description | VARCHAR(255) | NULL | |
 | created_at | TIMESTAMP | CURRENT_TIMESTAMP | |
 
+### Table: `messages`
+| Column | Type | Default | Notes |
+|---|---|---|---|
+| id | INT PK AUTO_INCREMENT | — | |
+| user_id | INT FK | — | References users.id ON DELETE CASCADE |
+| title | VARCHAR(255) | — | Tajuk mesej |
+| content | TEXT | — | Kandungan mesej |
+| is_read | TINYINT(1) | 0 | 0 = belum dibaca, 1 = dibaca |
+| created_at | TIMESTAMP | CURRENT_TIMESTAMP | |
+
 ### Table: `settings`
 Key-value store. Keys yang dibenarkan:
 - `company_name`, `company_tagline`, `logo_url`, `favicon_url`, `support_phone`, `support_whatsapp`
 - `keterangan_under_review`, `keterangan_loan_approved`, `keterangan_credit_frozen`
 - `keterangan_unfrozen_processing`, `keterangan_credit_score_low`
 - `keterangan_payment_processing`, `keterangan_loan_being_canceled`
+- **Tema Dark Mode (12 keys):** `dark_accent`, `dark_bg_primary`, `dark_bg_secondary`, `dark_bg_card`, `dark_bg_card_inner`, `dark_text_primary`, `dark_text_secondary`, `dark_text_muted`, `dark_border_color`, `dark_border_light`, `dark_nav_bg`, `dark_bg_image`
+- **Tema Light Mode (12 keys):** `light_accent`, `light_bg_primary`, `light_bg_secondary`, `light_bg_card`, `light_bg_card_inner`, `light_text_primary`, `light_text_secondary`, `light_text_muted`, `light_border_color`, `light_border_light`, `light_nav_bg`, `light_bg_image`
 
 ### Seed admin default
 - Email: `admin@pinjamanbarakah.my`
@@ -221,6 +233,15 @@ Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folde
 
 **Withdraw rules:** hanya boleh jika ada loan dengan status `loan_approved` DAN `users.balance > 0`. Balance menjadi 0 selepas withdraw.
 
+### Messages (`/messages`)
+| Method | Endpoint | Auth | Notes |
+|---|---|---|---|
+| GET | `/messages/my` | JWT client | Senarai mesej sendiri, terurut terkini |
+| PUT | `/messages/my/:id/read` | JWT client | Tandakan mesej sebagai dibaca |
+| GET | `/messages` | JWT admin/staff | Semua mesej + user info (JOIN users) |
+| POST | `/messages` | JWT admin/staff | Hantar mesej: `{ user_id, title, content }` atau `{ broadcast: true, title, content }` untuk semua ahli aktif |
+| DELETE | `/messages/:id` | JWT admin/staff | Padam mesej |
+
 ### Auth logic
 - Login dengan `phone` → role mesti `client`
 - Login dengan `email` → role mesti `admin` atau `staff`
@@ -246,6 +267,9 @@ Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folde
 | `/dashboard/account/change-password` | `app/dashboard/account/change-password/page.tsx` | ✅ Redirect ke khidmat pelanggan (WhatsApp/Telefon dari settings) |
 | `/dashboard/account/withdrawal` | `app/dashboard/account/withdrawal/page.tsx` | ✅ Papar maklumat bank pengeluaran (dari users + loans) |
 | `/dashboard/account/transaction-history` | `app/dashboard/account/transaction-history/page.tsx` | ✅ Senarai transaksi klien + summary |
+| `/dashboard/account/loan-contract` | `app/dashboard/account/loan-contract/page.tsx` | ✅ Page penuh kontrak pinjaman (nama, IC, jumlah, kadar, tandatangan) |
+| `/dashboard/account/repayment` | `app/dashboard/account/repayment/page.tsx` | ✅ Butiran bayaran balik: jumlah, faedah, tempoh, tarikh bayaran seterusnya, status. Button → Loan Contract |
+| `/dashboard/account/messages` | `app/dashboard/account/messages/page.tsx` | ✅ Senarai mesej dari admin. Unread badge + expand on tap + auto mark-as-read |
 | `/dashboard/support` | `app/dashboard/support/page.tsx` | ✅ Papar maklumat sokongan dari settings |
 
 ### Apply Now — Flow (4 Langkah)
@@ -278,9 +302,14 @@ Minimum: 5 digit selepas normalisasi
 - `user_name` — nama user
 - `user_phone` — nombor telefon
 
+### Wallet — Loan Details & Contract
+- Wallet page papar **Butiran Pinjaman** card: order number, status badge, jumlah, tempoh, bank, no. akaun, tarikh mohon
+- Button **View Contract** buka popup kontrak (putih, 85vh scrollable) dengan data sebenar (nama, IC, jumlah, kadar faedah 0.70%, bayaran bulanan, tandatangan `sign_url`)
+- Bayaran bulanan dikira: `amount × (1 + 0.007 × months) / months`
+
 ### Register flow
 1. User isi: nama lengkap, IC, nombor telefon, password
-2. API auto-generate `withdrawal_password` (6 digit random), catat `ip_client`, `balance` default RM 3000
+2. API auto-generate `withdrawal_password` (6 digit random), catat `ip_client`, `balance` default **0** (bukan 3000)
 3. Status → `pending`, tiada token — redirect ke success page
 4. Admin approve di admin dashboard → status jadi `active`
 5. Baru boleh login
@@ -305,8 +334,9 @@ Minimum: 5 digit selepas normalisasi
 | `/dashboard/loans/orderer` | `app/dashboard/loans/orderer/page.tsx` | ✅ Full CRUD — kolum: Order No., Username, Phone, UID, Loan Amount, Loan Terms, Sign, Application Time, Status. View/Edit modal lengkap + keterangan auto-fill dari settings template |
 | `/dashboard/member/member-list` | `app/dashboard/member/member-list/page.tsx` | ✅ Semua status (filter dropdown), 23+ medan di View & Edit modal, password boleh ditukar, reg status badge |
 | `/dashboard/member/member-approval` | `app/dashboard/member/member-approval/page.tsx` | ✅ UID column, approve/reject pending |
-| `/dashboard/settings` | `app/dashboard/settings/page.tsx` | ✅ Maklumat syarikat + logo + sokongan + **7 template keterangan pinjaman** |
-| `/dashboard/transaction` | `app/dashboard/transaction/page.tsx` | ✅ CRUD sejarah transaksi semua klien — tambah/edit/padam, filter nama/telefon/UID |
+| `/dashboard/settings` | `app/dashboard/settings/page.tsx` | ✅ Maklumat syarikat + logo + sokongan + 7 template keterangan + **tema warna Dark/Light mode** (12 var setiap tema, color picker) |
+| `/dashboard/transaction` | `app/dashboard/transaction/page.tsx` | ✅ CRUD sejarah transaksi semua klien — tambah/edit/padam, filter nama/telefon/UID, **searchable client picker** |
+| `/dashboard/messages` | `app/dashboard/messages/page.tsx` | ✅ Hantar & urus mesej kepada ahli — send ke **Ahli Tertentu** (searchable picker) atau **Broadcast** semua ahli aktif. Table: unread dot, expand row, delete |
 
 ### UID Format Convention
 - **User UID**: `#${String(id).padStart(4, "0")}` → `#0001`
@@ -332,9 +362,23 @@ View modal paparkan 4 gambar dalam grid 2×2:
 
 Edit modal: 4 input URL dengan preview gambar kecil
 
+### Admin — Mobile Responsive
+- **Sidebar**: Di layar < 768px, bertukar jadi drawer overlay (slide dari kiri). Hamburger di Header membukanya, backdrop atau ✕ menutupnya.
+- **Header**: Di mobile, papar nama app di tengah; sembunyikan nama admin (hanya tunjuk inisial avatar).
+- **Main content**: `marginLeft = 0` di mobile (tiada sidebar offset). Padding turun dari 28px → 14px.
+- **Tables**: `min-width: 640px` pada mobile — scroll mendatar.
+- **CSS class**: `admin-main` untuk responsive padding. Modal boleh dibuat bottom-sheet dengan class `admin-modal-overlay` + `admin-modal-inner`.
+
+### Client — Native App Feel
+- **Viewport**: `maximum-scale=1`, `user-scalable=no`, `viewport-fit=cover` — tiada pinch zoom, sokong notch.
+- **Safe area insets**: Bottom nav + page content guna `env(safe-area-inset-bottom)` — iPhone X+, Android notch.
+- **iOS input zoom fix**: Semua `input`/`textarea` `font-size: 16px` — Safari tidak zoom.
+- **Touch targets**: Butang/nav item minimum 44px.
+- **PWA**: `apple-mobile-web-app-capable`, `status-bar-style: black-translucent` — fullscreen bila save ke home screen.
+
 ### Components
-- `src/components/Sidebar.tsx` — Collapsible sidebar dengan sub-menus (Member, Loans)
-- `src/components/Header.tsx` — Top bar dengan admin name + bell
+- `src/components/Sidebar.tsx` — Collapsible desktop sidebar + mobile drawer overlay (backdrop + ✕ button)
+- `src/components/Header.tsx` — Top bar responsive: full name di desktop, inisial avatar di mobile
 - `src/components/StatsCard.tsx` — Card statistik untuk console
 
 ### localStorage keys (admin)
@@ -419,27 +463,35 @@ mysql -u loan_panel -p[password] loan_panel < api/migration.sql && pm2 restart l
 - [x] Loans/Orderer: ✅ Full CRUD + keterangan auto-fill + dokumen gambar
 - [x] Member List: ✅ 23+ medan, view/edit/delete, password change
 - [x] Member Approval: ✅ Approve/reject dengan UID
-- [x] Settings: ✅ Syarikat + logo + sokongan + keterangan templates
+- [x] Settings: ✅ Syarikat + logo + sokongan + keterangan templates + tema warna Dark/Light (24 keys)
+- [x] Transaction: ✅ CRUD transaksi semua klien + searchable client picker
+- [x] Messages: ✅ Hantar mesej ke ahli tertentu atau broadcast; table dengan expand row
+- [x] Mobile responsive: ✅ Sidebar drawer overlay pada mobile, header compact, padding responsive
 
 ### Client
 - [x] Halaman Personal Info ✅ — view profil + dokumen IC/selfie dari pinjaman terkini
 - [x] Change Password page ✅ — redirect ke khidmat pelanggan (WhatsApp/Telefon dari settings)
-- [x] Apply Now ✅ — borang 4-langkah dengan upload dokumen + tandatangan virtual
+- [x] Apply Now ✅ — borang 4-langkah dengan upload dokumen + tandatangan virtual. Cegah pinjaman berganda.
 - [x] Paparan status pinjaman di dashboard ✅ — data sebenar dari `/loans/my`
 - [x] Dashboard data sebenar ✅ — balance, loan status, order number dari API
-- [x] Wallet ✅ — balance sebenar + sejarah pinjaman dari API
+- [x] Wallet ✅ — balance, loan details card, View Contract popup, withdraw modal, sejarah transaksi & pinjaman
 - [x] Withdrawal account page ✅ — maklumat bank dari users + loans
+- [x] Transaction History ✅ — senarai transaksi + summary
+- [x] Loan Contract ✅ — page penuh kontrak dengan data sebenar + tandatangan
+- [x] Repayment ✅ — butiran bayaran + tarikh bayaran seterusnya (auto-10hb) + button View Contract
+- [x] Messages ✅ — senarai mesej dari admin, unread badge, expand + auto mark-as-read
+- [x] Mobile app feel ✅ — safe areas, iOS zoom fix, touch targets 44px, PWA meta, momentum scroll
 - [ ] Multilanguage toggle (Melayu / English / Chinese)
-- [ ] Loan Contract, Repayment, Transaction History, Messages pages (masih `href="#"`)
 
 ### API
-- [x] Client loan endpoints ✅ — `GET /loans/my`, `POST /loans/apply` (set balance = amount)
+- [x] Client loan endpoints ✅ — `GET /loans/my`, `POST /loans/apply` (set balance = amount, cegah duplikat)
 - [x] Upload gambar ✅ — `POST /upload` (multer, local storage di `api/uploads/`, max 5MB)
 - [x] Client profile update ✅ — `PUT /auth/profile`
 - [x] Transactions CRUD ✅ — `GET/POST/PUT/DELETE /transactions` (admin), `GET /transactions/my` + `POST /transactions/withdraw` (client)
+- [x] Messages CRUD ✅ — `GET/POST/DELETE /messages` (admin, broadcast support), `GET /messages/my` + `PUT /messages/my/:id/read` (client)
 - [x] User management endpoints ✅
 - [x] Loans admin endpoints ✅
-- [x] Settings keterangan templates ✅
+- [x] Settings tema warna ✅ — 24 keys dark/light mode
 
 ## Bahasa
 - UI dalam Bahasa Melayu (utama) + English

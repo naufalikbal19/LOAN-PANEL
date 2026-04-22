@@ -82,3 +82,49 @@ body { min-height: 100vh; background: var(--bg-primary); overflow-x: hidden; }
 .animate-delay-1 { animation-delay: 0.1s; }
 .animate-delay-2 { animation-delay: 0.2s; }
 .animate-delay-3 { animation-delay: 0.3s; }
+
+/* ── Responsive layout ─────────────────────────────────────────────────────── */
+.admin-main { padding: 28px; }
+
+@media (max-width: 767px) {
+  .admin-main { padding: 14px; }
+
+  /* Tables: horizontal scroll on small screens */
+  .admin-main table { min-width: 640px; }
+
+  /* Modals: full-width bottom sheet on mobile */
+  .admin-modal-inner {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 20px 20px 0 0 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+  }
+  .admin-modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  /* Page headers: stack on mobile */
+  .admin-page-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  .admin-page-header button { width: 100% !important; justify-content: center; }
+
+  /* Stats cards: 2 column grid */
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+
+/* Touch improvements */
+* { -webkit-tap-highlight-color: transparent; }
+button, a { touch-action: manipulation; }
+
+/* Smooth scrolling */
+.admin-main { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }

@@ -28,7 +28,8 @@
       "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT id, name, balance FROM users WHERE role = '\\\\''client'\\\\'';')",
       "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT user_id, amount, status FROM loans ORDER BY created_at DESC LIMIT 10;')",
       "Bash(echo \"Update balance done: $?\")",
-      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT id, name, balance FROM users WHERE role='\\\\''client'\\\\'';')"
+      "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT id, name, balance FROM users WHERE role='\\\\''client'\\\\'';')",
+      "Read(//c/Users/Admin/Documents/projek-guys/projek-2/**)"
     ]
   }
 }

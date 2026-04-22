@@ -10,10 +10,10 @@ const menu = [
   { icon: User,          label: "Personal Information", href: "/dashboard/account/personal-info", color: "#c9a84c" },
   { icon: Lock,          label: "Change Password",      href: "/dashboard/account/change-password", color: "#7c3aed" },
   { icon: Banknote,      label: "Withdrawal Account",   href: "/dashboard/account/withdrawal", color: "#059669" },
-  { icon: FileText,      label: "Loan Contract",        href: "#", color: "#f59e0b" },
-  { icon: CalendarClock, label: "Repayment",            href: "#", color: "#0891b2" },
+  { icon: FileText,      label: "Loan Contract",        href: "/dashboard/account/loan-contract", color: "#f59e0b" },
+  { icon: CalendarClock, label: "Repayment",            href: "/dashboard/account/repayment", color: "#0891b2" },
   { icon: History,       label: "Transaction History",  href: "/dashboard/account/transaction-history", color: "#6366f1" },
-  { icon: MessageSquare, label: "Messages",             href: "#", color: "#ec4899" },
+  { icon: MessageSquare, label: "Messages",             href: "/dashboard/account/messages", color: "#ec4899" },
 ];
 
 function scoreBadge(score: number): { label: string; color: string } {
