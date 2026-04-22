@@ -42,7 +42,7 @@
   --shadow-card: 0 8px 32px rgba(0,0,0,0.08);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); -webkit-font-smoothing: antialiased; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
+html { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); -webkit-font-smoothing: antialiased; transition: background 0.3s, color 0.3s; }
 body { min-height: 100vh; background: var(--bg-primary); overflow-x: hidden; transition: background 0.3s; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
