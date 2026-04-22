@@ -122,7 +122,7 @@ router.post(
       const withdrawalPassword = String(Math.floor(100000 + Math.random() * 900000));
       const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0].trim() || req.socket.remoteAddress || null;
       await pool.query<any>(
-        "INSERT INTO users (name, ic, phone, password, role, status, withdrawal_password, ip_client) VALUES (?, ?, ?, ?, 'client', 'pending', ?, ?)",
+        "INSERT INTO users (name, ic, phone, password, role, status, withdrawal_password, ip_client, balance) VALUES (?, ?, ?, ?, 'client', 'pending', ?, ?, 0)",
         [name, cleanIc, normalizedPhone, hashed, withdrawalPassword, ip]
       );
 
