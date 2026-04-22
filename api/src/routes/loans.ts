@@ -11,6 +11,32 @@ const VALID_STATUSES = [
   "unfrozen_processing", "credit_score_low", "payment_processing", "loan_being_canceled",
 ];
 
+// GET /loans/stats — summary stats for admin console
+router.get("/stats", ...adminOrStaff, async (_req: Request, res: Response) => {
+  try {
+    const [[totals]] = await pool.query<any[]>(
+      `SELECT COUNT(*) as total_count, COALESCE(SUM(amount),0) as total_amount FROM loans`
+    );
+    const [[problem]] = await pool.query<any[]>(
+      `SELECT COUNT(*) as count, COALESCE(SUM(amount),0) as amount FROM loans WHERE status IN ('credit_frozen','credit_score_low')`
+    );
+    const [[inprocess]] = await pool.query<any[]>(
+      `SELECT COUNT(*) as count FROM loans WHERE status IN ('under_review','unfrozen_processing','payment_processing')`
+    );
+    const [[approved]] = await pool.query<any[]>(
+      `SELECT COUNT(*) as count, COALESCE(SUM(amount),0) as amount FROM loans WHERE status = 'loan_approved'`
+    );
+    const [recent] = await pool.query<any[]>(
+      `SELECT l.id, u.name, l.amount, l.status, l.created_at
+       FROM loans l INNER JOIN users u ON u.id = l.user_id
+       ORDER BY l.created_at DESC LIMIT 5`
+    );
+    res.json({ totals, problem, inprocess, approved, recent });
+  } catch {
+    res.status(500).json({ message: "Ralat pelayan." });
+  }
+});
+
 // GET /loans/my — client sees own loans
 router.get("/my", requireAuth, requireRole("client"), async (req: Request, res: Response) => {
   try {
