@@ -2,9 +2,13 @@
 import BottomNav from "@/components/BottomNav";
 import { useTheme } from "@/context/ThemeContext";
 import { Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
   return (
     <button
       onClick={toggle}
@@ -12,7 +16,7 @@ function ThemeToggle() {
       style={{
         position: "fixed",
         top: 16,
-        right: 16,
+        right: "max(16px, calc(50vw - 199px))",
         zIndex: 200,
         width: 38,
         height: 38,

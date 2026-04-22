@@ -47,7 +47,7 @@ body { min-height: 100vh; background: var(--bg-primary); overflow-x: hidden; tra
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 2px; }
-.app-shell { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg-primary); overflow: hidden; }
+.app-shell { max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative; background: var(--bg-primary); overflow-x: hidden; }
 .page-content { position: relative; z-index: 1; padding-bottom: 90px; }
 .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-card); padding: 20px; }
 .btn-primary { background: var(--accent-blue); color: white; border: none; border-radius: var(--radius-btn); padding: 16px 24px; font-weight: 600; font-size: 15px; cursor: pointer; width: 100%; transition: all 0.2s ease; box-shadow: var(--shadow-button); font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.3px; }
@@ -105,8 +105,9 @@ input, textarea, select {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Smooth momentum scrolling */
-.app-shell { -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; }
+/* Smooth momentum scrolling — apply on body/html, not app-shell (overflow-x:hidden != scroll container) */
+body { -webkit-overflow-scrolling: touch; }
+.page-content { overscroll-behavior-y: contain; }
 
 /* Safe area insets for notched phones */
 .app-shell { padding-bottom: env(safe-area-inset-bottom); }
