@@ -67,7 +67,7 @@ export default function RegisterPage() {
   const fields = [
     { key: "name",  label: "Nama Penuh",         icon: User,       type: "text", placeholder: "Contoh: Ahmad bin Ali" },
     { key: "ic",    label: "No. Kad Pengenalan",  icon: CreditCard, type: "text", placeholder: "Min. 5 digit angka" },
-    { key: "phone", label: "Nombor Telefon",      icon: Phone,      type: "tel",  placeholder: "01x / +601x / 601x" },
+    { key: "phone", label: "Nombor Telefon",      icon: Phone,      type: "tel",  placeholder: "01x / 601x" },
   ] as const;
 
   if (submitted) {
