@@ -42,7 +42,7 @@
   --shadow-card: 0 8px 32px rgba(0,0,0,0.08);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
-html { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); -webkit-font-smoothing: antialiased; transition: background 0.3s, color 0.3s; }
+html { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-primary); color: var(--text-primary); -webkit-font-smoothing: antialiased; transition: background 0.3s, color 0.3s; overflow-x: hidden; }
 body { min-height: 100vh; background: var(--bg-primary); overflow-x: hidden; transition: background 0.3s; }
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
@@ -104,10 +104,6 @@ input, textarea, select {
   font-size: 16px !important;
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
-
-/* Smooth momentum scrolling — apply on body/html, not app-shell (overflow-x:hidden != scroll container) */
-body { -webkit-overflow-scrolling: touch; }
-.page-content { overscroll-behavior-y: contain; }
 
 /* Safe area insets for notched phones */
 .app-shell { padding-bottom: env(safe-area-inset-bottom); }
