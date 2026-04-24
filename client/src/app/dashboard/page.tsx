@@ -106,7 +106,7 @@ export default function DashboardPage() {
 
       {/* Apply Now Banner */}
       <div style={{ padding: "0 20px 20px" }} className="animate-fade-in-up animate-delay-2">
-        <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)", overflow: "hidden", position: "relative" }}>
+        <div className="card" style={{ background: "linear-gradient(135deg, var(--bg-card-inner) 0%, var(--bg-primary) 100%)", border: "1px solid var(--border-light)", overflow: "hidden", position: "relative" }}>
           <div style={{ position: "absolute", right: -30, top: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.1)" }} />
           <div style={{ position: "relative" }}>
             <span className="badge-available" style={{ marginBottom: 12, display: "inline-flex" }}>
@@ -125,7 +125,7 @@ export default function DashboardPage() {
 
       {/* Company Banner */}
       <div style={{ padding: "0 20px 20px" }} className="animate-fade-in-up animate-delay-3">
-        <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", gap: 16, overflow: "hidden" }}>
+        <div className="card" style={{ background: "linear-gradient(135deg, var(--bg-card-inner) 0%, var(--bg-primary) 100%)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", gap: 16, overflow: "hidden" }}>
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
               <div style={{ width: 32, height: 32, background: "rgba(201,168,76,0.12)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏢</div>

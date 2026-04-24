@@ -46,7 +46,7 @@ export default function WithdrawalPage() {
         {loading ? (
           <p style={{ textAlign: "center", color: "var(--text-muted)", fontSize: 14, padding: "40px 0" }}>Memuatkan...</p>
         ) : (
-          <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)" }}>
+          <div className="card" style={{ background: "linear-gradient(135deg, var(--bg-card-inner) 0%, var(--bg-primary) 100%)", border: "1px solid var(--border-light)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
               <div style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(5,150,105,0.12)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <Banknote size={20} color="#059669" />

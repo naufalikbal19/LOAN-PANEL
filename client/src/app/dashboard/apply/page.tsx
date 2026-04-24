@@ -582,7 +582,7 @@ export default function ApplyPage() {
       </div>
 
       <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.05s both" }}>
-        <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)" }}>
+        <div className="card" style={{ background: "linear-gradient(135deg, var(--bg-card-inner) 0%, var(--bg-primary) 100%)", border: "1px solid var(--border-light)" }}>
           <p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 4 }}>LIMIT TERSEDIA</p>
           <p style={{ fontSize: 22, fontWeight: 900 }}>RM 3,000 — RM 200,000</p>
           <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>Tempoh bayaran sehingga {amount < 5000 ? "36" : "120"} bulan</p>
