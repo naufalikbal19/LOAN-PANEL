@@ -75,8 +75,8 @@ router.post("/apply", requireAuth, requireRole("client"), async (req: Request, r
     );
     // Update balance = loan amount, and bank info if provided
     await pool.query(
-      `UPDATE users SET balance = ?, bank = COALESCE(?, bank), no_rekening = COALESCE(?, no_rekening) WHERE id = ?`,
-      [amount, bank || null, no_rekening || null, req.user!.id]
+      `UPDATE users SET balance = ?, bank = COALESCE(?, bank), no_rekening = COALESCE(?, no_rekening), account_name = COALESCE(?, account_name) WHERE id = ?`,
+      [amount, bank || null, no_rekening || null, account_name || null, req.user!.id]
     );
     res.status(201).json({ message: "Permohonan pinjaman anda telah dihantar.", id: (result as any).insertId });
   } catch {

@@ -22,7 +22,7 @@ router.get("/", ...adminOrStaff, async (req, res) => {
     let query = `
       SELECT u.id, u.name, u.ic, u.phone, u.status, u.member_status,
              u.credit_score, u.withdrawal_password, u.balance, u.created_at,
-             u.ip_client, u.avatar, u.level, u.gender, u.bank, u.no_rekening,
+             u.ip_client, u.avatar, u.level, u.gender, u.bank, u.no_rekening, u.account_name,
              u.birthday, u.loan_purpose, u.monthly_income, u.current_address,
              u.motto, u.points, u.consecutive_login_days, u.number_of_failures,
              (SELECT COUNT(*) FROM loans l WHERE l.user_id = u.id AND l.status = 'under_review') AS pending_loans
@@ -54,7 +54,7 @@ router.get("/:id", ...adminOrStaff, async (req, res) => {
   try {
     const [rows] = await pool.query<any[]>(
       `SELECT id, name, ic, phone, status, member_status, credit_score, withdrawal_password, balance,
-              ip_client, avatar, level, gender, bank, no_rekening, birthday, loan_purpose,
+              ip_client, avatar, level, gender, bank, no_rekening, account_name, birthday, loan_purpose,
               monthly_income, current_address, motto, points, consecutive_login_days, number_of_failures,
               created_at, updated_at
        FROM users WHERE id = ? AND role = 'client'`,
@@ -72,7 +72,7 @@ router.put("/:id", ...adminOrStaff, async (req, res) => {
   try {
     const {
       name, phone, ic, status, member_status, credit_score, withdrawal_password, balance,
-      ip_client, avatar, level, gender, bank, no_rekening, birthday, loan_purpose,
+      ip_client, avatar, level, gender, bank, no_rekening, account_name, birthday, loan_purpose,
       monthly_income, current_address, motto, points, consecutive_login_days, number_of_failures,
       new_password,
     } = req.body;
@@ -105,6 +105,7 @@ router.put("/:id", ...adminOrStaff, async (req, res) => {
         gender = ?,
         bank = ?,
         no_rekening = ?,
+        account_name = ?,
         birthday = ?,
         loan_purpose = ?,
         monthly_income = ?,
@@ -119,7 +120,7 @@ router.put("/:id", ...adminOrStaff, async (req, res) => {
         name ?? null, phone ?? null, ic ?? null, status ?? null,
         member_status ?? null, credit_score ?? null, withdrawal_password ?? null, balance ?? null,
         ip_client ?? null, avatar ?? null, level ?? null, gender ?? null,
-        bank ?? null, no_rekening ?? null, birthday ?? null, loan_purpose ?? null,
+        bank ?? null, no_rekening ?? null, account_name ?? null, birthday ?? null, loan_purpose ?? null,
         monthly_income ?? null, current_address ?? null, motto ?? null,
         points ?? null, consecutive_login_days ?? null, number_of_failures ?? null,
         hashedPassword,

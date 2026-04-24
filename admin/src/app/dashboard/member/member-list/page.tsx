@@ -20,6 +20,7 @@ interface MemberRow {
   gender: string | null;
   bank: string | null;
   no_rekening: string | null;
+  account_name: string | null;
   birthday: string | null;
   loan_purpose: string | null;
   monthly_income: string | null;
@@ -110,6 +111,7 @@ export default function MemberListPage() {
   const [editGender, setEditGender] = useState("");
   const [editBank, setEditBank] = useState("");
   const [editNoRekening, setEditNoRekening] = useState("");
+  const [editAccountName, setEditAccountName] = useState("");
   const [editBirthday, setEditBirthday] = useState("");
   const [editLoanPurpose, setEditLoanPurpose] = useState("");
   const [editMonthlyIncome, setEditMonthlyIncome] = useState("");
@@ -165,6 +167,7 @@ export default function MemberListPage() {
     setEditGender(row.gender || "");
     setEditBank(row.bank || "");
     setEditNoRekening(row.no_rekening || "");
+    setEditAccountName(row.account_name || "");
     setEditBirthday(row.birthday ? row.birthday.split("T")[0] : "");
     setEditLoanPurpose(row.loan_purpose || "");
     setEditMonthlyIncome(row.monthly_income || "");
@@ -202,6 +205,7 @@ export default function MemberListPage() {
           gender: editGender || null,
           bank: editBank || null,
           no_rekening: editNoRekening || null,
+          account_name: editAccountName || null,
           birthday: editBirthday || null,
           loan_purpose: editLoanPurpose || null,
           monthly_income: editMonthlyIncome ? Number(editMonthlyIncome) : null,
@@ -406,6 +410,7 @@ export default function MemberListPage() {
                 <SectionLabel>Kewangan</SectionLabel>
                 <FieldBlock label="Bank" value={viewRow.bank || ""} />
                 <FieldBlock label="Nomor Rekening" value={viewRow.no_rekening || ""} mono />
+                <FieldBlock label="Nama Pemegang Kad" value={viewRow.account_name || ""} />
                 <FieldBlock label="Monthly Income" value={formatRM(viewRow.monthly_income)} />
                 <FieldBlock label="Loan Purpose" value={viewRow.loan_purpose || ""} full />
 
@@ -545,6 +550,10 @@ export default function MemberListPage() {
                 <div>
                   <label style={labelStyle}>Nomor Rekening</label>
                   <input value={editNoRekening} onChange={(e) => setEditNoRekening(e.target.value)} style={{ ...inputStyle, fontFamily: "monospace" }} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Nama Pemegang Kad</label>
+                  <input value={editAccountName} onChange={(e) => setEditAccountName(e.target.value)} placeholder="Nama seperti dalam kad bank" style={inputStyle} />
                 </div>
                 <div>
                   <label style={labelStyle}>Monthly Income (RM)</label>
