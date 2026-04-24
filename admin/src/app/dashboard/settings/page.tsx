@@ -158,6 +158,17 @@ export default function SettingsPage() {
     if (status !== "idle") setStatus("idle");
   };
 
+  const handleResetTheme = () => {
+    const prefix = themeTab;
+    const themeKeys = Object.keys(DEFAULTS).filter((k) => k.startsWith(`${prefix}_`)) as (keyof Settings)[];
+    setSettings((prev) => {
+      const next = { ...prev };
+      themeKeys.forEach((k) => { (next as any)[k] = (DEFAULTS as any)[k]; });
+      return next;
+    });
+    if (status !== "idle") setStatus("idle");
+  };
+
   const handleSave = async () => {
     setStatus("saving"); setErrorMsg("");
     try {
@@ -244,22 +255,39 @@ export default function SettingsPage() {
           Kustomisasi warna aplikasi klien untuk Dark Mode dan Light Mode secara berasingan. Perubahan aktif serta-merta selepas disimpan.
         </p>
 
-        {/* Tab switcher */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 24, background: "#1a1a1a", borderRadius: 12, padding: 4, width: "fit-content" }}>
-          {(["dark","light"] as ThemeTab[]).map((t) => (
-            <button key={t} onClick={() => setThemeTab(t)} style={{
-              display: "flex", alignItems: "center", gap: 7,
-              padding: "9px 20px", borderRadius: 9, border: "none", cursor: "pointer",
-              fontFamily: "inherit", fontWeight: 700, fontSize: 13,
-              background: themeTab === t ? (t === "dark" ? "#2a2a2a" : "#fff") : "transparent",
-              color: themeTab === t ? (t === "dark" ? "#c9a84c" : "#333") : "#555",
-              boxShadow: themeTab === t ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
+        {/* Tab switcher + Reset */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: 8, background: "#1a1a1a", borderRadius: 12, padding: 4 }}>
+            {(["dark","light"] as ThemeTab[]).map((t) => (
+              <button key={t} onClick={() => setThemeTab(t)} style={{
+                display: "flex", alignItems: "center", gap: 7,
+                padding: "9px 20px", borderRadius: 9, border: "none", cursor: "pointer",
+                fontFamily: "inherit", fontWeight: 700, fontSize: 13,
+                background: themeTab === t ? (t === "dark" ? "#2a2a2a" : "#fff") : "transparent",
+                color: themeTab === t ? (t === "dark" ? "#c9a84c" : "#333") : "#555",
+                boxShadow: themeTab === t ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
+                transition: "all 0.2s",
+              }}>
+                {t === "dark" ? <Moon size={14} /> : <Sun size={14} />}
+                {t === "dark" ? "Dark Mode" : "Light Mode"}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={handleResetTheme}
+            title={`Reset warna ${themeTab === "dark" ? "Dark" : "Light"} Mode ke default`}
+            style={{
+              display: "flex", alignItems: "center", gap: 6,
+              padding: "9px 16px", borderRadius: 9, border: "1px solid #2e2e2e",
+              background: "#1a1a1a", color: "#888", cursor: "pointer",
+              fontFamily: "inherit", fontWeight: 600, fontSize: 12,
               transition: "all 0.2s",
-            }}>
-              {t === "dark" ? <Moon size={14} /> : <Sun size={14} />}
-              {t === "dark" ? "Dark Mode" : "Light Mode"}
-            </button>
-          ))}
+            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#ef4444"; (e.currentTarget as HTMLButtonElement).style.color = "#ef4444"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#2e2e2e"; (e.currentTarget as HTMLButtonElement).style.color = "#888"; }}
+          >
+            ↺ Reset {themeTab === "dark" ? "Dark" : "Light"} ke Default
+          </button>
         </div>
 
         {/* Color groups */}
