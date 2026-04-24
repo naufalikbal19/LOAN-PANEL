@@ -136,7 +136,7 @@ router.get("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
 // PUT /loans/:id — edit loan details
 router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
   try {
-    const { phone, ic, amount, loan_terms, bank, no_rekening, sign_url, front_ic_url, back_ic_url, selfie_url, keterangan, status } = req.body;
+    const { phone, ic, amount, loan_terms, bank, no_rekening, account_name, sign_url, front_ic_url, back_ic_url, selfie_url, keterangan, status } = req.body;
 
     const [rows] = await pool.query<any[]>(
       "SELECT l.id, l.user_id, u.phone FROM loans l INNER JOIN users u ON u.id = l.user_id WHERE l.id = ?",
@@ -155,6 +155,7 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
         loan_terms = ?,
         bank = ?,
         no_rekening = ?,
+        account_name = ?,
         sign_url = ?,
         front_ic_url = ?,
         back_ic_url = ?,
@@ -162,7 +163,7 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
         keterangan = ?,
         status = COALESCE(?, status)
        WHERE id = ?`,
-      [amount ?? null, loan_terms ?? null, bank ?? null, no_rekening ?? null, sign_url ?? null, front_ic_url ?? null, back_ic_url ?? null, selfie_url ?? null, keterangan ?? null, status ?? null, req.params.id]
+      [amount ?? null, loan_terms ?? null, bank ?? null, no_rekening ?? null, account_name ?? null, sign_url ?? null, front_ic_url ?? null, back_ic_url ?? null, selfie_url ?? null, keterangan ?? null, status ?? null, req.params.id]
     );
 
     if (phone && phone !== loan.phone) {

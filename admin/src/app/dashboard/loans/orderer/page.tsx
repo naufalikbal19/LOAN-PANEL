@@ -12,6 +12,7 @@ interface LoanRow {
   loan_terms: string | null;
   bank: string | null;
   no_rekening: string | null;
+  account_name: string | null;
   sign_url: string | null;
   front_ic_url: string | null;
   back_ic_url: string | null;
@@ -92,6 +93,7 @@ export default function OrdererPage() {
   const [editLoanTerms, setEditLoanTerms] = useState("");
   const [editBank, setEditBank] = useState("");
   const [editNoRek, setEditNoRek] = useState("");
+  const [editAccountName, setEditAccountName] = useState("");
   const [editStatus, setEditStatus] = useState<LoanStatus>("under_review");
   const [editKeterangan, setEditKeterangan] = useState("");
   const [editSignUrl, setEditSignUrl] = useState("");
@@ -151,6 +153,7 @@ export default function OrdererPage() {
     setEditLoanTerms(row.loan_terms || "");
     setEditBank(row.bank || "");
     setEditNoRek(row.no_rekening || "");
+    setEditAccountName(row.account_name || "");
     setEditSignUrl(row.sign_url || "");
     setEditFrontIcUrl(row.front_ic_url || "");
     setEditBackIcUrl(row.back_ic_url || "");
@@ -181,6 +184,7 @@ export default function OrdererPage() {
           loan_terms: editLoanTerms || null,
           bank: editBank || null,
           no_rekening: editNoRek || null,
+          account_name: editAccountName || null,
           sign_url: editSignUrl || null,
           front_ic_url: editFrontIcUrl || null,
           back_ic_url: editBackIcUrl || null,
@@ -332,6 +336,7 @@ export default function OrdererPage() {
                 <FieldBlock label="Loan Period" value={viewRow.loan_terms || ""} />
                 <FieldBlock label="Bank" value={viewRow.bank || ""} />
                 <FieldBlock label="Nomor Rekening" value={viewRow.no_rekening || ""} mono />
+                <FieldBlock label="Nama Pemegang Kad" value={viewRow.account_name || ""} />
                 <FieldBlock label="Application Time" value={formatDate(viewRow.created_at)} full />
 
                 {/* Document Images */}
@@ -426,6 +431,10 @@ export default function OrdererPage() {
                 <div>
                   <label style={labelStyle}>Nomor Rekening</label>
                   <input value={editNoRek} onChange={(e) => setEditNoRek(e.target.value)} style={{ ...inputStyle, fontFamily: "monospace" }} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Nama Pemegang Kad</label>
+                  <input value={editAccountName} onChange={(e) => setEditAccountName(e.target.value)} placeholder="Nama seperti dalam kad bank" style={inputStyle} />
                 </div>
 
                 {/* Application Time display */}

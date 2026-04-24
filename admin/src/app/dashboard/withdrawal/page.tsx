@@ -9,6 +9,7 @@ interface WithdrawalRow {
   amount: string;
   bank: string | null;
   no_rekening: string | null;
+  account_name: string | null;
   status: LoanStatus;
   created_at: string;
 }
@@ -69,6 +70,7 @@ export default function WithdrawalPage() {
   const [editAmount, setEditAmount] = useState("");
   const [editBank, setEditBank] = useState("");
   const [editNoRek, setEditNoRek] = useState("");
+  const [editAccountName, setEditAccountName] = useState("");
   const [editStatus, setEditStatus] = useState<LoanStatus>("under_review");
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
@@ -103,6 +105,7 @@ export default function WithdrawalPage() {
     setEditAmount(String(row.amount));
     setEditBank(row.bank || "");
     setEditNoRek(row.no_rekening || "");
+    setEditAccountName(row.account_name || "");
     setEditStatus(row.status);
     setEditError("");
   };
@@ -114,7 +117,7 @@ export default function WithdrawalPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/loans/${editRow.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ phone: editPhone, amount: editAmount, bank: editBank, no_rekening: editNoRek, status: editStatus }),
+        body: JSON.stringify({ phone: editPhone, amount: editAmount, bank: editBank, no_rekening: editNoRek, account_name: editAccountName, status: editStatus }),
       });
       const data = await res.json();
       if (!res.ok) { setEditError(data.message || "Ralat."); return; }
@@ -240,6 +243,7 @@ export default function WithdrawalPage() {
               <FieldBlock label="Tanggal Pinjam" value={new Date(viewRow.created_at).toLocaleDateString("ms-MY", { day: "2-digit", month: "long", year: "numeric" })} />
               <FieldBlock label="Bank" value={viewRow.bank || ""} />
               <FieldBlock label="No. Rekening" value={viewRow.no_rekening || ""} />
+              <FieldBlock label="Nama Pemegang Kad" value={viewRow.account_name || ""} />
             </div>
 
             <div style={{ background: "#0c0c0c", borderRadius: 10, padding: "14px 16px", marginBottom: 20 }}>
@@ -289,6 +293,11 @@ export default function WithdrawalPage() {
                 <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>No. Rekening</label>
                 <input value={editNoRek} onChange={(e) => setEditNoRek(e.target.value)} placeholder="Nombor akaun bank"
                   style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "monospace", boxSizing: "border-box" }} />
+              </div>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nama Pemegang Kad</label>
+                <input value={editAccountName} onChange={(e) => setEditAccountName(e.target.value)} placeholder="Nama seperti dalam kad bank"
+                  style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
               </div>
             </div>
 
