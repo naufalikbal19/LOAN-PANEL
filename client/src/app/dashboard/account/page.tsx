@@ -29,7 +29,7 @@ function Gauge({ score, max = 600 }: { score: number; max?: number }) {
   const { color } = scoreBadge(score);
   return (
     <svg width="90" height="54" viewBox="0 0 90 54">
-      <path d="M 9 45 A 36 36 0 0 1 81 45" fill="none" stroke="#1e2a50" strokeWidth="8" strokeLinecap="round" />
+      <path d="M 9 45 A 36 36 0 0 1 81 45" fill="none" stroke="var(--border-light)" strokeWidth="8" strokeLinecap="round" />
       <path d="M 9 45 A 36 36 0 0 1 81 45" fill="none" stroke={color} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${dash} ${circ}`} />
       <circle cx="45" cy="45" r="4" fill={color} />
     </svg>
@@ -71,7 +71,7 @@ export default function AccountPage() {
       </div>
 
       <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.1s both" }}>
-        <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="card" style={{ background: "linear-gradient(135deg, var(--bg-card-inner) 0%, var(--bg-primary) 100%)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-secondary)", marginBottom: 8 }}>Credit Score</p>
             <p style={{ fontSize: 44, fontWeight: 900, lineHeight: 1, marginBottom: 10, color: creditScore === null ? "var(--text-muted)" : "inherit" }}>
