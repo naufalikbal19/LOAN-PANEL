@@ -88,13 +88,14 @@ Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 | member_status | ENUM('normal','suspended','blocked') | 'normal' | Status operasi akaun |
 | credit_score | INT | 500 | Maks 600 |
 | withdrawal_password | VARCHAR(10) | NULL | 6-digit, auto-generate semasa register |
-| balance | DECIMAL(15,2) | 3000 | Default RM 3000 |
+| balance | DECIMAL(15,2) | 0 | Default 0 — bertambah bila loan apply (= loan amount), jadi 0 selepas withdraw |
 | ip_client | VARCHAR(45) | NULL | IP dicatat semasa register |
 | avatar | TEXT | NULL | URL gambar profil |
 | level | INT | 1 | |
 | gender | ENUM('male','female','other') | NULL | |
 | bank | VARCHAR(100) | NULL | |
 | no_rekening | VARCHAR(50) | NULL | |
+| account_name | VARCHAR(100) | NULL | Nama pemegang kad bank (tambah via migration.sql) |
 | birthday | DATE | NULL | |
 | occupation | VARCHAR(100) | NULL | Pekerjaan semasa (tambah via migration.sql) |
 | loan_purpose | VARCHAR(255) | NULL | |
@@ -122,6 +123,7 @@ Gold rgba: `rgba(201,168,76,...)` — gunakan ini, bukan `rgba(59,109,255,...)`
 | selfie_url | TEXT | NULL | URL gambar selfie |
 | emergency_name | VARCHAR(100) | NULL | Nama kenalan kecemasan (tambah via migration.sql) |
 | emergency_phone | VARCHAR(20) | NULL | Telefon kenalan kecemasan (tambah via migration.sql) |
+| account_name | VARCHAR(100) | NULL | Nama pemegang kad bank (tambah via migration.sql) |
 | keterangan | TEXT | NULL | Nota/keterangan status, auto-fill dari settings template |
 | status | ENUM(...) | 'under_review' | Lihat nilai di bawah |
 | created_at | TIMESTAMP | CURRENT_TIMESTAMP | |
@@ -206,11 +208,12 @@ Base URL lokal: `http://localhost:4000`
 ### Loans (`/loans`)
 | Method | Endpoint | Auth | Notes |
 |---|---|---|---|
-| GET | `/loans/my` | JWT client | Senarai pinjaman sendiri (semua kolum termasuk `emergency_name`, `emergency_phone`, url gambar) |
-| POST | `/loans/apply` | JWT client | Submit permohonan → status `under_review`. **Juga set `users.balance = amount`** (balance boleh dilihat tapi withdraw hanya boleh bila loan_approved) |
+| GET | `/loans/stats` | JWT admin/staff | Stats untuk console: totals, problem, inprocess, approved, recent (5 terkini) |
+| GET | `/loans/my` | JWT client | Senarai pinjaman sendiri (semua kolum termasuk `emergency_name`, `emergency_phone`, `account_name`, url gambar) |
+| POST | `/loans/apply` | JWT client | Submit permohonan → status `under_review`. Set `users.balance = amount`, sync `bank`, `no_rekening`, `account_name` ke users |
 | GET | `/loans` | JWT admin/staff | Query: `?status=`, `?search=` — JOIN dengan users (ambil `name`, `phone`, `ic`) |
 | GET | `/loans/:id` | JWT admin/staff | Single loan detail |
-| PUT | `/loans/:id` | JWT admin/staff | Edit semua medan; jika `phone` berubah → update `users.phone`; jika `ic` dihantar → update `users.ic` |
+| PUT | `/loans/:id` | JWT admin/staff | Edit semua medan termasuk `account_name`; jika `phone` berubah → update `users.phone`; jika `ic` dihantar → update `users.ic` |
 | DELETE | `/loans/:id` | JWT admin only | Delete loan record |
 | PUT | `/loans/:id/status` | JWT admin/staff | Update status sahaja |
 
@@ -227,7 +230,7 @@ Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folde
 | GET | `/transactions/my` | JWT client | Senarai transaksi sendiri |
 | POST | `/transactions/withdraw` | JWT client | Withdraw baki: verifikasi `withdrawal_password`, check `loan_approved`, deduct balance, insert transaction. Returns `{ amount }` |
 | GET | `/transactions` | JWT admin/staff | Semua transaksi + user info. Query `?user_id=`, `?search=` |
-| POST | `/transactions` | JWT admin/staff | Manual add transaction — juga adjust `users.balance` |
+| POST | `/transactions` | JWT admin/staff | Manual add transaction — **TIDAK** adjust `users.balance` (balance diedit manual oleh admin) |
 | PUT | `/transactions/:id` | JWT admin/staff | Edit type/amount/description |
 | DELETE | `/transactions/:id` | JWT admin/staff | Delete transaction |
 
@@ -265,15 +268,15 @@ Static files: `GET /uploads/:filename` — public, tanpa auth. Served dari folde
 | `/dashboard/account` | `app/dashboard/account/page.tsx` | ✅ Logout berfungsi |
 | `/dashboard/account/personal-info` | `app/dashboard/account/personal-info/page.tsx` | ✅ View profil + dokumen pinjaman (IC, selfie) |
 | `/dashboard/account/change-password` | `app/dashboard/account/change-password/page.tsx` | ✅ Redirect ke khidmat pelanggan (WhatsApp/Telefon dari settings) |
-| `/dashboard/account/withdrawal` | `app/dashboard/account/withdrawal/page.tsx` | ✅ Papar maklumat bank pengeluaran (dari users + loans) |
-| `/dashboard/account/transaction-history` | `app/dashboard/account/transaction-history/page.tsx` | ✅ Senarai transaksi klien + summary |
+| `/dashboard/account/withdrawal` | `app/dashboard/account/withdrawal/page.tsx` | ✅ Papar maklumat bank pengeluaran: nama bank, nombor akaun, **nama pemegang kad** |
+| `/dashboard/account/transaction-history` | `app/dashboard/account/transaction-history/page.tsx` | ✅ Senarai transaksi + loan status events (merged & sorted by date) |
 | `/dashboard/account/loan-contract` | `app/dashboard/account/loan-contract/page.tsx` | ✅ Page penuh kontrak pinjaman (nama, IC, jumlah, kadar, tandatangan) |
 | `/dashboard/account/repayment` | `app/dashboard/account/repayment/page.tsx` | ✅ Butiran bayaran balik: jumlah, faedah, tempoh, tarikh bayaran seterusnya, status. Button → Loan Contract |
 | `/dashboard/account/messages` | `app/dashboard/account/messages/page.tsx` | ✅ Senarai mesej dari admin. Unread badge + expand on tap + auto mark-as-read |
 | `/dashboard/support` | `app/dashboard/support/page.tsx` | ✅ Papar maklumat sokongan dari settings |
 
 ### Apply Now — Flow (4 Langkah)
-1. **Langkah 1 — Pinjaman**: Pilih jumlah (RM 3,000–200,000 slider), tempoh (6–120 bulan), bank, nombor akaun
+1. **Langkah 1 — Pinjaman**: Pilih jumlah (RM 3,000–200,000 slider), tempoh (6–120 bulan), bank, nombor akaun, **nama pemegang kad**
 2. **Langkah 2 — Dokumen**: Upload Hadapan IC, Belakang IC, Selfie (imej, max 5MB each via `POST /upload`)
 3. **Langkah 3 — Maklumat Pribadi**: Nama, IC, Jantina, Tarikh Lahir, Pekerjaan, Pendapatan, Tujuan Pinjaman, Alamat, Kenalan Kecemasan (auto-fill dari `/auth/me`)
 4. **Langkah 4 — Tandatangan**: Canvas virtual signature → submit semua ke `PUT /auth/profile` + `POST /loans/apply`
@@ -327,14 +330,14 @@ Minimum: 5 digit selepas normalisasi
 |---|---|---|
 | `/login` | `app/login/page.tsx` | ✅ Connect ke API |
 | `/dashboard` | `app/dashboard/page.tsx` | Redirect → `/dashboard/console` |
-| `/dashboard/console` | `app/dashboard/console/page.tsx` | ✅ Stats (mock data) |
+| `/dashboard/console` | `app/dashboard/console/page.tsx` | ✅ Stats sebenar dari `GET /loans/stats` — jumlah keseluruhan, bermasalah, dalam proses, diluluskan + 5 pinjaman terkini |
 | `/dashboard/admin-management/admin-list` | `...page.tsx` | ✅ UI + mock data |
 | `/dashboard/admin-management/admin-log` | `...page.tsx` | ✅ UI + mock data |
-| `/dashboard/withdrawal` | `app/dashboard/withdrawal/page.tsx` | ✅ Full CRUD — GET/PUT `/loans`, kolum: UID, Nombor HP, Nominal, Bank, No. Rekening, Tanggal, Status |
-| `/dashboard/loans/orderer` | `app/dashboard/loans/orderer/page.tsx` | ✅ Full CRUD — kolum: Order No., Username, Phone, UID, Loan Amount, Loan Terms, Sign, Application Time, Status. View/Edit modal lengkap + keterangan auto-fill dari settings template |
-| `/dashboard/member/member-list` | `app/dashboard/member/member-list/page.tsx` | ✅ Semua status (filter dropdown), 23+ medan di View & Edit modal, password boleh ditukar, reg status badge |
+| `/dashboard/withdrawal` | `app/dashboard/withdrawal/page.tsx` | ✅ Full CRUD — GET/PUT `/loans`, kolum: UID, Nombor HP, Nominal, Bank, No. Rekening, Tanggal, Status. View/Edit modal termasuk **Nama Pemegang Kad** |
+| `/dashboard/loans/orderer` | `app/dashboard/loans/orderer/page.tsx` | ✅ Full CRUD — kolum: Order No., Username, Phone, UID, Loan Amount, Loan Terms, Sign, Application Time, Status. View/Edit modal lengkap + keterangan auto-fill + **Nama Pemegang Kad** |
+| `/dashboard/member/member-list` | `app/dashboard/member/member-list/page.tsx` | ✅ Semua status (filter dropdown), 24+ medan di View & Edit modal termasuk **Nama Pemegang Kad**, password boleh ditukar, reg status badge |
 | `/dashboard/member/member-approval` | `app/dashboard/member/member-approval/page.tsx` | ✅ UID column, approve/reject pending |
-| `/dashboard/settings` | `app/dashboard/settings/page.tsx` | ✅ Maklumat syarikat + logo + sokongan + 7 template keterangan + **tema warna Dark/Light mode** (12 var setiap tema, color picker) |
+| `/dashboard/settings` | `app/dashboard/settings/page.tsx` | ✅ Maklumat syarikat + logo + sokongan + 7 template keterangan + **tema warna Dark/Light mode** (12 var setiap tema, color picker, **Reset ke Default button**, **live phone mockup preview**) |
 | `/dashboard/transaction` | `app/dashboard/transaction/page.tsx` | ✅ CRUD sejarah transaksi semua klien — tambah/edit/padam, filter nama/telefon/UID, **searchable client picker** |
 | `/dashboard/messages` | `app/dashboard/messages/page.tsx` | ✅ Hantar & urus mesej kepada ahli — send ke **Ahli Tertentu** (searchable picker) atau **Broadcast** semua ahli aktif. Table: unread dot, expand row, delete |
 
@@ -344,9 +347,11 @@ Minimum: 5 digit selepas normalisasi
 - Format ini konsisten merentas semua menu (Member List, Withdrawal Records, Loans Orderer, Member Approval)
 
 ### Member List — Medan View/Edit Modal
-View modal (read-only): UID, Nama Lengkap, IC, Gender, Birthday, Phone Number, IP Client, Current Address, Login Password (tersembunyi ••••••••), Withdrawal Password, Credit Score, Balance, Points, Level, Consecutive Login Days, Number of Failures, Pending Approval, Bank, Nomor Rekening, Monthly Income, Loan Purpose, Motto, Avatar, Status (member_status)
+View modal (read-only): UID, Nama Lengkap, IC, Gender, Birthday, Phone Number, IP Client, Current Address, Login Password (tersembunyi ••••••••), Withdrawal Password, Credit Score, Balance, Points, Level, Consecutive Login Days, Number of Failures, Pending Approval, Bank, Nomor Rekening, **Nama Pemegang Kad**, Monthly Income, Loan Purpose, Motto, Avatar, Status (member_status)
 
 Edit modal (semua boleh diedit kecuali UID): sama seperti atas + Password Baru (kosong = tidak berubah), member_status radio (Normal/Suspended/Blocked)
+
+**Nota:** `account_name` disimpan di `users` table dan disync dari `loans` table bila loan apply. Admin boleh edit dari Member List, Loans Orderer, atau Withdrawal Records — semua update table yang sama.
 
 ### Loans Orderer — Keterangan Auto-fill
 - Edit modal: apabila admin klik mana-mana status, medan Keterangan auto-diisi dengan template dari `/settings`
@@ -370,7 +375,7 @@ Edit modal: 4 input URL dengan preview gambar kecil
 - **CSS class**: `admin-main` untuk responsive padding. Modal boleh dibuat bottom-sheet dengan class `admin-modal-overlay` + `admin-modal-inner`.
 
 ### Client — Native App Feel
-- **Viewport**: `maximum-scale=1`, `user-scalable=no`, `viewport-fit=cover` — tiada pinch zoom, sokong notch.
+- **Viewport**: `viewport-fit=cover` — sokong notch. `maximum-scale` dan `user-scalable` **DIBUANG** (menyebabkan iOS scroll block apabila ada `position: fixed` element).
 - **Safe area insets**: Bottom nav + page content guna `env(safe-area-inset-bottom)` — iPhone X+, Android notch.
 - **iOS input zoom fix**: Semua `input`/`textarea` `font-size: 16px` — Safari tidak zoom.
 - **Touch targets**: Butang/nav item minimum 44px.
