@@ -132,38 +132,38 @@ export default function WalletPage() {
 
       {/* Wallet Card */}
       <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.1s both" }}>
-        <div className="card" style={{ background: "linear-gradient(135deg,#1a1a1a 0%,#0a0a0a 100%)", border: "1px solid var(--border-light)", overflow: "hidden", position: "relative" }}>
+        <div className="card" style={{ background: "linear-gradient(135deg, var(--bg-card-inner) 0%, var(--bg-primary) 100%)", border: "1px solid var(--border-light)", overflow: "hidden", position: "relative" }}>
           <div style={{ position: "absolute", right: -20, top: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(201,168,76,0.06)" }} />
           <div style={{ position: "relative" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <Link href="/dashboard">
-                  <button style={{ width: 32, height: 32, borderRadius: 10, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "white" }}>
+                  <button style={{ width: 32, height: 32, borderRadius: 10, background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-primary)" }}>
                     <ChevronLeft size={16} />
                   </button>
                 </Link>
-                <div><p style={{ fontSize: 13, fontWeight: 700 }}>WALLET</p><p style={{ fontSize: 10, color: "#888", letterSpacing: 1 }}>SECURE PAGE</p></div>
+                <div><p style={{ fontSize: 13, fontWeight: 700 }}>WALLET</p><p style={{ fontSize: 10, color: "var(--text-secondary)", letterSpacing: 1 }}>SECURE PAGE</p></div>
               </div>
               <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent-green)", boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
             </div>
             <div style={{ marginBottom: 20 }}>
-              <p style={{ fontSize: 11, color: "#888", marginBottom: 6, letterSpacing: 0.5 }}>AKAUN SAYA</p>
+              <p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6, letterSpacing: 0.5 }}>AKAUN SAYA</p>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <p style={{ fontSize: 32, fontWeight: 900, letterSpacing: -1, color: "white" }}>
+                <p style={{ fontSize: 32, fontWeight: 900, letterSpacing: -1, color: "var(--text-primary)" }}>
                   {loading ? "..." : show ? `RM ${balance !== null ? Number(balance).toLocaleString("ms-MY", { minimumFractionDigits: 2 }) : "0.00"}` : "RM ••••"}
                 </p>
-                <button onClick={() => setShow(!show)} style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", color: "#888", display: "flex", alignItems: "center" }}>
+                <button onClick={() => setShow(!show)} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, padding: "6px 8px", cursor: "pointer", color: "var(--text-secondary)", display: "flex", alignItems: "center" }}>
                   {show ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
-              <p style={{ fontSize: 12, color: "#888", marginTop: 4 }}>Akaun no: {phone ? maskPhone(phone) : "—"}</p>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4 }}>Akaun no: {phone ? maskPhone(phone) : "—"}</p>
             </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "12px 16px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "var(--bg-card-inner)", borderRadius: 12, padding: "12px 16px" }}>
               <div>
-                <p style={{ fontSize: 12, color: "#888", marginBottom: 2 }}>
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 2 }}>
                   {latestLoan ? (statusLabel[latestLoan.status] ?? latestLoan.status) : "Tiada Pinjaman"}
                 </p>
-                <p style={{ fontSize: 15, fontWeight: 700, color: "white" }}>
+                <p style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>
                   {latestLoan ? `RM ${Number(latestLoan.amount).toLocaleString()}` : "—"}
                 </p>
               </div>
@@ -172,8 +172,8 @@ export default function WalletPage() {
                 disabled={!canWithdraw}
                 title={!canWithdraw ? (latestLoan?.status !== "loan_approved" ? "Pinjaman belum diluluskan" : "Tiada baki untuk dikeluarkan") : ""}
                 style={{
-                  background: canWithdraw ? "linear-gradient(135deg,#22c55e,#16a34a)" : "rgba(255,255,255,0.1)",
-                  border: "none", borderRadius: 8, padding: "8px 16px", color: canWithdraw ? "white" : "#666",
+                  background: canWithdraw ? "linear-gradient(135deg,#22c55e,#16a34a)" : "var(--bg-card-inner)",
+                  border: "none", borderRadius: 8, padding: "8px 16px", color: canWithdraw ? "white" : "var(--text-muted)",
                   fontSize: 12, fontWeight: 700, cursor: canWithdraw ? "pointer" : "not-allowed",
                   fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6,
                   transition: "all 0.2s",
