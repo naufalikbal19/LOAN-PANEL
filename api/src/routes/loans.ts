@@ -41,7 +41,7 @@ router.get("/stats", ...adminOrStaff, async (_req: Request, res: Response) => {
 router.get("/my", requireAuth, requireRole("client"), async (req: Request, res: Response) => {
   try {
     const [rows] = await pool.query<any[]>(
-      `SELECT id, amount, loan_terms, bank, no_rekening, keterangan, status,
+      `SELECT id, amount, loan_terms, bank, no_rekening, account_name, keterangan, status,
               front_ic_url, back_ic_url, selfie_url, sign_url,
               emergency_name, emergency_phone, created_at, updated_at
        FROM loans WHERE user_id = ? ORDER BY created_at DESC`,
@@ -56,7 +56,7 @@ router.get("/my", requireAuth, requireRole("client"), async (req: Request, res: 
 // POST /loans/apply — client submits loan application
 router.post("/apply", requireAuth, requireRole("client"), async (req: Request, res: Response) => {
   try {
-    const { amount, loan_terms, bank, no_rekening, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name, emergency_phone } = req.body;
+    const { amount, loan_terms, bank, no_rekening, account_name, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name, emergency_phone } = req.body;
     if (!amount || !loan_terms) {
       res.status(400).json({ message: "Jumlah dan tempoh pinjaman wajib diisi." }); return;
     }
@@ -69,9 +69,9 @@ router.post("/apply", requireAuth, requireRole("client"), async (req: Request, r
       res.status(409).json({ message: "Anda sudah mempunyai permohonan pinjaman. Sila hubungi khidmat pelanggan untuk maklumat lanjut.", code: "LOAN_EXISTS" }); return;
     }
     const [result] = await pool.query<any>(
-      `INSERT INTO loans (user_id, amount, loan_terms, bank, no_rekening, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name, emergency_phone, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'under_review')`,
-      [req.user!.id, amount, loan_terms, bank || null, no_rekening || null, front_ic_url || null, back_ic_url || null, selfie_url || null, sign_url || null, emergency_name || null, emergency_phone || null]
+      `INSERT INTO loans (user_id, amount, loan_terms, bank, no_rekening, account_name, front_ic_url, back_ic_url, selfie_url, sign_url, emergency_name, emergency_phone, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'under_review')`,
+      [req.user!.id, amount, loan_terms, bank || null, no_rekening || null, account_name || null, front_ic_url || null, back_ic_url || null, selfie_url || null, sign_url || null, emergency_name || null, emergency_phone || null]
     );
     // Update balance = loan amount, and bank info if provided
     await pool.query(

@@ -10,20 +10,21 @@ function mask(val: string): string {
 }
 
 export default function WithdrawalPage() {
-  const [bank, setBank]   = useState<string | null>(null);
-  const [noRek, setNoRek] = useState<string | null>(null);
-  const [show, setShow]   = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [bank, setBank]           = useState<string | null>(null);
+  const [noRek, setNoRek]         = useState<string | null>(null);
+  const [accountName, setAccountName] = useState<string | null>(null);
+  const [show, setShow]           = useState(false);
+  const [loading, setLoading]     = useState(true);
 
   useEffect(() => {
     Promise.all([
       apiFetch("/auth/me"),
       apiFetch("/loans/my").catch(() => []),
     ]).then(([u, loans]: [any, any[]]) => {
-      // Prefer users table; fall back to most recent loan entry
       const latestLoan = Array.isArray(loans) && loans.length > 0 ? loans[0] : null;
       setBank(u.bank || latestLoan?.bank || null);
       setNoRek(u.no_rekening || latestLoan?.no_rekening || null);
+      setAccountName(latestLoan?.account_name || null);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
@@ -59,6 +60,15 @@ export default function WithdrawalPage() {
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 3 }}>Nama Bank</p>
                 <p style={{ fontSize: 15, fontWeight: 700 }}>{bank || "-"}</p>
+              </div>
+            </div>
+
+            {/* Account Name */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px", background: "var(--bg-card)", borderRadius: 12, marginBottom: 10 }}>
+              <Building2 size={18} color="var(--text-secondary)" />
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 3 }}>Nama Pemegang Kad</p>
+                <p style={{ fontSize: 15, fontWeight: 700 }}>{accountName || "-"}</p>
               </div>
             </div>
 

@@ -74,6 +74,7 @@ export default function ApplyPage() {
   const [loanTerms, setLoanTerms] = useState("");
   const [bank, setBank]         = useState("");
   const [noRek, setNoRek]       = useState("");
+  const [accountName, setAccountName] = useState("");
 
   /* Step 2 */
   const [docs, setDocs] = useState<Partial<Record<DocKey, DocFile>>>({});
@@ -235,7 +236,7 @@ export default function ApplyPage() {
       await apiFetch("/loans/apply", {
         method: "POST",
         body: JSON.stringify({
-          amount, loan_terms: loanTerms, bank: bank || undefined, no_rekening: noRek || undefined,
+          amount, loan_terms: loanTerms, bank: bank || undefined, no_rekening: noRek || undefined, account_name: accountName || undefined,
           front_ic_url, back_ic_url, selfie_url, sign_url,
           emergency_name: profile.emergency_name, emergency_phone: profile.emergency_phone,
         }),
@@ -637,6 +638,12 @@ export default function ApplyPage() {
         <div>
           <p style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Nombor Akaun Bank</p>
           <input type="text" placeholder="cth: 1234567890" value={noRek} onChange={(e) => setNoRek(e.target.value)} style={{ width: "100%", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 12, padding: "14px 16px", color: "var(--text-primary)", fontSize: 14, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
+        </div>
+
+        {/* Account Name */}
+        <div>
+          <p style={{ fontSize: 12, fontWeight: 600, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>Nama Pemegang Kad</p>
+          <input type="text" placeholder="Nama seperti dalam kad bank" value={accountName} onChange={(e) => setAccountName(e.target.value)} style={{ width: "100%", background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 12, padding: "14px 16px", color: "var(--text-primary)", fontSize: 14, fontFamily: "inherit", outline: "none", boxSizing: "border-box" }} />
         </div>
 
         {error && (
