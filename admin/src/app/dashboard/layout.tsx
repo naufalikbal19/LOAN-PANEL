@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const marginLeft = isMobile ? 0 : collapsed ? 64 : 240;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#080808" }}>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: "#080808" }}>
       <Sidebar
         collapsed={collapsed}
         onToggle={() => setCollapsed((p) => !p)}
@@ -42,7 +42,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         mobileOpen={mobileOpen}
         onMobileClose={() => setMobileOpen(false)}
       />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", marginLeft, transition: "margin-left 0.25s ease", minWidth: 0 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", marginLeft, transition: "margin-left 0.25s ease", minWidth: 0, overflow: "hidden" }}>
         <Header onMenuToggle={handleMenuToggle} sidebarCollapsed={collapsed} isMobile={isMobile} />
         <main className="admin-main" style={{ flex: 1, overflowY: "auto" }}>
           {children}

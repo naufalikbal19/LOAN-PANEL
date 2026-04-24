@@ -74,7 +74,7 @@ export default function SignInPage() {
           <input
             className="input-field"
             type="tel"
-            placeholder="0123456789 / +60123456789"
+            placeholder="0123456789"
             value={phone}
             onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: undefined })); setApiError(""); }}
           />
