@@ -326,19 +326,8 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Mini preview */}
-        <div style={{ marginTop: 20, borderRadius: 12, overflow: "hidden", border: "1px solid #2e2e2e" }}>
-          <div style={{ background: settings[`${p}_bg_primary` as keyof Settings] as string || "#080808", padding: "14px 16px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ background: settings[`${p}_bg_card` as keyof Settings] as string || "#161616", borderRadius: 10, padding: "10px 16px", border: `1px solid ${(settings[`${p}_border_color` as keyof Settings] as string) || "#242424"}` }}>
-              <p style={{ fontSize: 12, color: settings[`${p}_text_primary` as keyof Settings] as string || "#fff", fontWeight: 700, margin: 0 }}>Tajuk</p>
-              <p style={{ fontSize: 10, color: settings[`${p}_text_secondary` as keyof Settings] as string || "#888", margin: 0 }}>Keterangan</p>
-              <p style={{ fontSize: 10, color: settings[`${p}_text_muted` as keyof Settings] as string || "#484848", margin: 0 }}>Teks pudar</p>
-            </div>
-            <button style={{ background: settings[`${p}_accent` as keyof Settings] as string || "#c9a84c", border: "none", borderRadius: 8, padding: "10px 16px", cursor: "pointer", fontWeight: 700, fontSize: 12 }}>Butang</button>
-            <span style={{ fontSize: 12, color: settings[`${p}_accent` as keyof Settings] as string || "#c9a84c", fontWeight: 600 }}>Teks Aksen</span>
-          </div>
-          <p style={{ fontSize: 10, color: "#555", padding: "5px 12px", background: "#0a0a0a" }}>Preview — hasil sebenar mungkin berbeza sedikit</p>
-        </div>
+        {/* Phone mockup preview */}
+        <ThemePreview s={settings} p={p} />
       </section>
 
       {/* ── Keterangan Templates ── */}
@@ -378,6 +367,153 @@ export default function SettingsPage() {
       >
         <Save size={16} /> {status === "saving" ? "Menyimpan..." : "Simpan Semua Tetapan"}
       </button>
+    </div>
+  );
+}
+
+// ─── Phone mockup preview ─────────────────────────────────────────────────────
+function ThemePreview({ s, p }: { s: Settings; p: string }) {
+  const c = (key: string) => (s as any)[`${p}_${key}`] || "";
+  const accent      = c("accent")        || "#c9a84c";
+  const bgPrimary   = c("bg_primary")    || "#080808";
+  const bgCard      = c("bg_card")       || "#161616";
+  const bgCardInner = c("bg_card_inner") || "#1e1e1e";
+  const navBg       = c("nav_bg")        || "#0c0c0c";
+  const textPrimary = c("text_primary")  || "#ffffff";
+  const textSecond  = c("text_secondary")|| "#888888";
+  const textMuted   = c("text_muted")    || "#484848";
+  const borderColor = c("border_color")  || "#242424";
+  const borderLight = c("border_light")  || "#2e2e2e";
+  const bgImage     = c("bg_image")      || "";
+
+  return (
+    <div style={{ marginTop: 24 }}>
+      <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#c9a84c", marginBottom: 12 }}>
+        Preview Langsung — {p === "dark" ? "Dark Mode" : "Light Mode"}
+      </p>
+
+      {/* Phone frame */}
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <div style={{
+          width: 260, borderRadius: 36, border: "6px solid #333",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.8), inset 0 0 0 1px #555",
+          overflow: "hidden", position: "relative", background: bgPrimary,
+        }}>
+          {/* Notch */}
+          <div style={{ background: "#111", height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ width: 60, height: 10, borderRadius: 10, background: "#222" }} />
+          </div>
+
+          {/* Screen */}
+          <div style={{
+            background: bgImage ? `url(${bgImage}) center/cover` : bgPrimary,
+            minHeight: 480, position: "relative", fontFamily: "sans-serif",
+          }}>
+            {/* Overlay if bg image */}
+            {bgImage && <div style={{ position: "absolute", inset: 0, background: bgPrimary, opacity: 0.85 }} />}
+
+            <div style={{ position: "relative", zIndex: 1 }}>
+              {/* Page header */}
+              <div style={{ padding: "14px 14px 10px", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <p style={{ fontSize: 7, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: accent, margin: 0 }}>FINANCIAL OVERVIEW</p>
+                  <p style={{ fontSize: 14, fontWeight: 800, color: textPrimary, margin: 0 }}>Dompet Saya</p>
+                </div>
+                <div style={{ fontSize: 7, fontWeight: 700, color: "#22c55e", background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 20, padding: "3px 7px", display: "flex", alignItems: "center", gap: 3 }}>
+                  <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#22c55e", display: "inline-block" }} />VERIFIED
+                </div>
+              </div>
+
+              {/* Wallet card */}
+              <div style={{ margin: "0 10px 10px", background: `linear-gradient(135deg, ${bgCardInner} 0%, ${bgPrimary} 100%)`, border: `1px solid ${borderLight}`, borderRadius: 14, padding: "12px 14px" }}>
+                <p style={{ fontSize: 7, color: textMuted, margin: "0 0 4px", letterSpacing: 0.5 }}>AKAUN SAYA</p>
+                <p style={{ fontSize: 18, fontWeight: 900, color: textPrimary, margin: "0 0 8px", letterSpacing: -0.5 }}>RM 25,000.00</p>
+                <div style={{ background: "rgba(255,255,255,0.05)", borderRadius: 8, padding: "8px 10px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <p style={{ fontSize: 7, color: textMuted, margin: 0 }}>Pinjaman Diluluskan</p>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: textPrimary, margin: 0 }}>RM 25,000</p>
+                  </div>
+                  <div style={{ background: "linear-gradient(135deg,#22c55e,#16a34a)", borderRadius: 6, padding: "5px 10px" }}>
+                    <p style={{ fontSize: 8, fontWeight: 700, color: "white", margin: 0 }}>WITHDRAW</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cards row */}
+              <div style={{ padding: "0 10px 10px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: "10px 10px" }}>
+                  <p style={{ fontSize: 7, color: textMuted, margin: "0 0 3px", textTransform: "uppercase", letterSpacing: 0.8 }}>Status</p>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: accent, margin: 0 }}>Diluluskan</p>
+                </div>
+                <div style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: "10px 10px" }}>
+                  <p style={{ fontSize: 7, color: textMuted, margin: "0 0 3px", textTransform: "uppercase", letterSpacing: 0.8 }}>Tempoh</p>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: textPrimary, margin: 0 }}>24 Bulan</p>
+                </div>
+              </div>
+
+              {/* Menu items */}
+              <div style={{ padding: "0 10px", display: "flex", flexDirection: "column", gap: 6, marginBottom: 10 }}>
+                {["Maklumat Peribadi", "Sejarah Transaksi", "Akaun Pengeluaran"].map((item) => (
+                  <div key={item} style={{ background: bgCard, border: `1px solid ${borderColor}`, borderRadius: 10, padding: "9px 12px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ width: 22, height: 22, borderRadius: 7, background: bgCardInner, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontSize: 9 }}>👤</span>
+                      </div>
+                      <p style={{ fontSize: 9, fontWeight: 600, color: textPrimary, margin: 0 }}>{item}</p>
+                    </div>
+                    <p style={{ fontSize: 10, color: textSecond, margin: 0 }}>›</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Primary button */}
+              <div style={{ padding: "0 10px 60px" }}>
+                <div style={{ background: accent, borderRadius: 10, padding: "10px 0", textAlign: "center" }}>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: "white", margin: 0 }}>Mohon Pinjaman</p>
+                </div>
+                <p style={{ fontSize: 7, color: textSecond, margin: "6px 0 0", textAlign: "center" }}>Teks sekunder — {textSecond}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom nav */}
+          <div style={{
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            background: navBg, borderTop: `1px solid ${borderColor}`,
+            display: "flex", justifyContent: "space-around", padding: "8px 0 10px",
+          }}>
+            {[["🏠","UTAMA"], ["💳","DOMPET"], ["🎧","SOKONGAN"], ["👤","SAYA"]].map(([icon, label], i) => (
+              <div key={label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                <span style={{ fontSize: 13 }}>{icon}</span>
+                <p style={{ fontSize: 6, fontWeight: 700, margin: 0, letterSpacing: 0.5, color: i === 1 ? accent : textMuted }}>{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Color legend */}
+      <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 6 }}>
+        {[
+          { label: "Latar Utama", color: bgPrimary },
+          { label: "Latar Kad", color: bgCard },
+          { label: "Latar Dalam Kad", color: bgCardInner },
+          { label: "Warna Aksen", color: accent },
+          { label: "Teks Utama", color: textPrimary },
+          { label: "Teks Sekunder", color: textSecond },
+          { label: "Teks Pudar", color: textMuted },
+          { label: "Border Utama", color: borderColor },
+          { label: "Bottom Nav", color: navBg },
+        ].map(({ label, color }) => (
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, background: "#0e0e0e", borderRadius: 8, padding: "7px 10px", border: "1px solid #1e1e1e" }}>
+            <div style={{ width: 20, height: 20, borderRadius: 5, background: color, border: "1px solid #333", flexShrink: 0 }} />
+            <div>
+              <p style={{ fontSize: 10, fontWeight: 600, color: "#ccc", margin: 0 }}>{label}</p>
+              <p style={{ fontSize: 9, color: "#555", margin: 0, fontFamily: "monospace" }}>{color}</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
