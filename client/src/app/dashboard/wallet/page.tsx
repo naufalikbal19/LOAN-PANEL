@@ -404,8 +404,8 @@ export default function WalletPage() {
 
       {/* Withdraw Modal */}
       {showWithdraw && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 300, display: "flex", alignItems: "flex-end", justifyContent: "center" }} onClick={closeWithdrawModal}>
-          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--bg-card)", borderRadius: "24px 24px 0 0", padding: "28px 24px 40px", width: "100%", maxWidth: 430, animation: "fadeInUp 0.3s ease both" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 300, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px" }} onClick={closeWithdrawModal}>
+          <div onClick={(e) => e.stopPropagation()} style={{ background: "var(--bg-card)", borderRadius: 24, padding: "28px 24px 28px", width: "100%", maxWidth: 400, animation: "fadeInUp 0.3s ease both" }}>
 
             {wdSuccess ? (
               /* Success state */
