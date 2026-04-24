@@ -110,14 +110,7 @@ router.post("/", ...adminOrStaff, async (req: Request, res: Response) => {
       res.status(400).json({ message: "Jenis transaksi tidak sah." }); return;
     }
 
-    // Adjust balance based on type
     const amt = parseFloat(amount);
-    if (type === "credit" || type === "adjustment") {
-      await pool.query("UPDATE users SET balance = balance + ? WHERE id = ?", [amt, user_id]);
-    } else if (type === "debit" || type === "withdrawal") {
-      await pool.query("UPDATE users SET balance = GREATEST(0, balance - ?) WHERE id = ?", [amt, user_id]);
-    }
-
     const [result] = await pool.query<any>(
       "INSERT INTO transactions (user_id, type, amount, description) VALUES (?, ?, ?, ?)",
       [user_id, type, amt, description || null]
