@@ -37,6 +37,7 @@ router.put(
       "keterangan_under_review", "keterangan_loan_approved", "keterangan_credit_frozen",
       "keterangan_unfrozen_processing", "keterangan_credit_score_low",
       "keterangan_payment_processing", "keterangan_loan_being_canceled", "keterangan_transfer_failed",
+      "withdrawal_warning",
       // Tema dark mode
       "dark_accent","dark_bg_primary","dark_bg_secondary","dark_bg_card","dark_bg_card_inner",
       "dark_text_primary","dark_text_secondary","dark_text_muted",

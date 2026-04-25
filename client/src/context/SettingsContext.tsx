@@ -8,6 +8,7 @@ export interface SiteSettings {
   favicon_url: string;
   support_whatsapp: string;
   support_phone: string;
+  withdrawal_warning: string;
   // Dark mode
   dark_accent: string;
   dark_bg_primary: string; dark_bg_secondary: string;
@@ -28,6 +29,7 @@ const defaults: SiteSettings = {
   company_name: "Pinjaman Barakah",
   company_tagline: "Pinjaman peribadi terbaik untuk anda",
   logo_url: "", favicon_url: "", support_whatsapp: "", support_phone: "",
+  withdrawal_warning: "⚠ Pengeluaran hanya tersedia selepas pinjaman diluluskan",
   dark_accent: "#c9a84c",
   dark_bg_primary: "#080808", dark_bg_secondary: "#0f0f0f",
   dark_bg_card: "#161616",    dark_bg_card_inner: "#1e1e1e",

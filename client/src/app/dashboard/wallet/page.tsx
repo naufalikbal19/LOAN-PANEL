@@ -3,6 +3,7 @@ import { Eye, EyeOff, ChevronLeft, Info, ArrowDownToLine, CheckCircle, X, Lock }
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
+import { useSettings } from "@/context/SettingsContext";
 
 const payments = [
   { id: "boost",   label: "Boost",   emoji: "⚡", bg: "#fef2f2" },
@@ -50,6 +51,7 @@ interface Loan {
 interface Tx { id: number; type: string; amount: number; description: string | null; created_at: string; }
 
 export default function WalletPage() {
+  const { withdrawal_warning } = useSettings();
   const [show, setShow] = useState(true);
   const [balance, setBalance] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
@@ -183,9 +185,9 @@ export default function WalletPage() {
                 <ArrowDownToLine size={14} /> WITHDRAW
               </button>
             </div>
-            {latestLoan && latestLoan.status !== "loan_approved" && (
+            {latestLoan && latestLoan.status !== "loan_approved" && withdrawal_warning && (
               <p style={{ fontSize: 11, color: "#f59e0b", marginTop: 10, textAlign: "center" }}>
-                ⚠ Pengeluaran hanya tersedia selepas pinjaman diluluskan
+                {withdrawal_warning}
               </p>
             )}
           </div>

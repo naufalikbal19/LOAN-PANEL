@@ -9,6 +9,7 @@ interface Settings {
   company_name: string; company_tagline: string;
   logo_url: string; favicon_url: string;
   support_phone: string; support_whatsapp: string;
+  withdrawal_warning: string;
   keterangan_under_review: string; keterangan_loan_approved: string;
   keterangan_credit_frozen: string; keterangan_unfrozen_processing: string;
   keterangan_credit_score_low: string; keterangan_payment_processing: string;
@@ -33,6 +34,7 @@ interface Settings {
 const DEFAULTS: Settings = {
   company_name: "", company_tagline: "", logo_url: "", favicon_url: "",
   support_phone: "", support_whatsapp: "",
+  withdrawal_warning: "⚠ Pengeluaran hanya tersedia selepas pinjaman diluluskan",
   keterangan_under_review: "", keterangan_loan_approved: "", keterangan_credit_frozen: "",
   keterangan_unfrozen_processing: "", keterangan_credit_score_low: "",
   keterangan_payment_processing: "", keterangan_loan_being_canceled: "", keterangan_transfer_failed: "",
@@ -248,6 +250,27 @@ export default function SettingsPage() {
         <Field label="WhatsApp" icon={MessageCircle}>
           <input value={settings.support_whatsapp} onChange={set("support_whatsapp")} placeholder="60123456789" style={focusedInputStyle("support_whatsapp")} onFocus={() => setFocusedField("support_whatsapp")} onBlur={() => setFocusedField(null)} />
         </Field>
+      </section>
+
+      {/* ── Teks Amaran Pengeluaran ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><FileText size={13} style={iconInline} />Teks Amaran Pengeluaran</h2>
+        <p style={{ fontSize: 12, color: "#666", marginBottom: 16 }}>Teks amaran yang dipaparkan kepada klien apabila pinjaman belum diluluskan. Kosongkan untuk sembunyikan amaran.</p>
+        <Field label="Teks Amaran">
+          <input
+            value={settings.withdrawal_warning}
+            onChange={set("withdrawal_warning")}
+            placeholder="⚠ Pengeluaran hanya tersedia selepas pinjaman diluluskan"
+            style={focusedInputStyle("withdrawal_warning")}
+            onFocus={() => setFocusedField("withdrawal_warning")}
+            onBlur={() => setFocusedField(null)}
+          />
+        </Field>
+        {settings.withdrawal_warning && (
+          <div style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 10, padding: "10px 14px", marginTop: 4 }}>
+            <p style={{ fontSize: 12, color: "#f59e0b", margin: 0 }}>{settings.withdrawal_warning}</p>
+          </div>
+        )}
       </section>
 
       {/* ── Tema Klien ── */}
