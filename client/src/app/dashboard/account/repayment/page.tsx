@@ -16,6 +16,7 @@ const statusMap: Record<string, { label: string; color: string }> = {
   credit_score_low:    { label: "Skor Kredit Rendah", color: "#f87171" },
   payment_processing:  { label: "Proses Pembayaran",  color: "#818cf8" },
   loan_being_canceled: { label: "Dibatalkan",         color: "#9ca3af" },
+  transfer_failed:     { label: "Pindahan Gagal",     color: "#ef4444" },
 };
 
 function nextPaymentDate(): string {

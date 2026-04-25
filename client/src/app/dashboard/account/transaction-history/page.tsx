@@ -31,6 +31,7 @@ const loanStatusLabel: Record<string, string> = {
   credit_score_low:    "Skor Kredit Rendah",
   payment_processing:  "Proses Pembayaran",
   loan_being_canceled: "Pinjaman Dibatalkan",
+  transfer_failed:     "Pindahan Gagal",
 };
 const loanStatusColor: Record<string, string> = {
   under_review:        "#60a5fa",
@@ -40,6 +41,7 @@ const loanStatusColor: Record<string, string> = {
   credit_score_low:    "#ef4444",
   payment_processing:  "#c9a84c",
   loan_being_canceled: "#ef4444",
+  transfer_failed:     "#ef4444",
 };
 const loanStatusEmoji: Record<string, string> = {
   under_review:        "📋",
@@ -49,6 +51,7 @@ const loanStatusEmoji: Record<string, string> = {
   credit_score_low:    "⚠️",
   payment_processing:  "💳",
   loan_being_canceled: "❌",
+  transfer_failed:     "⛔",
 };
 
 interface Tx { id: number; type: string; amount: number; description: string | null; created_at: string; }

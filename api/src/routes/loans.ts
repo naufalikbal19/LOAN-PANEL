@@ -9,6 +9,7 @@ const adminOrStaff = [requireAuth, requireRole("admin", "staff")];
 const VALID_STATUSES = [
   "under_review", "loan_approved", "credit_frozen",
   "unfrozen_processing", "credit_score_low", "payment_processing", "loan_being_canceled",
+  "transfer_failed",
 ];
 
 // GET /loans/stats — summary stats for admin console

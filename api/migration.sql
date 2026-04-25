@@ -22,6 +22,13 @@ CREATE TABLE IF NOT EXISTS transactions (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Tambah status transfer_failed ke loans
+ALTER TABLE loans MODIFY COLUMN status ENUM(
+  'under_review','loan_approved','credit_frozen',
+  'unfrozen_processing','credit_score_low','payment_processing',
+  'loan_being_canceled','transfer_failed'
+) NOT NULL DEFAULT 'under_review';
+
 -- Jadual mesej baru
 CREATE TABLE IF NOT EXISTS messages (
   id         INT PRIMARY KEY AUTO_INCREMENT,

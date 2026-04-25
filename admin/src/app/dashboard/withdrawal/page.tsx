@@ -21,7 +21,8 @@ type LoanStatus =
   | "unfrozen_processing"
   | "credit_score_low"
   | "payment_processing"
-  | "loan_being_canceled";
+  | "loan_being_canceled"
+  | "transfer_failed";
 
 const STATUS_META: Record<LoanStatus, { label: string; bg: string; color: string }> = {
   under_review:        { label: "Under Review",        bg: "rgba(201,168,76,0.12)", color: "#c9a84c" },
@@ -31,6 +32,7 @@ const STATUS_META: Record<LoanStatus, { label: string; bg: string; color: string
   credit_score_low:    { label: "Credit Score Low",     bg: "rgba(239,68,68,0.08)", color: "#f87171" },
   payment_processing:  { label: "Payment Processing",   bg: "rgba(99,102,241,0.1)", color: "#818cf8" },
   loan_being_canceled: { label: "Loan Being Canceled",  bg: "rgba(107,114,128,0.1)", color: "#6b7280" },
+  transfer_failed:     { label: "Transfer Failed",      bg: "rgba(239,68,68,0.12)",  color: "#ef4444" },
 };
 
 const ALL_STATUSES = Object.entries(STATUS_META) as [LoanStatus, typeof STATUS_META[LoanStatus]][];

@@ -20,6 +20,7 @@ const statusLabel: Record<string, string> = {
   credit_score_low:    "Skor Kredit Rendah",
   payment_processing:  "Proses Pembayaran",
   loan_being_canceled: "Pinjaman Dibatalkan",
+  transfer_failed:     "Pindahan Gagal",
 };
 
 const statusColor: Record<string, string> = {
@@ -30,6 +31,7 @@ const statusColor: Record<string, string> = {
   credit_score_low:    "#f59e0b",
   payment_processing:  "#6366f1",
   loan_being_canceled: "#ef4444",
+  transfer_failed:     "#ef4444",
 };
 
 interface Loan {

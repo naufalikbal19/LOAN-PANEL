@@ -21,6 +21,7 @@ const statusLabel: Record<string, string> = {
   credit_score_low:    "Skor Kredit Rendah",
   payment_processing:  "Proses Pembayaran",
   loan_being_canceled: "Pinjaman Dibatalkan",
+  transfer_failed:     "Pindahan Gagal",
 };
 
 const txTypeLabel: Record<string, string> = {
@@ -216,8 +217,8 @@ export default function WalletPage() {
               </div>
               <span style={{
                 fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 8,
-                background: latestLoan.status === "loan_approved" ? "rgba(34,197,94,0.12)" : latestLoan.status === "loan_being_canceled" || latestLoan.status === "credit_frozen" ? "rgba(239,68,68,0.1)" : "rgba(201,168,76,0.12)",
-                color: latestLoan.status === "loan_approved" ? "#22c55e" : latestLoan.status === "loan_being_canceled" || latestLoan.status === "credit_frozen" ? "#ef4444" : "#c9a84c",
+                background: latestLoan.status === "loan_approved" ? "rgba(34,197,94,0.12)" : latestLoan.status === "loan_being_canceled" || latestLoan.status === "credit_frozen" || latestLoan.status === "transfer_failed" ? "rgba(239,68,68,0.1)" : "rgba(201,168,76,0.12)",
+                color: latestLoan.status === "loan_approved" ? "#22c55e" : latestLoan.status === "loan_being_canceled" || latestLoan.status === "credit_frozen" || latestLoan.status === "transfer_failed" ? "#ef4444" : "#c9a84c",
               }}>{statusLabel[latestLoan.status] ?? latestLoan.status}</span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 8px", marginBottom: 14 }}>
@@ -300,7 +301,7 @@ export default function WalletPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {loans.map((l) => {
-              const color = l.status === "loan_approved" ? "#22c55e" : l.status === "loan_being_canceled" || l.status === "credit_frozen" ? "#ef4444" : "#c9a84c";
+              const color = l.status === "loan_approved" ? "#22c55e" : l.status === "loan_being_canceled" || l.status === "credit_frozen" || l.status === "transfer_failed" ? "#ef4444" : "#c9a84c";
               return (
                 <div key={l.id} className="card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>

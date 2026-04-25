@@ -13,6 +13,7 @@ interface Settings {
   keterangan_credit_frozen: string; keterangan_unfrozen_processing: string;
   keterangan_credit_score_low: string; keterangan_payment_processing: string;
   keterangan_loan_being_canceled: string;
+  keterangan_transfer_failed: string;
   // Dark
   dark_accent: string;
   dark_bg_primary: string; dark_bg_secondary: string;
@@ -34,7 +35,7 @@ const DEFAULTS: Settings = {
   support_phone: "", support_whatsapp: "",
   keterangan_under_review: "", keterangan_loan_approved: "", keterangan_credit_frozen: "",
   keterangan_unfrozen_processing: "", keterangan_credit_score_low: "",
-  keterangan_payment_processing: "", keterangan_loan_being_canceled: "",
+  keterangan_payment_processing: "", keterangan_loan_being_canceled: "", keterangan_transfer_failed: "",
   dark_accent: "#c9a84c",
   dark_bg_primary: "#080808", dark_bg_secondary: "#0f0f0f",
   dark_bg_card: "#161616",    dark_bg_card_inner: "#1e1e1e",
@@ -92,6 +93,7 @@ const KETERANGAN_FIELDS: { key: keyof Settings; label: string; badgeBg: string; 
   { key: "keterangan_credit_score_low",    label: "Credit Score Low",    badgeBg: "rgba(239,68,68,0.08)",  badgeColor: "#f87171" },
   { key: "keterangan_payment_processing",  label: "Payment Processing",  badgeBg: "rgba(99,102,241,0.12)", badgeColor: "#818cf8" },
   { key: "keterangan_loan_being_canceled", label: "Loan Being Canceled", badgeBg: "rgba(107,114,128,0.12)",badgeColor: "#9ca3af" },
+  { key: "keterangan_transfer_failed",     label: "Transfer Failed",     badgeBg: "rgba(239,68,68,0.12)",  badgeColor: "#ef4444" },
 ];
 
 type SaveStatus = "idle" | "saving" | "success" | "error";

@@ -254,6 +254,7 @@ export default function ApplyPage() {
     credit_frozen: "Kredit Dibekukan", unfrozen_processing: "Proses Pencairan",
     credit_score_low: "Skor Kredit Rendah", payment_processing: "Proses Pembayaran",
     loan_being_canceled: "Dalam Pembatalan",
+    transfer_failed: "Pindahan Gagal",
   };
 
   /* ─── LOADING CHECK ─── */
