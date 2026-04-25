@@ -55,7 +55,7 @@ const loanStatusEmoji: Record<string, string> = {
 };
 
 interface Tx { id: number; type: string; amount: number; description: string | null; created_at: string; }
-interface LoanHistory { id: number; loan_id: number; status: string; amount: number; loan_terms: string; created_at: string; }
+interface LoanHistory { id: number; loan_id: number; status: string; keterangan: string | null; amount: number; loan_terms: string; created_at: string; }
 
 type Entry =
   | { kind: "tx"; data: Tx }
@@ -150,6 +150,9 @@ export default function TransactionHistoryPage() {
                       <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
                         #ORD-{String(l.loan_id).padStart(5, "0")} · RM {Number(l.amount).toLocaleString("ms-MY")}
                       </p>
+                      {l.keterangan && (
+                        <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 3, lineHeight: 1.4, borderLeft: `2px solid ${color}`, paddingLeft: 6 }}>{l.keterangan}</p>
+                      )}
                       <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 3 }}>{dateStr} · {timeStr}</p>
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0 }}>

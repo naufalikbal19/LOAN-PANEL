@@ -40,6 +40,9 @@ CREATE TABLE IF NOT EXISTS loan_status_history (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+-- Tambah keterangan ke sejarah status pinjaman
+ALTER TABLE loan_status_history ADD COLUMN IF NOT EXISTS keterangan TEXT NULL;
+
 -- Jadual mesej baru
 CREATE TABLE IF NOT EXISTS messages (
   id         INT PRIMARY KEY AUTO_INCREMENT,

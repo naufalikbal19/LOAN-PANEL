@@ -42,7 +42,7 @@ router.get("/stats", ...adminOrStaff, async (_req: Request, res: Response) => {
 router.get("/my/history", requireAuth, requireRole("client"), async (req: Request, res: Response) => {
   try {
     const [rows] = await pool.query<any[]>(
-      `SELECT lsh.id, lsh.loan_id, lsh.status, lsh.created_at, l.amount, l.loan_terms
+      `SELECT lsh.id, lsh.loan_id, lsh.status, lsh.keterangan, lsh.created_at, l.amount, l.loan_terms
        FROM loan_status_history lsh
        INNER JOIN loans l ON l.id = lsh.loan_id
        WHERE lsh.user_id = ?
@@ -204,8 +204,8 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
     }
     if (status) {
       await pool.query(
-        "INSERT INTO loan_status_history (loan_id, user_id, status) VALUES (?, ?, ?)",
-        [req.params.id, loan.user_id, status]
+        "INSERT INTO loan_status_history (loan_id, user_id, status, keterangan) VALUES (?, ?, ?, ?)",
+        [req.params.id, loan.user_id, status, keterangan ?? null]
       );
     }
 
@@ -237,7 +237,7 @@ router.delete("/:id", requireAuth, requireRole("admin"), async (req: Request, re
 // PUT /loans/:id/status — update loan status only
 router.put("/:id/status", ...adminOrStaff, async (req: Request, res: Response) => {
   try {
-    const { status } = req.body;
+    const { status, keterangan } = req.body;
     if (!status || !VALID_STATUSES.includes(status)) {
       res.status(400).json({ message: "Status tidak sah." }); return;
     }
@@ -249,10 +249,13 @@ router.put("/:id/status", ...adminOrStaff, async (req: Request, res: Response) =
     if (!(rows as any[]).length) { res.status(404).json({ message: "Rekod pinjaman tidak dijumpai." }); return; }
     const loan = (rows as any[])[0];
 
-    await pool.query("UPDATE loans SET status = ? WHERE id = ?", [status, req.params.id]);
     await pool.query(
-      "INSERT INTO loan_status_history (loan_id, user_id, status) VALUES (?, ?, ?)",
-      [req.params.id, loan.user_id, status]
+      "UPDATE loans SET status = ?, keterangan = COALESCE(?, keterangan) WHERE id = ?",
+      [status, keterangan ?? null, req.params.id]
+    );
+    await pool.query(
+      "INSERT INTO loan_status_history (loan_id, user_id, status, keterangan) VALUES (?, ?, ?, ?)",
+      [req.params.id, loan.user_id, status, keterangan ?? null]
     );
     await logAction(req, `Tukar status pinjaman → ${status}`, `UID ${loan.user_id} (${loan.phone})`);
     res.json({ message: "Status pinjaman dikemaskini." });
