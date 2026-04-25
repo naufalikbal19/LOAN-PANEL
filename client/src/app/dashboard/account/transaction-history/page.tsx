@@ -55,35 +55,33 @@ const loanStatusEmoji: Record<string, string> = {
 };
 
 interface Tx { id: number; type: string; amount: number; description: string | null; created_at: string; }
-interface Loan { id: number; amount: number; status: string; loan_terms: string; created_at: string; updated_at: string; }
+interface LoanHistory { id: number; loan_id: number; status: string; amount: number; loan_terms: string; created_at: string; }
 
 type Entry =
   | { kind: "tx"; data: Tx }
-  | { kind: "loan"; data: Loan };
+  | { kind: "loan"; data: LoanHistory };
 
 export default function TransactionHistoryPage() {
   const [transactions, setTransactions] = useState<Tx[]>([]);
-  const [loans, setLoans] = useState<Loan[]>([]);
+  const [loanHistory, setLoanHistory] = useState<LoanHistory[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       apiFetch<Tx[]>("/transactions/my").catch(() => []),
-      apiFetch<Loan[]>("/loans/my").catch(() => []),
-    ]).then(([txs, ls]) => {
+      apiFetch<LoanHistory[]>("/loans/my/history").catch(() => []),
+    ]).then(([txs, hist]) => {
       setTransactions(Array.isArray(txs) ? txs : []);
-      setLoans(Array.isArray(ls) ? ls : []);
+      setLoanHistory(Array.isArray(hist) ? hist : []);
     }).finally(() => setLoading(false));
   }, []);
 
   const entries: Entry[] = [
     ...transactions.map((t): Entry => ({ kind: "tx", data: t })),
-    ...loans.map((l): Entry => ({ kind: "loan", data: l })),
-  ].sort((a, b) => {
-    const dateA = new Date(a.kind === "tx" ? a.data.created_at : a.data.updated_at).getTime();
-    const dateB = new Date(b.kind === "tx" ? b.data.created_at : b.data.updated_at).getTime();
-    return dateB - dateA;
-  });
+    ...loanHistory.map((l): Entry => ({ kind: "loan", data: l })),
+  ].sort((a, b) =>
+    new Date(b.data.created_at).getTime() - new Date(a.data.created_at).getTime()
+  );
 
   return (
     <div style={{ paddingBottom: 32 }}>
@@ -140,24 +138,24 @@ export default function TransactionHistoryPage() {
                 const color = loanStatusColor[l.status] ?? "#888";
                 const emoji = loanStatusEmoji[l.status] ?? "📋";
                 const label = loanStatusLabel[l.status] ?? l.status;
-                const dateStr = new Date(l.updated_at).toLocaleDateString("ms-MY", { day: "2-digit", month: "short", year: "numeric" });
-                const timeStr = new Date(l.updated_at).toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
+                const dateStr = new Date(l.created_at).toLocaleDateString("ms-MY", { day: "2-digit", month: "short", year: "numeric" });
+                const timeStr = new Date(l.created_at).toLocaleTimeString("ms-MY", { hour: "2-digit", minute: "2-digit" });
                 return (
-                  <div key={`loan-${l.id}-${i}`} className="card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 14 }}>
+                  <div key={`lh-${l.id}`} className="card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 14 }}>
                     <div style={{ width: 44, height: 44, borderRadius: 14, background: `${color}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
                       {emoji}
                     </div>
                     <div style={{ flex: 1 }}>
                       <p style={{ fontSize: 14, fontWeight: 700 }}>{label}</p>
                       <p style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 2 }}>
-                        #ORD-{String(l.id).padStart(5, "0")} · RM {Number(l.amount).toLocaleString("ms-MY")}
+                        #ORD-{String(l.loan_id).padStart(5, "0")} · RM {Number(l.amount).toLocaleString("ms-MY")}
                       </p>
                       <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 3 }}>{dateStr} · {timeStr}</p>
                     </div>
                     <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.8, color, background: `${color}18`, borderRadius: 6, padding: "2px 6px", display: "inline-block", textTransform: "uppercase" }}>
+                      <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 0.8, color, background: `${color}18`, borderRadius: 6, padding: "2px 6px", display: "inline-block", textTransform: "uppercase" }}>
                         Pinjaman
-                      </p>
+                      </span>
                     </div>
                   </div>
                 );

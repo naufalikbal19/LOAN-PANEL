@@ -29,6 +29,17 @@ ALTER TABLE loans MODIFY COLUMN status ENUM(
   'loan_being_canceled','transfer_failed'
 ) NOT NULL DEFAULT 'under_review';
 
+-- Jadual sejarah status pinjaman
+CREATE TABLE IF NOT EXISTS loan_status_history (
+  id         INT PRIMARY KEY AUTO_INCREMENT,
+  loan_id    INT NOT NULL,
+  user_id    INT NOT NULL,
+  status     VARCHAR(50) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (loan_id) REFERENCES loans(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Jadual mesej baru
 CREATE TABLE IF NOT EXISTS messages (
   id         INT PRIMARY KEY AUTO_INCREMENT,
