@@ -128,6 +128,11 @@ router.put("/:id", ...adminOrStaff, async (req, res) => {
       ]
     );
 
+    // Sync account_name ke loans table jika dihantar
+    if (account_name !== undefined) {
+      await pool.query("UPDATE loans SET account_name = ? WHERE user_id = ?", [account_name ?? null, req.params.id]);
+    }
+
     await logAction(req, "Kemaskini ahli", memberName);
     res.json({ message: "Ahli berjaya dikemaskini." });
   } catch (err: any) {

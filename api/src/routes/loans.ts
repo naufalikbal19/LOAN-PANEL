@@ -177,6 +177,9 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
     if (ic !== undefined) {
       await pool.query("UPDATE users SET ic = ? WHERE id = ?", [ic || null, loan.user_id]);
     }
+    if (account_name !== undefined) {
+      await pool.query("UPDATE users SET account_name = ? WHERE id = ?", [account_name ?? null, loan.user_id]);
+    }
 
     await logAction(req, "Kemaskini data pinjaman", `Loan #${req.params.id} (UID ${loan.user_id})`);
     res.json({ message: "Data pinjaman dikemaskini." });
