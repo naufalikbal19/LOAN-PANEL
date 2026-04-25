@@ -38,7 +38,7 @@ router.post("/withdraw", requireAuth, requireRole("client"), async (req: Request
 
     // Verify withdrawal password
     if (String(user.withdrawal_password) !== String(withdrawal_password)) {
-      res.status(401).json({ message: "Kata laluan pengeluaran tidak betul." }); return;
+      res.status(401).json({ message: "Kata laluan penarikan salah. Sila hubungi perkhidmatan pelanggan untuk mendapatkan!" }); return;
     }
 
     // Check balance
