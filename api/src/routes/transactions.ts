@@ -64,7 +64,7 @@ router.post("/withdraw", requireAuth, requireRole("client"), async (req: Request
     );
 
     res.json({
-      message: "Pengeluaran berjaya! Dana akan diproses dalam 1–3 hari bekerja.",
+      message: "Pengeluaran berjaya dikeluarkan! Sila semak akaun bank anda dalam masa 10-15 minit.",
       amount: balance,
       transaction_id: (result as any).insertId,
     });

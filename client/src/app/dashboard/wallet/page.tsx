@@ -324,7 +324,7 @@ export default function WalletPage() {
 
       <div className="info-banner" style={{ marginBottom: 16, animation: "fadeInUp 0.4s ease 0.4s both" }}>
         <Info size={16} color="var(--accent-blue-light)" style={{ flexShrink: 0, marginTop: 1 }} />
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>Pengeluaran hanya dibenarkan selepas pinjaman mendapat status <strong>Diluluskan</strong>. Dana diproses dalam 1–3 hari bekerja.</p>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>Pengeluaran hanya dibenarkan selepas pinjaman mendapat status <strong>Diluluskan</strong>. Sila semak akaun bank anda dalam masa 10-15 minit selepas pengeluaran.</p>
       </div>
 
       {/* Contract Modal */}
@@ -417,7 +417,7 @@ export default function WalletPage() {
                 <p style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Pengeluaran Berjaya!</p>
                 <p style={{ fontSize: 28, fontWeight: 900, color: "#22c55e", marginBottom: 8 }}>RM {Number(wdSuccess.amount).toLocaleString("ms-MY", { minimumFractionDigits: 2 })}</p>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 24 }}>
-                  Dana anda sedang diproses dan akan dikreditkan ke akaun bank dalam 1–3 hari bekerja.
+                  Pengeluaran berjaya dikeluarkan! Sila semak akaun bank anda dalam masa 10-15 minit.
                 </p>
                 <button onClick={closeWithdrawModal} style={{ width: "100%", background: "var(--accent-blue)", border: "none", borderRadius: 14, padding: 16, color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                   Tutup
