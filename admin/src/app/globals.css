@@ -6,6 +6,7 @@
   --bg-secondary: #0f0f0f;
   --bg-card: #161616;
   --bg-card-inner: #1e1e1e;
+  --nav-bg: #0c0c0c;
   --accent-gold: #c9a84c;
   --accent-gold-light: #e2c060;
   --accent-gold-hover: #a88a38;
@@ -20,6 +21,20 @@
   --shadow-card: 0 8px 32px rgba(0,0,0,0.6);
   --radius-card: 20px;
   --radius-btn: 12px;
+}
+
+.light {
+  --bg-primary: #f4f4f5;
+  --bg-secondary: #e4e4e7;
+  --bg-card: #ffffff;
+  --bg-card-inner: #f1f1f1;
+  --nav-bg: #ffffff;
+  --text-primary: #111111;
+  --text-secondary: #555555;
+  --text-muted: #999999;
+  --border-color: #e0e0e0;
+  --border-light: #d4d4d4;
+  --shadow-card: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }

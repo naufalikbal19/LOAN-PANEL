@@ -89,8 +89,8 @@ export default function Sidebar({ collapsed, onToggle, isMobile, mobileOpen, onM
       <aside style={{
         width: sidebarWidth,
         minHeight: "100vh",
-        background: "#0c0c0c",
-        borderRight: "1px solid #1e1e1e",
+        background: "var(--nav-bg)",
+        borderRight: "1px solid var(--border-color)",
         display: "flex",
         flexDirection: "column",
         transition: "transform 0.3s ease, width 0.25s ease",
@@ -104,20 +104,20 @@ export default function Sidebar({ collapsed, onToggle, isMobile, mobileOpen, onM
         transform,
       }}>
         {/* Brand */}
-        <div style={{ padding: "16px 16px", borderBottom: "1px solid #1e1e1e", display: "flex", alignItems: "center", gap: 10, justifyContent: (collapsed && !isMobile) ? "center" : "space-between" }}>
+        <div style={{ padding: "16px 16px", borderBottom: "1px solid var(--border-color)", display: "flex", alignItems: "center", gap: 10, justifyContent: (collapsed && !isMobile) ? "center" : "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", flex: 1 }} onClick={(!isMobile && !collapsed) ? onToggle : undefined}>
             <div style={{ width: 34, height: 34, background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <Shield size={18} color="#c9a84c" strokeWidth={1.5} />
             </div>
             {(isMobile || !collapsed) && (
               <div>
-                <p style={{ fontSize: 13, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>Admin Panel</p>
-                <p style={{ fontSize: 10, color: "#888" }}>Pinjaman Barakah</p>
+                <p style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", lineHeight: 1.2 }}>Admin Panel</p>
+                <p style={{ fontSize: 10, color: "var(--text-secondary)" }}>Pinjaman Barakah</p>
               </div>
             )}
           </div>
           {isMobile && (
-            <button onClick={onMobileClose} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid #2e2e2e", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#888", flexShrink: 0 }}>
+            <button onClick={onMobileClose} style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-color)", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-secondary)", flexShrink: 0 }}>
               <X size={16} />
             </button>
           )}
@@ -141,7 +141,7 @@ export default function Sidebar({ collapsed, onToggle, isMobile, mobileOpen, onM
                       width: "100%", display: "flex", alignItems: "center", gap: 10,
                       padding: showLabel ? "11px 16px" : "11px 0",
                       background: parentActive ? "rgba(201,168,76,0.08)" : "transparent",
-                      border: "none", cursor: "pointer", color: parentActive ? "#c9a84c" : "#888",
+                      border: "none", cursor: "pointer", color: parentActive ? "#c9a84c" : "var(--text-secondary)",
                       transition: "all 0.15s", justifyContent: showLabel ? "flex-start" : "center",
                       borderLeft: parentActive ? "2px solid #c9a84c" : "2px solid transparent",
                     }}
@@ -153,8 +153,8 @@ export default function Sidebar({ collapsed, onToggle, isMobile, mobileOpen, onM
                     </>}
                   </button>
                   {showLabel && isOpen && item.children?.map((child) => (
-                    <Link key={child.href} href={child.href} onClick={handleNavClick} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 16px 9px 44px", color: isActive(child.href) ? "#c9a84c" : "#666", fontSize: 13, fontWeight: isActive(child.href) ? 700 : 500, textDecoration: "none", background: isActive(child.href) ? "rgba(201,168,76,0.06)" : "transparent", transition: "all 0.15s", borderLeft: isActive(child.href) ? "2px solid #c9a84c" : "2px solid transparent" }}>
-                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: isActive(child.href) ? "#c9a84c" : "#444", flexShrink: 0 }} />
+                    <Link key={child.href} href={child.href} onClick={handleNavClick} style={{ display: "flex", alignItems: "center", gap: 8, padding: "9px 16px 9px 44px", color: isActive(child.href) ? "#c9a84c" : "var(--text-secondary)", fontSize: 13, fontWeight: isActive(child.href) ? 700 : 500, textDecoration: "none", background: isActive(child.href) ? "rgba(201,168,76,0.06)" : "transparent", transition: "all 0.15s", borderLeft: isActive(child.href) ? "2px solid #c9a84c" : "2px solid transparent" }}>
+                      <div style={{ width: 5, height: 5, borderRadius: "50%", background: isActive(child.href) ? "#c9a84c" : "var(--text-muted)", flexShrink: 0 }} />
                       {child.label}
                     </Link>
                   ))}
@@ -166,7 +166,7 @@ export default function Sidebar({ collapsed, onToggle, isMobile, mobileOpen, onM
               <Link key={item.href} href={item.href!} onClick={handleNavClick} style={{
                 display: "flex", alignItems: "center", gap: 10,
                 padding: showLabel ? "11px 16px" : "11px 0",
-                color: isActive(item.href!) ? "#c9a84c" : "#888",
+                color: isActive(item.href!) ? "#c9a84c" : "var(--text-secondary)",
                 textDecoration: "none", transition: "all 0.15s",
                 background: isActive(item.href!) ? "rgba(201,168,76,0.08)" : "transparent",
                 borderLeft: isActive(item.href!) ? "2px solid #c9a84c" : "2px solid transparent",
@@ -180,7 +180,7 @@ export default function Sidebar({ collapsed, onToggle, isMobile, mobileOpen, onM
         </nav>
 
         {/* Logout */}
-        <div style={{ borderTop: "1px solid #1e1e1e", padding: (isMobile || !collapsed) ? "12px 16px" : "12px 0" }}>
+        <div style={{ borderTop: "1px solid var(--border-color)", padding: (isMobile || !collapsed) ? "12px 16px" : "12px 0" }}>
           <button onClick={handleLogout} style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: (isMobile || !collapsed) ? "8px 10px" : "8px 0", background: "transparent", border: "none", cursor: "pointer", color: "#ef4444", borderRadius: 8, transition: "all 0.15s", justifyContent: (isMobile || !collapsed) ? "flex-start" : "center" }}>
             <LogOut size={16} style={{ flexShrink: 0 }} />
             {(isMobile || !collapsed) && <span style={{ fontSize: 13, fontWeight: 600 }}>Log Keluar</span>}

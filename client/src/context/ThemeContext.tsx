@@ -7,14 +7,13 @@ interface ThemeCtx { theme: Theme; toggle: () => void; }
 const ThemeContext = createContext<ThemeCtx>({ theme: "dark", toggle: () => {} });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     const saved = localStorage.getItem("theme") as Theme | null;
-    if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-      document.documentElement.classList.toggle("light", saved === "light");
-    }
+    const t: Theme = (saved === "light" || saved === "dark") ? saved : "light";
+    setTheme(t);
+    document.documentElement.classList.toggle("light", t === "light");
   }, []);
 
   const toggle = () => {

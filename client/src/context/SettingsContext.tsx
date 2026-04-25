@@ -116,7 +116,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   // Apply CSS vars on settings load + on theme-change event
   useEffect(() => {
-    const theme = (localStorage.getItem("theme") as "dark" | "light") || "dark";
+    const theme = (localStorage.getItem("theme") as "dark" | "light") || "light";
     applyThemeVars(settings, theme);
 
     const handler = (e: Event) => {
