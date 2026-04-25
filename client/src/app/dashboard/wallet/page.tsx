@@ -185,6 +185,12 @@ export default function WalletPage() {
                 <ArrowDownToLine size={14} /> WITHDRAW
               </button>
             </div>
+            {latestLoan?.keterangan && (
+              <div style={{ marginTop: 10, background: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.18)", borderRadius: 10, padding: "9px 12px" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "var(--accent-gold)", marginBottom: 3 }}>Keterangan</p>
+                <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5, margin: 0 }}>{latestLoan.keterangan}</p>
+              </div>
+            )}
             {latestLoan && latestLoan.status !== "loan_approved" && withdrawal_warning && (
               <p style={{ fontSize: 11, color: "#f59e0b", marginTop: 10, textAlign: "center" }}>
                 {withdrawal_warning}
