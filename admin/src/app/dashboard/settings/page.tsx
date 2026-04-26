@@ -105,18 +105,18 @@ type ThemeTab = "dark" | "light";
 function ColorRow({ label, hint, value, onChange }: { label: string; hint: string; value: string; onChange: (v: string) => void }) {
   const isValid = /^#[0-9a-fA-F]{6}$/.test(value);
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #1a1a1a" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid var(--bg-card)" }}>
       <div style={{ position: "relative", flexShrink: 0 }}>
         <input
           type="color"
           value={isValid ? value : "#888888"}
           onChange={(e) => onChange(e.target.value)}
-          style={{ width: 40, height: 40, borderRadius: 10, border: "1px solid #2e2e2e", cursor: "pointer", padding: 2, background: "none" }}
+          style={{ width: 40, height: 40, borderRadius: 10, border: "1px solid var(--border-light)", cursor: "pointer", padding: 2, background: "none" }}
         />
       </div>
       <div style={{ flex: 1 }}>
-        <p style={{ fontSize: 13, fontWeight: 600, color: "#ddd", marginBottom: 2 }}>{label}</p>
-        <p style={{ fontSize: 11, color: "#555" }}>{hint}</p>
+        <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", marginBottom: 2 }}>{label}</p>
+        <p style={{ fontSize: 11, color: "var(--text-muted)" }}>{hint}</p>
       </div>
       <input
         type="text"
@@ -125,9 +125,9 @@ function ColorRow({ label, hint, value, onChange }: { label: string; hint: strin
         maxLength={7}
         placeholder="#000000"
         style={{
-          width: 90, background: "#1a1a1a",
-          border: `1px solid ${isValid ? "#2e2e2e" : "#ef4444"}`,
-          borderRadius: 8, padding: "7px 10px", color: "#fff",
+          width: 90, background: "var(--bg-card)",
+          border: `1px solid ${isValid ? "var(--border-light)" : "#ef4444"}`,
+          borderRadius: 8, padding: "7px 10px", color: "var(--text-primary)",
           fontSize: 13, outline: "none", fontFamily: "monospace", textAlign: "center",
         }}
       />
@@ -192,16 +192,16 @@ export default function SettingsPage() {
   };
 
   const inputStyle: React.CSSProperties = {
-    background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 10,
-    padding: "12px 14px", color: "#fff", fontSize: 14, width: "100%",
+    background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", borderRadius: 10,
+    padding: "12px 14px", color: "var(--text-primary)", fontSize: 14, width: "100%",
     outline: "none", fontFamily: "inherit", transition: "border-color 0.2s",
   };
   const focusedInputStyle = (key: keyof Settings): React.CSSProperties => ({
-    ...inputStyle, border: `1px solid ${focusedField === key ? "#c9a84c" : "#2e2e2e"}`,
+    ...inputStyle, border: `1px solid ${focusedField === key ? "#c9a84c" : "var(--border-light)"}`,
   });
 
   if (loading) return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300, color: "#888" }}>Memuatkan tetapan...</div>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300, color: "var(--text-secondary)" }}>Memuatkan tetapan...</div>
   );
 
   const p = themeTab; // "dark" | "light"
@@ -210,7 +210,7 @@ export default function SettingsPage() {
     <div style={{ maxWidth: 740 }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Settings</h1>
-        <p style={{ color: "#888", fontSize: 13 }}>Konfigurasi maklumat, rupa syarikat, dan tema klien</p>
+        <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Konfigurasi maklumat, rupa syarikat, dan tema klien</p>
       </div>
 
       {/* ── Company ── */}
@@ -231,7 +231,7 @@ export default function SettingsPage() {
           <input value={settings.logo_url} onChange={set("logo_url")} placeholder="https://..." style={focusedInputStyle("logo_url")} onFocus={() => setFocusedField("logo_url")} onBlur={() => setFocusedField(null)} />
         </Field>
         {settings.logo_url && (
-          <div style={{ marginBottom: 16, padding: 10, background: "#1a1a1a", borderRadius: 8, display: "inline-block" }}>
+          <div style={{ marginBottom: 16, padding: 10, background: "var(--bg-card)", borderRadius: 8, display: "inline-block" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={settings.logo_url} alt="logo" style={{ height: 44, objectFit: "contain" }} onError={(e) => ((e.target as HTMLImageElement).style.display="none")} />
           </div>
@@ -255,7 +255,7 @@ export default function SettingsPage() {
       {/* ── Teks Amaran Pengeluaran ── */}
       <section style={card}>
         <h2 style={sectionTitle}><FileText size={13} style={iconInline} />Teks Amaran Pengeluaran</h2>
-        <p style={{ fontSize: 12, color: "#666", marginBottom: 16 }}>Teks amaran yang dipaparkan kepada klien apabila pinjaman belum diluluskan. Kosongkan untuk sembunyikan amaran.</p>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 16 }}>Teks amaran yang dipaparkan kepada klien apabila pinjaman belum diluluskan. Kosongkan untuk sembunyikan amaran.</p>
         <Field label="Teks Amaran">
           <input
             value={settings.withdrawal_warning}
@@ -276,20 +276,20 @@ export default function SettingsPage() {
       {/* ── Tema Klien ── */}
       <section style={card}>
         <h2 style={sectionTitle}><Palette size={13} style={iconInline} />Tema Klien</h2>
-        <p style={{ fontSize: 12, color: "#666", marginBottom: 20 }}>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 20 }}>
           Kustomisasi warna aplikasi klien untuk Dark Mode dan Light Mode secara berasingan. Perubahan aktif serta-merta selepas disimpan.
         </p>
 
         {/* Tab switcher + Reset */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 8, background: "#1a1a1a", borderRadius: 12, padding: 4 }}>
+          <div style={{ display: "flex", gap: 8, background: "var(--bg-card)", borderRadius: 12, padding: 4 }}>
             {(["dark","light"] as ThemeTab[]).map((t) => (
               <button key={t} onClick={() => setThemeTab(t)} style={{
                 display: "flex", alignItems: "center", gap: 7,
                 padding: "9px 20px", borderRadius: 9, border: "none", cursor: "pointer",
                 fontFamily: "inherit", fontWeight: 700, fontSize: 13,
                 background: themeTab === t ? (t === "dark" ? "#2a2a2a" : "#fff") : "transparent",
-                color: themeTab === t ? (t === "dark" ? "#c9a84c" : "#333") : "#555",
+                color: themeTab === t ? (t === "dark" ? "#c9a84c" : "#333") : "var(--text-secondary)",
                 boxShadow: themeTab === t ? "0 1px 4px rgba(0,0,0,0.4)" : "none",
                 transition: "all 0.2s",
               }}>
@@ -303,13 +303,13 @@ export default function SettingsPage() {
             title={`Reset warna ${themeTab === "dark" ? "Dark" : "Light"} Mode ke default`}
             style={{
               display: "flex", alignItems: "center", gap: 6,
-              padding: "9px 16px", borderRadius: 9, border: "1px solid #2e2e2e",
-              background: "#1a1a1a", color: "#888", cursor: "pointer",
+              padding: "9px 16px", borderRadius: 9, border: "1px solid var(--border-light)",
+              background: "var(--bg-card)", color: "var(--text-secondary)", cursor: "pointer",
               fontFamily: "inherit", fontWeight: 600, fontSize: 12,
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#ef4444"; (e.currentTarget as HTMLButtonElement).style.color = "#ef4444"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "#2e2e2e"; (e.currentTarget as HTMLButtonElement).style.color = "#888"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.borderColor = "var(--border-light)"; (e.currentTarget as HTMLButtonElement).style.color = "var(--text-secondary)"; }}
           >
             ↺ Reset {themeTab === "dark" ? "Dark" : "Light"} ke Default
           </button>
@@ -319,7 +319,7 @@ export default function SettingsPage() {
         {THEME_GROUPS.map((group) => (
           <div key={group.title} style={{ marginBottom: 24 }}>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#c9a84c", marginBottom: 4 }}>{group.title}</p>
-            <div style={{ background: "#0e0e0e", borderRadius: 12, border: "1px solid #1e1e1e", padding: "0 14px" }}>
+            <div style={{ background: "var(--bg-primary)", borderRadius: 12, border: "1px solid var(--border-color)", padding: "0 14px" }}>
               {group.vars.map(({ key, label, hint }) => {
                 const fullKey = `${p}_${key}` as keyof Settings;
                 return (
@@ -341,7 +341,7 @@ export default function SettingsPage() {
             style={{ ...inputStyle, marginBottom: 10 }}
           />
           {(settings[`${p}_bg_image` as keyof Settings] as string) && (
-            <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid #2e2e2e", height: 90, position: "relative" }}>
+            <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid var(--border-light)", height: 90, position: "relative" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={settings[`${p}_bg_image` as keyof Settings] as string} alt="bg preview" style={{ width: "100%", height: "100%", objectFit: "cover" }} onError={(e) => ((e.target as HTMLImageElement).style.display="none")} />
               <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.45)", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -358,10 +358,10 @@ export default function SettingsPage() {
       {/* ── Keterangan Templates ── */}
       <section style={card}>
         <h2 style={sectionTitle}><FileText size={13} style={iconInline} />Template Keterangan Pinjaman</h2>
-        <p style={{ fontSize: 12, color: "#666", marginBottom: 20 }}>Teks ini auto-diisi apabila status pinjaman ditukar. Staff boleh edit secara manual.</p>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 20 }}>Teks ini auto-diisi apabila status pinjaman ditukar. Staff boleh edit secara manual.</p>
         {KETERANGAN_FIELDS.map(({ key, label, badgeBg, badgeColor }) => (
           <div key={key} style={{ marginBottom: 20 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "#666", marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "var(--text-secondary)", marginBottom: 8, display: "flex", alignItems: "center", gap: 8 }}>
               <FileText size={11} />
               <span style={{ background: badgeBg, color: badgeColor, padding: "2px 8px", borderRadius: 8, fontSize: 10, fontWeight: 700 }}>{label}</span>
             </label>
@@ -371,7 +371,7 @@ export default function SettingsPage() {
               onFocus={() => setFocusedField(key)}
               onBlur={() => setFocusedField(null)}
               rows={3}
-              style={{ background: "#1e1e1e", border: `1px solid ${focusedField === key ? "#c9a84c" : "#2e2e2e"}`, borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 13, width: "100%", outline: "none", fontFamily: "inherit", resize: "vertical", lineHeight: 1.6, transition: "border-color 0.2s", boxSizing: "border-box" }}
+              style={{ background: "var(--bg-card-inner)", border: `1px solid ${focusedField === key ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 10, padding: "12px 14px", color: "var(--text-primary)", fontSize: 13, width: "100%", outline: "none", fontFamily: "inherit", resize: "vertical", lineHeight: 1.6, transition: "border-color 0.2s", boxSizing: "border-box" }}
             />
           </div>
         ))}
@@ -637,9 +637,9 @@ function ThemePreview({ s, p }: { s: Settings; p: string }) {
             style={{
               display: "flex", alignItems: "center", gap: 5,
               padding: "7px 14px", borderRadius: 8, border: "1px solid",
-              borderColor: page === pg.id ? "#c9a84c" : "#2e2e2e",
-              background: page === pg.id ? "rgba(201,168,76,0.1)" : "#1a1a1a",
-              color: page === pg.id ? "#c9a84c" : "#666",
+              borderColor: page === pg.id ? "#c9a84c" : "var(--border-light)",
+              background: page === pg.id ? "rgba(201,168,76,0.1)" : "var(--bg-card)",
+              color: page === pg.id ? "#c9a84c" : "var(--text-secondary)",
               fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
               transition: "all 0.15s",
             }}
@@ -701,11 +701,11 @@ function ThemePreview({ s, p }: { s: Settings; p: string }) {
           { label: "Border Utama",     color: borderColor },
           { label: "Bottom Nav",       color: navBg },
         ].map(({ label, color }) => (
-          <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, background: "#0e0e0e", borderRadius: 8, padding: "7px 10px", border: "1px solid #1e1e1e" }}>
-            <div style={{ width: 20, height: 20, borderRadius: 5, background: color, border: "1px solid #333", flexShrink: 0 }} />
+          <div key={label} style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg-primary)", borderRadius: 8, padding: "7px 10px", border: "1px solid var(--border-color)" }}>
+            <div style={{ width: 20, height: 20, borderRadius: 5, background: color, border: "1px solid var(--border-light)", flexShrink: 0 }} />
             <div>
-              <p style={{ fontSize: 10, fontWeight: 600, color: "#ccc", margin: 0 }}>{label}</p>
-              <p style={{ fontSize: 9, color: "#555", margin: 0, fontFamily: "monospace" }}>{color}</p>
+              <p style={{ fontSize: 10, fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{label}</p>
+              <p style={{ fontSize: 9, color: "var(--text-muted)", margin: 0, fontFamily: "monospace" }}>{color}</p>
             </div>
           </div>
         ))}
@@ -718,7 +718,7 @@ function ThemePreview({ s, p }: { s: Settings; p: string }) {
 function Field({ label, icon: Icon, children }: { label: string; icon?: React.ElementType; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "#888", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+      <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-secondary)", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
         {Icon && <Icon size={12} />} {label}
       </label>
       {children}
@@ -726,6 +726,6 @@ function Field({ label, icon: Icon, children }: { label: string; icon?: React.El
   );
 }
 
-const card: React.CSSProperties = { background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, padding: 24, marginBottom: 20 };
+const card: React.CSSProperties = { background: "var(--bg-primary)", border: "1px solid var(--border-color)", borderRadius: 16, padding: 24, marginBottom: 20 };
 const sectionTitle: React.CSSProperties = { fontSize: 11, fontWeight: 700, marginBottom: 20, color: "#c9a84c", letterSpacing: 1, textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 };
 const iconInline: React.CSSProperties = { display: "inline", verticalAlign: "middle" };
