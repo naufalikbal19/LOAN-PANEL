@@ -5,13 +5,13 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 
-const payments = [
-  { id: "boost",   label: "Boost",   emoji: "⚡", bg: "#fef2f2" },
-  { id: "gxbank",  label: "GXBank",  emoji: "🏦", bg: "#eff6ff" },
-  { id: "ewallet", label: "eWallet", emoji: "💳", bg: "#f5f3ff" },
-  { id: "maybank", label: "Maybank", emoji: "🏧", bg: "#fffbeb" },
-  { id: "cimb",    label: "CIMB",    emoji: "🔴", bg: "#fef2f2" },
-  { id: "rhb",     label: "RHB",     emoji: "🟢", bg: "#ecfdf5" },
+const paymentDefaults = [
+  { id: "boost",   label: "Boost",   emoji: "⚡" },
+  { id: "gxbank",  label: "GXBank",  emoji: "🏦" },
+  { id: "ewallet", label: "eWallet", emoji: "💳" },
+  { id: "maybank", label: "Maybank", emoji: "🏧" },
+  { id: "cimb",    label: "CIMB",    emoji: "🔴" },
+  { id: "rhb",     label: "RHB",     emoji: "🟢" },
 ];
 
 const statusLabel: Record<string, string> = {
@@ -51,7 +51,8 @@ interface Loan {
 interface Tx { id: number; type: string; amount: number; description: string | null; created_at: string; }
 
 export default function WalletPage() {
-  const { withdrawal_warning } = useSettings();
+  const { withdrawal_warning, payment_img_1, payment_img_2, payment_img_3, payment_img_4, payment_img_5, payment_img_6 } = useSettings() as any;
+  const paymentImages = [payment_img_1, payment_img_2, payment_img_3, payment_img_4, payment_img_5, payment_img_6];
   const [show, setShow] = useState(true);
   const [balance, setBalance] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
@@ -200,19 +201,6 @@ export default function WalletPage() {
         </div>
       </div>
 
-      {/* Payment Methods */}
-      <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.2s both" }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Kaedah Pembayaran</p>
-        <div className="payment-grid">
-          {payments.map((m) => (
-            <div key={m.id} className="payment-item">
-              <div className="payment-logo" style={{ background: m.bg }}>{m.emoji}</div>
-              <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)" }}>{m.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Loan Details */}
       {latestLoan && (
         <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.25s both" }}>
@@ -329,6 +317,28 @@ export default function WalletPage() {
           </div>
         )}
       </div>
+
+      {/* Payment Methods */}
+      {paymentImages.some(Boolean) && (
+        <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.38s both" }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Kaedah Pembayaran</p>
+          <div className="payment-grid">
+            {paymentImages.map((imgUrl: string, i: number) => {
+              if (!imgUrl) return null;
+              const def = paymentDefaults[i] ?? { label: `Pembayaran ${i + 1}`, emoji: "💳" };
+              return (
+                <div key={i} className="payment-item">
+                  <div className="payment-logo" style={{ background: "var(--bg-card-inner)" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={imgUrl} alt={def.label} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)" }}>{def.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       <div className="info-banner" style={{ marginBottom: 16, animation: "fadeInUp 0.4s ease 0.4s both" }}>
         <Info size={16} color="var(--accent-blue-light)" style={{ flexShrink: 0, marginTop: 1 }} />
