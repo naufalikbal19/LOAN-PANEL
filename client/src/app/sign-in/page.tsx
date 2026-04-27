@@ -29,8 +29,14 @@ export default function SignInPage() {
 
   const validate = () => {
     const e: typeof errors = {};
-    const phoneErr = validatePhone(phone);
-    if (phoneErr) e.phone = t("err_phone_required");
+    if (!phone.trim()) {
+      e.phone = t("err_phone_required");
+    } else if (!/^(01|60)/.test(phone)) {
+      e.phone = "Nombor telefon mesti bermula dengan 01 atau 60.";
+    } else {
+      const phoneErr = validatePhone(phone);
+      if (phoneErr) e.phone = t("err_phone_required");
+    }
     if (!password.trim()) e.password = t("err_password_required");
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -86,7 +92,12 @@ export default function SignInPage() {
             type="tel"
             placeholder="0123456789"
             value={phone}
-            onChange={(e) => { setPhone(e.target.value); setErrors((p) => ({ ...p, phone: undefined })); setApiError(""); }}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[\s+]/g, "");
+              setPhone(raw);
+              setErrors((p) => ({ ...p, phone: undefined }));
+              setApiError("");
+            }}
           />
           {errors.phone && <p style={{ color: "#ef4444", fontSize: 12, marginTop: 6 }}>{errors.phone}</p>}
         </div>
