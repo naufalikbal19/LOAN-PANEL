@@ -15,6 +15,9 @@ interface Settings {
   keterangan_credit_score_low: string; keterangan_payment_processing: string;
   keterangan_loan_being_canceled: string;
   keterangan_transfer_failed: string;
+  // Diiktiraf Oleh
+  diiktiraf_img_1: string; diiktiraf_img_2: string;
+  diiktiraf_img_3: string; diiktiraf_img_4: string;
   // Dark
   dark_accent: string;
   dark_bg_primary: string; dark_bg_secondary: string;
@@ -38,6 +41,7 @@ const DEFAULTS: Settings = {
   keterangan_under_review: "", keterangan_loan_approved: "", keterangan_credit_frozen: "",
   keterangan_unfrozen_processing: "", keterangan_credit_score_low: "",
   keterangan_payment_processing: "", keterangan_loan_being_canceled: "", keterangan_transfer_failed: "",
+  diiktiraf_img_1: "", diiktiraf_img_2: "", diiktiraf_img_3: "", diiktiraf_img_4: "",
   dark_accent: "#c9a84c",
   dark_bg_primary: "#080808", dark_bg_secondary: "#0f0f0f",
   dark_bg_card: "#161616",    dark_bg_card_inner: "#1e1e1e",
@@ -375,6 +379,40 @@ export default function SettingsPage() {
             />
           </div>
         ))}
+      </section>
+
+      {/* ── Gambar Diiktiraf Oleh ── */}
+      <section style={card}>
+        <h2 style={sectionTitle}><Image size={13} style={iconInline} />Gambar "Diiktiraf Oleh" (Footer Dashboard Klien)</h2>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 20 }}>
+          Sehingga 4 gambar (logo/badge) yang dipaparkan di bahagian bawah dashboard klien. Kosongkan slot untuk sembunyikan. Gunakan URL gambar (PNG/JPG/SVG).
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          {([
+            { key: "diiktiraf_img_1" as keyof Settings, label: "Gambar 1" },
+            { key: "diiktiraf_img_2" as keyof Settings, label: "Gambar 2" },
+            { key: "diiktiraf_img_3" as keyof Settings, label: "Gambar 3" },
+            { key: "diiktiraf_img_4" as keyof Settings, label: "Gambar 4" },
+          ] as { key: keyof Settings; label: string }[]).map(({ key, label }) => (
+            <div key={key}>
+              <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" as const, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>{label}</label>
+              <input
+                value={settings[key] as string}
+                onChange={set(key)}
+                placeholder="https://... atau /uploads/..."
+                style={focusedInputStyle(key)}
+                onFocus={() => setFocusedField(key)}
+                onBlur={() => setFocusedField(null)}
+              />
+              {(settings[key] as string) && (
+                <div style={{ marginTop: 8, background: "var(--bg-card)", borderRadius: 8, padding: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-color)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={settings[key] as string} alt={label} style={{ height: 40, maxWidth: 80, objectFit: "contain" }} onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Status */}

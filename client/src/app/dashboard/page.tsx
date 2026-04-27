@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSettings } from "@/context/SettingsContext";
 import { apiFetch } from "@/lib/api";
 
-const trustBadges = [
+const defaultBadges = [
   { label: "PIDM", color: "#1a56db", text: "P" },
   { label: "KDN",  emoji: "🇲🇾" },
   { label: "CWSP", color: "#7c3aed", text: "C" },
@@ -44,7 +44,8 @@ interface Loan {
 }
 
 export default function DashboardPage() {
-  const { company_name, company_tagline } = useSettings();
+  const { company_name, company_tagline, diiktiraf_img_1, diiktiraf_img_2, diiktiraf_img_3, diiktiraf_img_4 } = useSettings() as any;
+  const badgeImages = [diiktiraf_img_1, diiktiraf_img_2, diiktiraf_img_3, diiktiraf_img_4];
   const [userName, setUserName] = useState("");
   const [loan, setLoan] = useState<Loan | null | undefined>(undefined);
 
@@ -156,12 +157,20 @@ export default function DashboardPage() {
       {/* Trust Badges */}
       <div className="animate-fade-in-up animate-delay-5">
         <p className="section-label">Diiktiraf Oleh</p>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", padding: "0 20px 16px" }}>
-          {trustBadges.map((b) => (
-            <div key={b.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, padding: 12, width: 72, height: 72, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              {b.emoji ? <span style={{ fontSize: 28 }}>{b.emoji}</span> : <div style={{ width: 42, height: 42, borderRadius: 10, background: b.color, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 16, fontWeight: 900 }}>{b.text}</div>}
-            </div>
-          ))}
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", padding: "0 20px 16px", flexWrap: "wrap" }}>
+          {defaultBadges.map((b, i) => {
+            const imgUrl = badgeImages[i];
+            return (
+              <div key={b.label} style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, padding: 10, width: 72, height: 72, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                {imgUrl
+                  ? <img src={imgUrl} alt={b.label} style={{ width: 52, height: 52, objectFit: "contain" }} />
+                  : b.emoji
+                    ? <span style={{ fontSize: 28 }}>{b.emoji}</span>
+                    : <div style={{ width: 42, height: 42, borderRadius: 10, background: b.color, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 16, fontWeight: 900 }}>{b.text}</div>
+                }
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
