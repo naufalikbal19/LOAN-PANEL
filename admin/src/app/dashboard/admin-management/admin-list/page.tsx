@@ -58,6 +58,7 @@ export default function AdminListPage() {
   });
 
   const token = typeof window !== "undefined" ? localStorage.getItem("admin_token") : "";
+  const adminRole = typeof window !== "undefined" ? localStorage.getItem("admin_role") : "";
 
   const fetchAdmins = async (q = "") => {
     setLoading(true);
@@ -163,9 +164,11 @@ export default function AdminListPage() {
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Admin List</h1>
           <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Urus akaun pentadbir dan kakitangan</p>
         </div>
-        <button onClick={() => { setShowAdd(true); setAddError(""); setAddForm(emptyAdd); }} style={{ display: "flex", alignItems: "center", gap: 8, background: "#c9a84c", color: "#000", border: "none", borderRadius: 10, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-          <Plus size={16} /> Tambah Admin
-        </button>
+        {adminRole === "admin" && (
+          <button onClick={() => { setShowAdd(true); setAddError(""); setAddForm(emptyAdd); }} style={{ display: "flex", alignItems: "center", gap: 8, background: "#c9a84c", color: "#000", border: "none", borderRadius: 10, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+            <Plus size={16} /> Tambah Admin
+          </button>
+        )}
       </div>
 
       <form onSubmit={handleSearch} style={{ display: "flex", gap: 8, marginBottom: 20, maxWidth: 400 }}>
@@ -219,7 +222,7 @@ export default function AdminListPage() {
                         <button onClick={() => openEdit(a)} style={{ padding: "5px 10px", background: "rgba(201,168,76,0.1)", border: "none", borderRadius: 7, color: "#c9a84c", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontFamily: "inherit" }}>
                           <Pencil size={12} /> Edit
                         </button>
-                        {!isSelf && (
+                        {adminRole === "admin" && !isSelf && (
                           <button onClick={() => setDeleteId(a.id)} style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", border: "none", borderRadius: 7, color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontFamily: "inherit" }}>
                             <Trash2 size={12} /> Padam
                           </button>
