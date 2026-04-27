@@ -29,7 +29,14 @@
       "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT user_id, amount, status FROM loans ORDER BY created_at DESC LIMIT 10;')",
       "Bash(echo \"Update balance done: $?\")",
       "Bash(/c/laragon/bin/mysql/mysql-8.4.3-winx64/bin/mysql.exe -u root loan_panel -e 'SELECT id, name, balance FROM users WHERE role='\\\\''client'\\\\'';')",
-      "Read(//c/Users/Admin/Documents/projek-guys/projek-2/**)"
+      "Read(//c/Users/Admin/Documents/projek-guys/projek-2/**)",
+      "Bash(grep -rn \"\\\\\"#[0-9a-fA-F]\\\\{3,6\\\\}\\\\\"\" --include=\"*.tsx\" app/dashboard/)",
+      "Bash(grep -rn \"background: \\\\\"#\\\\|color: \\\\\"#\\\\|borderColor: \\\\\"#\\\\|border: \\\\\"1px solid #\\\\|border: \\\\`1px solid #\" --include=\"*.tsx\" app/dashboard/)",
+      "Bash(grep -n '\"#[0-9a-fA-F]\\\\{3,6\\\\}\"' app/dashboard/layout.tsx)",
+      "Bash(sed -i 's/background: \"var\\(--bg-primary\\)\", border: \"1px solid var\\(--border-color\\)\", borderRadius: 16/background: \"var\\(--bg-card\\)\", border: \"1px solid var\\(--border-color\\)\", borderRadius: 16/g' console/page.tsx)",
+      "Bash(sed -i 's/borderTop: \"1px solid var\\(--bg-card\\)\", background: i % 2 === 0 ? \"transparent\" : \"var\\(--bg-primary\\)\"/borderTop: \"1px solid var\\(--border-color\\)\", background: i % 2 === 0 ? \"transparent\" : \"var\\(--bg-card-inner\\)\"/g' console/page.tsx)",
+      "Bash(python3 -)",
+      "Bash(node -e ' *)"
     ]
   }
 }
