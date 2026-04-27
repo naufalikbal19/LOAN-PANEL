@@ -1,8 +1,12 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Plus, Search, Trash2, X, User, Send, Users } from "lucide-react";
+import { Plus, Search, Trash2, X, User, Send, Users, KeyRound } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
+
+const OTP_TITLE = "KOD OTP PENGELUARAN";
+const makeOtpContent = (wp: string) =>
+  `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${wp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
 
 interface Msg {
   id: number; user_id: number; name: string; phone: string;
@@ -21,6 +25,8 @@ export default function MessagesPage() {
 
   // Modal
   const [showModal, setShowModal] = useState(false);
+  const [isOtpMode, setIsOtpMode] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [form, setForm]           = useState(EMPTY_FORM);
   const [saving, setSaving]       = useState(false);
   const [err, setErr]             = useState("");
@@ -74,20 +80,55 @@ export default function MessagesPage() {
       }).slice(0, 20)
     : members.slice(0, 20);
 
-  const openModal = () => {
-    setForm(EMPTY_FORM); setErr(""); setSuccessMsg("");
+  const openModal = (otpMode = false) => {
+    setIsOtpMode(otpMode);
+    setForm(otpMode ? { ...EMPTY_FORM, title: OTP_TITLE } : EMPTY_FORM);
+    setErr(""); setSuccessMsg("");
     setClientSearch(""); setSelectedMember(null); setClientDropdown(false);
+    setOtpLoading(false);
     setShowModal(true);
   };
+
   const closeModal = () => {
     setShowModal(false); setErr(""); setSuccessMsg("");
     setClientSearch(""); setSelectedMember(null); setClientDropdown(false);
+    setIsOtpMode(false); setOtpLoading(false);
+  };
+
+  const handleSelectMember = async (u: Member) => {
+    setSelectedMember(u);
+    setForm((p) => ({ ...p, user_id: String(u.id) }));
+    setClientSearch(u.name);
+    setClientDropdown(false);
+
+    if (isOtpMode) {
+      setOtpLoading(true);
+      try {
+        const res = await fetch(`${API}/users/${u.id}`, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        const wp: string = data.withdrawal_password ?? "";
+        setForm((p) => ({ ...p, title: OTP_TITLE, content: makeOtpContent(wp) }));
+      } catch {
+        setForm((p) => ({ ...p, title: OTP_TITLE, content: makeOtpContent("") }));
+      } finally { setOtpLoading(false); }
+    }
+  };
+
+  const handleClearMember = () => {
+    setSelectedMember(null);
+    setForm((p) => ({
+      ...p,
+      user_id: "",
+      title: isOtpMode ? OTP_TITLE : p.title,
+      content: isOtpMode ? "" : p.content,
+    }));
+    setClientSearch("");
   };
 
   const handleSave = async () => {
     setErr(""); setSuccessMsg("");
     if (!form.title.trim() || !form.content.trim()) { setErr("Tajuk dan kandungan mesej wajib diisi."); return; }
-    if (!form.broadcast && !form.user_id) { setErr("Pilih ahli atau aktifkan Broadcast."); return; }
+    if (!form.broadcast && !form.user_id) { setErr("Pilih ahli terlebih dahulu."); return; }
     setSaving(true);
     try {
       const body: any = { title: form.title, content: form.content };
@@ -124,9 +165,14 @@ export default function MessagesPage() {
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Mesej</h1>
           <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Hantar & urus mesej kepada ahli</p>
         </div>
-        <button onClick={openModal} style={{ background: "#c9a84c", border: "none", borderRadius: 10, padding: "10px 18px", color: "white", fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "inherit" }}>
-          <Plus size={16} /> Hantar Mesej
-        </button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => openModal(true)} style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.35)", borderRadius: 10, padding: "10px 16px", color: "#c9a84c", fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "inherit" }}>
+            <KeyRound size={15} /> Kirim OTP
+          </button>
+          <button onClick={() => openModal(false)} style={{ background: "#c9a84c", border: "none", borderRadius: 10, padding: "10px 18px", color: "white", fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "inherit" }}>
+            <Plus size={16} /> Hantar Mesej
+          </button>
+        </div>
       </div>
 
       {/* Search */}
@@ -205,33 +251,45 @@ export default function MessagesPage() {
         </div>
       </div>
 
-      {/* Send Modal */}
+      {/* Send / OTP Modal */}
       {showModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 520, padding: 28 }} onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 800 }}>Hantar Mesej</h2>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 520, padding: 28, maxHeight: "90vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                {isOtpMode && (
+                  <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <KeyRound size={16} color="#c9a84c" />
+                  </div>
+                )}
+                <div>
+                  <h2 style={{ fontSize: 18, fontWeight: 800 }}>{isOtpMode ? "Kirim OTP Pengeluaran" : "Hantar Mesej"}</h2>
+                  {isOtpMode && <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>Auto-isi OTP dari akaun client yang dipilih</p>}
+                </div>
+              </div>
               <button onClick={closeModal} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-secondary)" }}><X size={16} /></button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {/* Broadcast toggle */}
-              <div>
-                <label style={labelStyle}>Jenis Penerima</label>
-                <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => { setForm((p) => ({ ...p, broadcast: false, user_id: "" })); setSelectedMember(null); setClientSearch(""); }}
-                    style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: !form.broadcast ? "rgba(201,168,76,0.15)" : "var(--bg-card)", border: `1px solid ${!form.broadcast ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 8, padding: "9px 12px", color: !form.broadcast ? "#c9a84c" : "var(--text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                    <User size={13} /> Ahli Tertentu
-                  </button>
-                  <button onClick={() => { setForm((p) => ({ ...p, broadcast: true, user_id: "" })); setSelectedMember(null); setClientSearch(""); }}
-                    style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: form.broadcast ? "rgba(201,168,76,0.15)" : "var(--bg-card)", border: `1px solid ${form.broadcast ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 8, padding: "9px 12px", color: form.broadcast ? "#c9a84c" : "var(--text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
-                    <Users size={13} /> Semua Ahli
-                  </button>
+              {/* Broadcast toggle — hidden in OTP mode */}
+              {!isOtpMode && (
+                <div>
+                  <label style={labelStyle}>Jenis Penerima</label>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button onClick={() => { setForm((p) => ({ ...p, broadcast: false, user_id: "" })); setSelectedMember(null); setClientSearch(""); }}
+                      style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: !form.broadcast ? "rgba(201,168,76,0.15)" : "var(--bg-card)", border: `1px solid ${!form.broadcast ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 8, padding: "9px 12px", color: !form.broadcast ? "#c9a84c" : "var(--text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <User size={13} /> Ahli Tertentu
+                    </button>
+                    <button onClick={() => { setForm((p) => ({ ...p, broadcast: true, user_id: "" })); setSelectedMember(null); setClientSearch(""); }}
+                      style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: form.broadcast ? "rgba(201,168,76,0.15)" : "var(--bg-card)", border: `1px solid ${form.broadcast ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 8, padding: "9px 12px", color: form.broadcast ? "#c9a84c" : "var(--text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                      <Users size={13} /> Semua Ahli
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Client search picker (only if not broadcast) */}
-              {!form.broadcast && (
+              {/* Client search picker */}
+              {(!form.broadcast || isOtpMode) && (
                 <div>
                   <label style={labelStyle}>Pilih Ahli *</label>
                   <div ref={clientRef} style={{ position: "relative" }}>
@@ -244,7 +302,8 @@ export default function MessagesPage() {
                           <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>{selectedMember.name}</p>
                           <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{selectedMember.phone} · #{String(selectedMember.id).padStart(4,"0")}</p>
                         </div>
-                        <button onClick={() => { setSelectedMember(null); setForm((p) => ({ ...p, user_id: "" })); setClientSearch(""); }}
+                        {otpLoading && <span style={{ fontSize: 11, color: "#c9a84c" }}>Memuat OTP...</span>}
+                        <button onClick={handleClearMember}
                           style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", padding: 2 }}>
                           <X size={14} />
                         </button>
@@ -264,7 +323,7 @@ export default function MessagesPage() {
                               <p style={{ padding: "14px 16px", fontSize: 13, color: "var(--text-secondary)", textAlign: "center" }}>Tiada ahli ditemui.</p>
                             ) : filteredMembers.map((u) => (
                               <button key={u.id}
-                                onClick={() => { setSelectedMember(u); setForm((p) => ({ ...p, user_id: String(u.id) })); setClientSearch(u.name); setClientDropdown(false); }}
+                                onClick={() => handleSelectMember(u)}
                                 style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid var(--border-color)", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}
                                 onMouseEnter={(e) => (e.currentTarget.style.background = "var(--border-color)")}
                                 onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
@@ -283,10 +342,15 @@ export default function MessagesPage() {
                       </>
                     )}
                   </div>
+                  {isOtpMode && selectedMember && !otpLoading && (
+                    <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 6 }}>
+                      OTP diisi automatik dari akaun client. Anda boleh edit kandungan sebelum hantar.
+                    </p>
+                  )}
                 </div>
               )}
 
-              {form.broadcast && (
+              {!isOtpMode && form.broadcast && (
                 <div style={{ background: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 8, padding: "10px 14px" }}>
                   <p style={{ fontSize: 12, color: "#c9a84c", fontWeight: 600 }}>📢 Mesej akan dihantar kepada <strong>semua ahli aktif</strong>.</p>
                 </div>
@@ -302,7 +366,7 @@ export default function MessagesPage() {
               {/* Content */}
               <div>
                 <label style={labelStyle}>Kandungan *</label>
-                <textarea rows={5} placeholder="Tulis mesej anda di sini..." value={form.content}
+                <textarea rows={isOtpMode ? 8 : 5} placeholder={isOtpMode ? "Pilih ahli untuk auto-isi kandungan OTP..." : "Tulis mesej anda di sini..."} value={form.content}
                   onChange={(e) => setForm((p) => ({ ...p, content: e.target.value }))}
                   style={{ ...inputStyle, resize: "vertical", lineHeight: 1.6 }} />
               </div>
@@ -312,9 +376,10 @@ export default function MessagesPage() {
 
               <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
                 <button onClick={closeModal} style={{ flex: 1, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, padding: "12px", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
-                <button onClick={handleSave} disabled={saving}
-                  style={{ flex: 2, background: saving ? "var(--bg-card)" : "#c9a84c", border: "none", borderRadius: 10, padding: "12px", color: saving ? "var(--text-secondary)" : "white", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
-                  <Send size={15} /> {saving ? "Menghantar..." : "Hantar Mesej"}
+                <button onClick={handleSave} disabled={saving || otpLoading}
+                  style={{ flex: 2, background: saving || otpLoading ? "var(--bg-card)" : "#c9a84c", border: "none", borderRadius: 10, padding: "12px", color: saving || otpLoading ? "var(--text-secondary)" : "white", fontWeight: 700, cursor: saving || otpLoading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+                  {isOtpMode ? <KeyRound size={15} /> : <Send size={15} />}
+                  {saving ? "Menghantar..." : otpLoading ? "Memuat OTP..." : isOtpMode ? "Hantar OTP" : "Hantar Mesej"}
                 </button>
               </div>
             </div>

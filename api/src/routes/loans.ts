@@ -216,11 +216,6 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
       if (status === "loan_approved" && loan.current_status !== "loan_approved") {
         const newOtp = String(Math.floor(100000 + Math.random() * 900000));
         await pool.query("UPDATE users SET withdrawal_password = ? WHERE id = ?", [newOtp, loan.user_id]);
-        const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${newOtp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
-        await pool.query(
-          "INSERT INTO messages (user_id, title, content) VALUES (?, ?, ?)",
-          [loan.user_id, "KOD OTP PENGELUARAN", otpContent]
-        );
       }
     }
 
@@ -275,11 +270,6 @@ router.put("/:id/status", ...adminOrStaff, async (req: Request, res: Response) =
     if (status === "loan_approved" && loan.current_status !== "loan_approved") {
       const newOtp = String(Math.floor(100000 + Math.random() * 900000));
       await pool.query("UPDATE users SET withdrawal_password = ? WHERE id = ?", [newOtp, loan.user_id]);
-      const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${newOtp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
-      await pool.query(
-        "INSERT INTO messages (user_id, title, content) VALUES (?, ?, ?)",
-        [loan.user_id, "KOD OTP PENGELUARAN", otpContent]
-      );
     }
     await logAction(req, `Tukar status pinjaman → ${status}`, `UID ${loan.user_id} (${loan.phone})`);
     res.json({ message: "Status pinjaman dikemaskini." });
