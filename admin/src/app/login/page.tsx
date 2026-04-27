@@ -4,18 +4,17 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Shield, AlertCircle } from "lucide-react";
 
 export default function AdminLoginPage() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ identifier?: string; password?: string }>({});
   const router = useRouter();
 
   const validate = () => {
     const e: typeof errors = {};
-    if (!email.trim()) e.email = "• E-mel wajib diisi";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) e.email = "• Format e-mel tidak sah";
+    if (!identifier.trim()) e.identifier = "• E-mel atau nama wajib diisi";
     if (!password.trim()) e.password = "• Kata laluan wajib diisi";
     else if (password.length < 6) e.password = "• Kata laluan minimum 6 aksara";
     setErrors(e);
@@ -32,7 +31,11 @@ export default function AdminLoginPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(
+          identifier.includes("@")
+            ? { email: identifier, password }
+            : { name: identifier, password }
+        ),
       });
 
       const data = await res.json();
@@ -191,17 +194,17 @@ export default function AdminLoginPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} noValidate>
           <div style={{ marginBottom: 18 }}>
-            <label className="input-label">E-mel</label>
+            <label className="input-label">E-mel / Nama</label>
             <input
               className="input-field"
-              type="email"
-              placeholder="admin@pinjamanbarakah.my"
-              value={email}
-              autoComplete="email"
-              onChange={(e) => { setEmail(e.target.value); setErrors((p) => ({ ...p, email: undefined })); setError(""); }}
+              type="text"
+              placeholder="E-mel atau nama pengguna"
+              value={identifier}
+              autoComplete="username"
+              onChange={(e) => { setIdentifier(e.target.value); setErrors((p) => ({ ...p, identifier: undefined })); setError(""); }}
             />
-            {errors.email && (
-              <p style={{ color: "var(--accent-red)", fontSize: 12, marginTop: 6 }}>{errors.email}</p>
+            {errors.identifier && (
+              <p style={{ color: "var(--accent-red)", fontSize: 12, marginTop: 6 }}>{errors.identifier}</p>
             )}
           </div>
 

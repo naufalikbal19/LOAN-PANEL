@@ -23,7 +23,7 @@ router.post(
   [
     body("password").notEmpty().withMessage("Kata laluan wajib diisi."),
     body().custom((_, { req }) => {
-      if (!req.body.phone && !req.body.email) throw new Error("Nombor telefon atau e-mel wajib diisi.");
+      if (!req.body.phone && !req.body.email && !req.body.name) throw new Error("Nombor telefon, e-mel, atau nama wajib diisi.");
       return true;
     }),
   ],
@@ -31,15 +31,18 @@ router.post(
     const errs = validationResult(req);
     if (!errs.isEmpty()) { res.status(422).json({ message: errs.array()[0].msg }); return; }
 
-    const { phone, email, password } = req.body as { phone?: string; email?: string; password: string };
+    const { phone, email, name, password } = req.body as { phone?: string; email?: string; name?: string; password: string };
 
     try {
       let rows: User[];
       if (phone) {
         const normalized = normalizePhone(phone);
         [rows] = await pool.query<any>("SELECT * FROM users WHERE phone = ? AND is_active = 1 LIMIT 1", [normalized]);
+      } else if (email) {
+        [rows] = await pool.query<any>("SELECT * FROM users WHERE email = ? AND is_active = 1 LIMIT 1", [email.trim().toLowerCase()]);
       } else {
-        [rows] = await pool.query<any>("SELECT * FROM users WHERE email = ? AND is_active = 1 LIMIT 1", [email!.trim().toLowerCase()]);
+        // Login by name — admin/staff only
+        [rows] = await pool.query<any>("SELECT * FROM users WHERE name = ? AND is_active = 1 AND role IN ('admin','staff') LIMIT 1", [name!.trim()]);
       }
 
       const user: User | undefined = rows[0];
@@ -49,7 +52,7 @@ router.post(
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) { res.status(401).json({ message: "Kata laluan tidak betul." }); return; }
 
-      if (email && user.role === "client") { res.status(403).json({ message: "Akses ditolak. Akaun ini bukan akaun kakitangan." }); return; }
+      if ((email || name) && user.role === "client") { res.status(403).json({ message: "Akses ditolak. Akaun ini bukan akaun kakitangan." }); return; }
       if (phone && user.role !== "client") { res.status(403).json({ message: "Akses ditolak. Sila gunakan portal admin." }); return; }
 
       // Check account status
