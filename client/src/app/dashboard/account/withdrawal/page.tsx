@@ -22,9 +22,9 @@ export default function WithdrawalPage() {
       apiFetch("/loans/my").catch(() => []),
     ]).then(([u, loans]: [any, any[]]) => {
       const latestLoan = Array.isArray(loans) && loans.length > 0 ? loans[0] : null;
-      setBank(u.bank || latestLoan?.bank || null);
-      setNoRek(u.no_rekening || latestLoan?.no_rekening || null);
-      setAccountName(latestLoan?.account_name || null);
+      setBank(latestLoan?.bank || u.bank || null);
+      setNoRek(latestLoan?.no_rekening || u.no_rekening || null);
+      setAccountName(latestLoan?.account_name || u.account_name || null);
     }).catch(() => {}).finally(() => setLoading(false));
   }, []);
 

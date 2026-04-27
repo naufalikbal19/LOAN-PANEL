@@ -199,6 +199,12 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
     if (ic !== undefined) {
       await pool.query("UPDATE users SET ic = ? WHERE id = ?", [ic || null, loan.user_id]);
     }
+    if (bank !== undefined) {
+      await pool.query("UPDATE users SET bank = ? WHERE id = ?", [bank ?? null, loan.user_id]);
+    }
+    if (no_rekening !== undefined) {
+      await pool.query("UPDATE users SET no_rekening = ? WHERE id = ?", [no_rekening ?? null, loan.user_id]);
+    }
     if (account_name !== undefined) {
       await pool.query("UPDATE users SET account_name = ? WHERE id = ?", [account_name ?? null, loan.user_id]);
     }
