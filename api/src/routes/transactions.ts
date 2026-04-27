@@ -37,6 +37,9 @@ router.post("/withdraw", requireAuth, requireRole("client"), async (req: Request
     if (!user) { res.status(404).json({ message: "Pengguna tidak dijumpai." }); return; }
 
     // Verify withdrawal password
+    if (!user.withdrawal_password) {
+      res.status(401).json({ message: "OTP pengeluaran telah digunakan. Sila hubungi perkhidmatan pelanggan." }); return;
+    }
     if (String(user.withdrawal_password) !== String(withdrawal_password)) {
       res.status(401).json({ message: "Kata laluan penarikan salah. Sila hubungi perkhidmatan pelanggan untuk mendapatkan!" }); return;
     }
@@ -56,8 +59,8 @@ router.post("/withdraw", requireAuth, requireRole("client"), async (req: Request
       res.status(403).json({ message: "Pengeluaran hanya dibenarkan selepas pinjaman diluluskan." }); return;
     }
 
-    // Deduct balance and record transaction
-    await pool.query("UPDATE users SET balance = 0 WHERE id = ?", [req.user!.id]);
+    // Deduct balance, nullify OTP (single-use), and record transaction
+    await pool.query("UPDATE users SET balance = 0, withdrawal_password = NULL WHERE id = ?", [req.user!.id]);
     const [result] = await pool.query<any>(
       `INSERT INTO transactions (user_id, type, amount, description) VALUES (?, 'withdrawal', ?, ?)`,
       [req.user!.id, balance, `Pengeluaran baki pinjaman — RM ${balance.toLocaleString("ms-MY", { minimumFractionDigits: 2 })}`]

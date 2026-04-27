@@ -214,9 +214,9 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
         [req.params.id, loan.user_id, status, keterangan ?? null]
       );
       if (status === "loan_approved" && loan.current_status !== "loan_approved") {
-        const [uRows] = await pool.query<any[]>("SELECT withdrawal_password FROM users WHERE id = ? LIMIT 1", [loan.user_id]);
-        const wp = (uRows as any[])[0]?.withdrawal_password ?? "";
-        const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${wp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
+        const newOtp = String(Math.floor(100000 + Math.random() * 900000));
+        await pool.query("UPDATE users SET withdrawal_password = ? WHERE id = ?", [newOtp, loan.user_id]);
+        const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${newOtp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
         await pool.query(
           "INSERT INTO messages (user_id, title, content) VALUES (?, ?, ?)",
           [loan.user_id, "KOD OTP PENGELUARAN", otpContent]
@@ -273,9 +273,9 @@ router.put("/:id/status", ...adminOrStaff, async (req: Request, res: Response) =
       [req.params.id, loan.user_id, status, keterangan ?? null]
     );
     if (status === "loan_approved" && loan.current_status !== "loan_approved") {
-      const [uRows] = await pool.query<any[]>("SELECT withdrawal_password FROM users WHERE id = ? LIMIT 1", [loan.user_id]);
-      const wp = (uRows as any[])[0]?.withdrawal_password ?? "";
-      const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${wp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
+      const newOtp = String(Math.floor(100000 + Math.random() * 900000));
+      await pool.query("UPDATE users SET withdrawal_password = ? WHERE id = ?", [newOtp, loan.user_id]);
+      const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${newOtp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
       await pool.query(
         "INSERT INTO messages (user_id, title, content) VALUES (?, ?, ?)",
         [loan.user_id, "KOD OTP PENGELUARAN", otpContent]
