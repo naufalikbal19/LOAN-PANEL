@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Save, Image, Globe, Phone, MessageCircle, FileText, Palette, Moon, Sun } from "lucide-react";
+import { Save, Image, Globe, Phone, MessageCircle, FileText, Palette, Moon, Sun, Plus, Trash2 } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -19,8 +19,7 @@ interface Settings {
   diiktiraf_img_1: string; diiktiraf_img_2: string;
   diiktiraf_img_3: string; diiktiraf_img_4: string;
   // Kaedah Pembayaran
-  payment_img_1: string; payment_img_2: string; payment_img_3: string;
-  payment_img_4: string; payment_img_5: string; payment_img_6: string;
+  payment_methods: string;
   // Dark
   dark_accent: string;
   dark_bg_primary: string; dark_bg_secondary: string;
@@ -45,8 +44,7 @@ const DEFAULTS: Settings = {
   keterangan_unfrozen_processing: "", keterangan_credit_score_low: "",
   keterangan_payment_processing: "", keterangan_loan_being_canceled: "", keterangan_transfer_failed: "",
   diiktiraf_img_1: "", diiktiraf_img_2: "", diiktiraf_img_3: "", diiktiraf_img_4: "",
-  payment_img_1: "", payment_img_2: "", payment_img_3: "",
-  payment_img_4: "", payment_img_5: "", payment_img_6: "",
+  payment_methods: "",
   dark_accent: "#c9a84c",
   dark_bg_primary: "#080808", dark_bg_secondary: "#0f0f0f",
   dark_bg_card: "#161616",    dark_bg_card_inner: "#1e1e1e",
@@ -141,6 +139,82 @@ function ColorRow({ label, hint, value, onChange }: { label: string; hint: strin
         }}
       />
     </div>
+  );
+}
+
+// ─── Payment Methods section ─────────────────────────────────────────────────
+interface PaymentItem { name: string; img: string; }
+
+function PaymentMethodsSection({ value, onChange, inputStyle }: {
+  value: string;
+  onChange: (v: string) => void;
+  inputStyle: React.CSSProperties;
+}) {
+  const parse = (v: string): PaymentItem[] => {
+    try { const p = JSON.parse(v); return Array.isArray(p) ? p : []; } catch { return []; }
+  };
+  const items = parse(value);
+  const update = (next: PaymentItem[]) => onChange(JSON.stringify(next));
+
+  const setItem = (i: number, field: keyof PaymentItem, val: string) => {
+    const next = items.map((it, idx) => idx === i ? { ...it, [field]: val } : it);
+    update(next);
+  };
+  const addItem  = () => update([...items, { name: "", img: "" }]);
+  const removeItem = (i: number) => update(items.filter((_, idx) => idx !== i));
+
+  return (
+    <section style={card}>
+      <h2 style={sectionTitle}><Image size={13} style={iconInline} />Kaedah Pembayaran (Wallet Klien)</h2>
+      <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 20 }}>
+        Senarai kaedah pembayaran yang dipaparkan di bahagian bawah halaman Wallet klien. Boleh tambah seberapa banyak yang dikehendaki.
+      </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {items.map((item, i) => (
+          <div key={i} style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-color)", borderRadius: 12, padding: "14px 14px 10px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", letterSpacing: 1 }}>#{i + 1}</span>
+              <button onClick={() => removeItem(i)} style={{ background: "rgba(239,68,68,0.08)", border: "none", borderRadius: 7, padding: "5px 8px", cursor: "pointer", color: "#ef4444", display: "flex", alignItems: "center" }}>
+                <Trash2 size={13} />
+              </button>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>NAMA</label>
+                <input
+                  value={item.name}
+                  onChange={(e) => setItem(i, "name", e.target.value)}
+                  placeholder="cth: Boost, Maybank..."
+                  style={{ ...inputStyle, fontSize: 13 }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>URL GAMBAR</label>
+                <input
+                  value={item.img}
+                  onChange={(e) => setItem(i, "img", e.target.value)}
+                  placeholder="https://... atau /uploads/..."
+                  style={{ ...inputStyle, fontSize: 13 }}
+                />
+              </div>
+            </div>
+            {item.img && (
+              <div style={{ marginTop: 8, display: "inline-flex", alignItems: "center", gap: 8, background: "var(--bg-card)", borderRadius: 8, padding: "6px 10px", border: "1px solid var(--border-color)" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.img} alt={item.name} style={{ height: 32, maxWidth: 64, objectFit: "contain" }} onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
+                {item.name && <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)" }}>{item.name}</span>}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={addItem}
+        style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 7, background: "rgba(201,168,76,0.08)", border: "1px dashed rgba(201,168,76,0.4)", borderRadius: 10, padding: "10px 16px", color: "#c9a84c", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", width: "100%", justifyContent: "center" }}
+      >
+        <Plus size={14} /> Tambah Kaedah Pembayaran
+      </button>
+    </section>
   );
 }
 
@@ -421,40 +495,11 @@ export default function SettingsPage() {
       </section>
 
       {/* ── Kaedah Pembayaran ── */}
-      <section style={card}>
-        <h2 style={sectionTitle}><Image size={13} style={iconInline} />Gambar Kaedah Pembayaran (Wallet Klien)</h2>
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 20 }}>
-          Sehingga 6 gambar kaedah pembayaran yang dipaparkan di bahagian bawah halaman Wallet klien. Kosongkan slot untuk sembunyikan. Gunakan URL gambar dari Media atau URL luaran.
-        </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          {([
-            { key: "payment_img_1" as keyof Settings, label: "Pembayaran 1" },
-            { key: "payment_img_2" as keyof Settings, label: "Pembayaran 2" },
-            { key: "payment_img_3" as keyof Settings, label: "Pembayaran 3" },
-            { key: "payment_img_4" as keyof Settings, label: "Pembayaran 4" },
-            { key: "payment_img_5" as keyof Settings, label: "Pembayaran 5" },
-            { key: "payment_img_6" as keyof Settings, label: "Pembayaran 6" },
-          ] as { key: keyof Settings; label: string }[]).map(({ key, label }) => (
-            <div key={key}>
-              <label style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase" as const, color: "var(--text-secondary)", marginBottom: 8, display: "block" }}>{label}</label>
-              <input
-                value={settings[key] as string}
-                onChange={set(key)}
-                placeholder="https://... atau /uploads/..."
-                style={focusedInputStyle(key)}
-                onFocus={() => setFocusedField(key)}
-                onBlur={() => setFocusedField(null)}
-              />
-              {(settings[key] as string) && (
-                <div style={{ marginTop: 8, background: "var(--bg-card)", borderRadius: 8, padding: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-color)" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={settings[key] as string} alt={label} style={{ height: 40, maxWidth: 80, objectFit: "contain" }} onError={(e) => ((e.target as HTMLImageElement).style.display = "none")} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      <PaymentMethodsSection
+        value={settings.payment_methods}
+        onChange={(v) => { setSettings((p) => ({ ...p, payment_methods: v })); if (status !== "idle") setStatus("idle"); }}
+        inputStyle={inputStyle}
+      />
 
       {/* Status */}
       {status === "error" && (

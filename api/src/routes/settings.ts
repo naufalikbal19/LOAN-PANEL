@@ -39,7 +39,7 @@ router.put(
       "keterangan_payment_processing", "keterangan_loan_being_canceled", "keterangan_transfer_failed",
       "withdrawal_warning",
       "diiktiraf_img_1", "diiktiraf_img_2", "diiktiraf_img_3", "diiktiraf_img_4",
-      "payment_img_1", "payment_img_2", "payment_img_3", "payment_img_4", "payment_img_5", "payment_img_6",
+      "payment_methods",
       // Tema dark mode
       "dark_accent","dark_bg_primary","dark_bg_secondary","dark_bg_card","dark_bg_card_inner",
       "dark_text_primary","dark_text_secondary","dark_text_muted",

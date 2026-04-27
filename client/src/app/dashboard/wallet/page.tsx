@@ -5,14 +5,6 @@ import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
 
-const paymentDefaults = [
-  { id: "boost",   label: "Boost",   emoji: "⚡" },
-  { id: "gxbank",  label: "GXBank",  emoji: "🏦" },
-  { id: "ewallet", label: "eWallet", emoji: "💳" },
-  { id: "maybank", label: "Maybank", emoji: "🏧" },
-  { id: "cimb",    label: "CIMB",    emoji: "🔴" },
-  { id: "rhb",     label: "RHB",     emoji: "🟢" },
-];
 
 const statusLabel: Record<string, string> = {
   under_review:        "Sedang Semakan",
@@ -51,8 +43,10 @@ interface Loan {
 interface Tx { id: number; type: string; amount: number; description: string | null; created_at: string; }
 
 export default function WalletPage() {
-  const { withdrawal_warning, payment_img_1, payment_img_2, payment_img_3, payment_img_4, payment_img_5, payment_img_6 } = useSettings() as any;
-  const paymentImages = [payment_img_1, payment_img_2, payment_img_3, payment_img_4, payment_img_5, payment_img_6];
+  const { withdrawal_warning, payment_methods } = useSettings() as any;
+  const paymentItems: { name: string; img: string }[] = (() => {
+    try { const p = JSON.parse(payment_methods || "[]"); return Array.isArray(p) ? p : []; } catch { return []; }
+  })();
   const [show, setShow] = useState(true);
   const [balance, setBalance] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
@@ -319,23 +313,19 @@ export default function WalletPage() {
       </div>
 
       {/* Payment Methods */}
-      {paymentImages.some(Boolean) && (
+      {paymentItems.length > 0 && (
         <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.38s both" }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Kaedah Pembayaran</p>
           <div className="payment-grid">
-            {paymentImages.map((imgUrl: string, i: number) => {
-              if (!imgUrl) return null;
-              const def = paymentDefaults[i] ?? { label: `Pembayaran ${i + 1}`, emoji: "💳" };
-              return (
-                <div key={i} className="payment-item">
-                  <div className="payment-logo" style={{ background: "var(--bg-card-inner)" }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={imgUrl} alt={def.label} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-                  </div>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)" }}>{def.label}</span>
+            {paymentItems.map((item, i) => (
+              <div key={i} className="payment-item">
+                <div className="payment-logo" style={{ background: "var(--bg-card-inner)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.img} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                 </div>
-              );
-            })}
+                <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-secondary)" }}>{item.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
