@@ -290,8 +290,8 @@ export default function RepaymentPage() {
 
       {/* Upload Modal */}
       {showModal && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 1000, display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
-          <div style={{ background: "var(--bg-secondary)", borderRadius: "24px 24px 0 0", padding: "24px 20px 40px", width: "100%", maxWidth: 430, animation: "fadeInUp 0.3s ease both" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 20px" }}>
+          <div style={{ background: "var(--bg-secondary)", borderRadius: 24, padding: "24px 20px 28px", width: "100%", maxWidth: 430, animation: "fadeInUp 0.3s ease both" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <p style={{ fontSize: 17, fontWeight: 800 }}>Hantar Bukti Pembayaran</p>
               <button onClick={closeModal} style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: 16, color: "var(--text-secondary)" }}>✕</button>
