@@ -214,18 +214,6 @@ export default function WalletPage() {
                 <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3 }}>TEMPOH</p>
                 <p style={{ fontSize: 14, fontWeight: 700 }}>{latestLoan.loan_terms || "—"}</p>
               </div>
-              {latestLoan.bank && (
-                <div>
-                  <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3 }}>BANK</p>
-                  <p style={{ fontSize: 13, fontWeight: 600 }}>{latestLoan.bank}</p>
-                </div>
-              )}
-              {latestLoan.no_rekening && (
-                <div>
-                  <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3 }}>NO. AKAUN</p>
-                  <p style={{ fontSize: 13, fontWeight: 600 }}>{latestLoan.no_rekening}</p>
-                </div>
-              )}
               <div>
                 <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3 }}>TARIKH MOHON</p>
                 <p style={{ fontSize: 13, fontWeight: 600 }}>{new Date(latestLoan.created_at).toLocaleDateString("ms-MY", { day: "2-digit", month: "short", year: "numeric" })}</p>
