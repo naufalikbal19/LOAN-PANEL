@@ -102,8 +102,15 @@ export default function AdminRepaymentPage() {
   const orderId = (id: number) => `#ORD-${String(id).padStart(5, "0")}`;
 
   const inputStyle: React.CSSProperties = {
-    width: "100%", background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10,
-    padding: "10px 14px", color: "#f0f0f0", fontSize: 13, fontFamily: "inherit", outline: "none",
+    width: "100%",
+    background: "var(--bg-card-inner)",
+    border: "1px solid var(--border-color)",
+    borderRadius: 10,
+    padding: "10px 14px",
+    color: "var(--text-primary)",
+    fontSize: 13,
+    fontFamily: "inherit",
+    outline: "none",
     boxSizing: "border-box",
   };
 
@@ -111,20 +118,20 @@ export default function AdminRepaymentPage() {
     <div style={{ padding: "28px 28px 40px" }}>
       {/* Toast */}
       {toast && (
-        <div style={{ position: "fixed", top: 24, right: 24, background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 12, padding: "12px 18px", zIndex: 9999, fontSize: 13, color: "#f0f0f0", boxShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+        <div style={{ position: "fixed", top: 24, right: 24, background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 12, padding: "12px 18px", zIndex: 9999, fontSize: 13, color: "var(--text-primary)", boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}>
           {toast}
         </div>
       )}
 
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Repayment</h1>
-        <p style={{ fontSize: 13, color: "#888" }}>Semak dan luluskan bukti bayaran balik ahli</p>
+        <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>Semak dan luluskan bukti bayaran balik ahli</p>
       </div>
 
       {/* Filters */}
       <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
         <div style={{ position: "relative", flex: 1, minWidth: 200 }}>
-          <Search size={14} color="#888" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
+          <Search size={14} color="var(--text-muted)" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
           <input
             style={{ ...inputStyle, paddingLeft: 36 }}
             placeholder="Cari nama, telefon, UID..."
@@ -149,39 +156,39 @@ export default function AdminRepaymentPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 820 }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #2e2e2e" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
                 {["UID","Nama / Telefon","Pinjaman","Ansuran","Jumlah","Tarikh Hantar","Status","Resit","Tindakan"].map((h) => (
-                  <th key={h} style={{ padding: "13px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: 0.8, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "13px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: 0.8, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={9} style={{ padding: "40px 16px", textAlign: "center", color: "#555", fontSize: 13 }}>Memuatkan...</td></tr>
+                <tr><td colSpan={9} style={{ padding: "40px 16px", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>Memuatkan...</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={9} style={{ padding: "40px 16px", textAlign: "center", color: "#555", fontSize: 13 }}>Tiada rekod ditemui.</td></tr>
+                <tr><td colSpan={9} style={{ padding: "40px 16px", textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>Tiada rekod ditemui.</td></tr>
               ) : filtered.map((r) => {
                 const cfg = statusConfig[r.status];
                 const StatusIcon = cfg.icon;
                 return (
-                  <tr key={r.id} style={{ borderBottom: "1px solid #1e1e1e" }}>
-                    <td style={{ padding: "13px 16px", fontSize: 12, color: "#888", whiteSpace: "nowrap" }}>{uid(r.user_id)}</td>
+                  <tr key={r.id} style={{ borderBottom: "1px solid var(--border-color)" }}>
+                    <td style={{ padding: "13px 16px", fontSize: 12, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{uid(r.user_id)}</td>
                     <td style={{ padding: "13px 16px" }}>
                       <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{r.name}</p>
-                      <p style={{ fontSize: 11, color: "#888" }}>{r.phone}</p>
+                      <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{r.phone}</p>
                     </td>
-                    <td style={{ padding: "13px 16px", fontSize: 12, color: "#aaa", whiteSpace: "nowrap" }}>{orderId(r.loan_id)}</td>
+                    <td style={{ padding: "13px 16px", fontSize: 12, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{orderId(r.loan_id)}</td>
                     <td style={{ padding: "13px 16px", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap" }}>
-                      Ke-{r.installment_no} <span style={{ fontSize: 11, color: "#888" }}>/ {parseInt(r.loan_terms) || "—"}</span>
+                      Ke-{r.installment_no} <span style={{ fontSize: 11, color: "var(--text-secondary)" }}>/ {parseInt(r.loan_terms) || "—"}</span>
                     </td>
                     <td style={{ padding: "13px 16px", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", color: "#c9a84c" }}>
                       RM {Number(r.amount).toLocaleString("ms-MY", { minimumFractionDigits: 2 })}
                     </td>
-                    <td style={{ padding: "13px 16px", fontSize: 12, color: "#aaa", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "13px 16px", fontSize: 12, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
                       {new Date(r.created_at).toLocaleDateString("ms-MY")}
                     </td>
                     <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
@@ -198,7 +205,7 @@ export default function AdminRepaymentPage() {
                           <Eye size={12} /> Lihat
                         </button>
                       ) : (
-                        <span style={{ fontSize: 11, color: "#555" }}>—</span>
+                        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>—</span>
                       )}
                     </td>
                     <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
@@ -210,7 +217,7 @@ export default function AdminRepaymentPage() {
                           Semak
                         </button>
                       ) : (
-                        <span style={{ fontSize: 11, color: "#555" }}>—</span>
+                        <span style={{ fontSize: 11, color: "var(--text-muted)" }}>—</span>
                       )}
                     </td>
                   </tr>
@@ -223,48 +230,48 @@ export default function AdminRepaymentPage() {
 
       {/* Action Modal */}
       {selected && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 18, padding: 28, width: "100%", maxWidth: 460 }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 18, padding: 28, width: "100%", maxWidth: 460 }}>
             <p style={{ fontSize: 17, fontWeight: 800, marginBottom: 18 }}>Semak Bayaran Balik</p>
 
-            <div style={{ background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 12, padding: "14px 16px", marginBottom: 18 }}>
+            <div style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-color)", borderRadius: 12, padding: "14px 16px", marginBottom: 18 }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 {[
-                  { label: "Ahli",       value: selected.name },
-                  { label: "Telefon",    value: selected.phone },
-                  { label: "Pinjaman",   value: orderId(selected.loan_id) },
-                  { label: "Ansuran",    value: `Ke-${selected.installment_no}` },
-                  { label: "Jumlah",     value: `RM ${Number(selected.amount).toLocaleString("ms-MY", { minimumFractionDigits: 2 })}` },
-                  { label: "Tarikh",     value: new Date(selected.created_at).toLocaleDateString("ms-MY") },
+                  { label: "Ahli",    value: selected.name },
+                  { label: "Telefon", value: selected.phone },
+                  { label: "Pinjaman",value: orderId(selected.loan_id) },
+                  { label: "Ansuran", value: `Ke-${selected.installment_no}` },
+                  { label: "Jumlah",  value: `RM ${Number(selected.amount).toLocaleString("ms-MY", { minimumFractionDigits: 2 })}` },
+                  { label: "Tarikh",  value: new Date(selected.created_at).toLocaleDateString("ms-MY") },
                 ].map(({ label, value }) => (
                   <div key={label}>
-                    <p style={{ fontSize: 10, color: "#666", marginBottom: 2, textTransform: "uppercase", letterSpacing: 0.6 }}>{label}</p>
+                    <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 2, textTransform: "uppercase", letterSpacing: 0.6 }}>{label}</p>
                     <p style={{ fontSize: 13, fontWeight: 600 }}>{value}</p>
                   </div>
                 ))}
               </div>
               {selected.receipt_url && (
-                <div style={{ marginTop: 14, borderTop: "1px solid #2e2e2e", paddingTop: 12 }}>
-                  <p style={{ fontSize: 11, color: "#666", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.6 }}>Resit</p>
-                  <img src={selected.receipt_url} alt="receipt" style={{ maxHeight: 180, maxWidth: "100%", objectFit: "contain", borderRadius: 8, border: "1px solid #2e2e2e" }} />
+                <div style={{ marginTop: 14, borderTop: "1px solid var(--border-color)", paddingTop: 12 }}>
+                  <p style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.6 }}>Resit</p>
+                  <img src={selected.receipt_url} alt="receipt" style={{ maxHeight: 180, maxWidth: "100%", objectFit: "contain", borderRadius: 8, border: "1px solid var(--border-color)" }} />
                 </div>
               )}
             </div>
 
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>Tindakan</p>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>Tindakan</p>
             <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
               {(["approved", "rejected"] as const).map((s) => (
                 <button
                   key={s}
                   onClick={() => setActionStatus(s)}
-                  style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1.5px solid ${actionStatus === s ? (s === "approved" ? "#22c55e" : "#ef4444") : "#2e2e2e"}`, background: actionStatus === s ? (s === "approved" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)") : "transparent", color: actionStatus === s ? (s === "approved" ? "#22c55e" : "#ef4444") : "#888", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
+                  style={{ flex: 1, padding: "11px", borderRadius: 10, border: `1.5px solid ${actionStatus === s ? (s === "approved" ? "#22c55e" : "#ef4444") : "var(--border-color)"}`, background: actionStatus === s ? (s === "approved" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)") : "transparent", color: actionStatus === s ? (s === "approved" ? "#22c55e" : "#ef4444") : "var(--text-secondary)", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}
                 >
                   {s === "approved" ? "Luluskan" : "Tolak"}
                 </button>
               ))}
             </div>
 
-            <p style={{ fontSize: 12, fontWeight: 700, color: "#888", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>Nota (Pilihan)</p>
+            <p style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 8, textTransform: "uppercase", letterSpacing: 0.8 }}>Nota (Pilihan)</p>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -274,7 +281,7 @@ export default function AdminRepaymentPage() {
             />
 
             <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
-              <button onClick={() => setSelected(null)} style={{ flex: 1, background: "transparent", border: "1px solid #2e2e2e", borderRadius: 12, padding: "12px", color: "#888", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+              <button onClick={() => setSelected(null)} style={{ flex: 1, background: "transparent", border: "1px solid var(--border-color)", borderRadius: 12, padding: "12px", color: "var(--text-secondary)", fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
                 Batal
               </button>
               <button
