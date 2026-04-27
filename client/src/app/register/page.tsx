@@ -18,7 +18,9 @@ export default function RegisterPage() {
   const { company_name } = useSettings();
 
   const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((p) => ({ ...p, [key]: e.target.value }));
+    let value = e.target.value;
+    if (key === "phone") value = value.replace(/[\s+]/g, "");
+    setForm((p) => ({ ...p, [key]: value }));
     setErrors((p) => ({ ...p, [key]: undefined }));
     setApiError("");
   };
@@ -29,6 +31,7 @@ export default function RegisterPage() {
     if (!form.ic.trim()) e.ic = "• No. IC wajib diisi";
     else if (!/^\d{5,}$/.test(form.ic.replace(/-/g, ""))) e.ic = "• IC mesti sekurang-kurangnya 5 digit angka";
     if (!form.phone.trim()) e.phone = "• Nombor telefon wajib diisi";
+    else if (!/^(01|60)/.test(form.phone)) e.phone = "• Nombor telefon mesti bermula dengan 01 atau 60";
     else if (!/^\d{5,}$/.test(normalizePhone(form.phone))) e.phone = "• Nombor telefon tidak sah (min. 5 digit)";
     if (!form.password.trim()) e.password = "• Kata laluan wajib diisi";
     else if (form.password.length < 6) e.password = "• Minimum 6 aksara";

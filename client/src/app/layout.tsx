@@ -3,6 +3,7 @@ import "./globals.css";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { LanguageProvider } from "@/context/LanguageContext";
+import ScreenProtect from "@/components/ScreenProtect";
 
 export const metadata: Metadata = {
   title: "Pinjaman Barakah",
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <LanguageProvider>
             <SettingsProvider>
+              <ScreenProtect />
               <div className="app-shell">{children}</div>
             </SettingsProvider>
           </LanguageProvider>
