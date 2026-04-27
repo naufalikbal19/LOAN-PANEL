@@ -19,8 +19,8 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const allowedOrigins = [
-  process.env.CLIENT_ORIGIN || "https://apps.pinjamanbarakah.my",
-  process.env.ADMIN_ORIGIN || "https://backendtest.pinjamanbarakah.my",
+  process.env.CLIENT_ORIGIN || "https://apps.easyloans.my",
+  process.env.ADMIN_ORIGIN || "https://backend.easyloans.my",
   // local dev
   "http://localhost:3000",
   "http://localhost:3001",

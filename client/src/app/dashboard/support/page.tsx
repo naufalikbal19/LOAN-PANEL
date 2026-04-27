@@ -15,7 +15,7 @@ export default function SupportPage() {
   const contacts = [
     { icon: Phone,         label: "Telefon",  value: support_phone || "—",    color: "#22c55e", action: "Hubungi",  href: support_phone ? `tel:${support_phone}` : undefined },
     { icon: MessageCircle, label: "WhatsApp", value: support_whatsapp || "—", color: "#22c55e", action: "WhatsApp", href: support_whatsapp ? `https://wa.me/${support_whatsapp.replace(/\D/g, "")}` : undefined },
-    { icon: Mail,          label: "E-mel",    value: "support@pinjamanbarakah.my", color: "#c9a84c", action: "E-mel", href: "mailto:support@pinjamanbarakah.my" },
+    { icon: Mail,          label: "E-mel",    value: "support@easyloans.my", color: "#c9a84c", action: "E-mel", href: "mailto:support@easyloans.my" },
   ];
 
   return (

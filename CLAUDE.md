@@ -6,9 +6,9 @@
 
 ```
 loan-panel/           ← repo root
-├── client/           → apps.pinjamanbarakah.my (Next.js, client panel)
-├── admin/            → backendtest.pinjamanbarakah.my (Next.js, admin dashboard)
-├── api/              → api.pinjamanbarakah.my (Express.js + TypeScript)
+├── client/           → apps.easyloans.my (Next.js, client panel)
+├── admin/            → backend.easyloans.my (Next.js, admin dashboard)
+├── api/              → api.easyloans.my (Express.js + TypeScript)
 ├── CLAUDE.md
 └── AGENTS.md
 ```
@@ -172,7 +172,7 @@ Key-value store. Keys yang dibenarkan:
 - **Tema Light Mode (12 keys):** `light_accent`, `light_bg_primary`, `light_bg_secondary`, `light_bg_card`, `light_bg_card_inner`, `light_text_primary`, `light_text_secondary`, `light_text_muted`, `light_border_color`, `light_border_light`, `light_nav_bg`, `light_bg_image`
 
 ### Seed admin default
-- Email: `admin@pinjamanbarakah.my`
+- Email: `admin@easyloans.my`
 - Password: `Admin@1234`
 
 ---
@@ -400,7 +400,7 @@ Edit modal: 4 input URL dengan preview gambar kecil
 # Lokal:
 NEXT_PUBLIC_API_URL=http://localhost:4000
 # Production (semasa di server):
-NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my
+NEXT_PUBLIC_API_URL=https://api.easyloans.my
 ```
 
 ### `admin/.env.local`
@@ -408,7 +408,7 @@ NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my
 # Lokal:
 NEXT_PUBLIC_API_URL=http://localhost:4000
 # Production (semasa di server):
-NEXT_PUBLIC_API_URL=https://api.pinjamanbarakah.my
+NEXT_PUBLIC_API_URL=https://api.easyloans.my
 ```
 
 ### `api/.env`
@@ -421,8 +421,8 @@ DB_PASSWORD=
 DB_NAME=loan_panel
 JWT_SECRET=dev_secret_tukar_di_production_12345
 JWT_EXPIRES_IN=7d
-CLIENT_ORIGIN=https://apps.pinjamanbarakah.my
-ADMIN_ORIGIN=https://backendtest.pinjamanbarakah.my
+CLIENT_ORIGIN=https://apps.easyloans.my
+ADMIN_ORIGIN=https://backend.easyloans.my
 ```
 
 ---
@@ -434,9 +434,9 @@ ADMIN_ORIGIN=https://backendtest.pinjamanbarakah.my
 
 | Domain | Folder | PM2 Name | Port |
 |---|---|---|---|
-| `apps.pinjamanbarakah.my` | `client/` | `loan-client` | 3000 |
-| `backendtest.pinjamanbarakah.my` | `admin/` | `loan-admin` | 3001 |
-| `api.pinjamanbarakah.my` | `api/` | `loan-api` | 4000 |
+| `apps.easyloans.my` | `client/` | `loan-client` | 3000 |
+| `backend.easyloans.my` | `admin/` | `loan-admin` | 3001 |
+| `api.easyloans.my` | `api/` | `loan-api` | 4000 |
 
 Nginx reverse proxy di AAPanel — semua request diproxy ke port masing-masing. **Jangan** letak `location ~ .*\.(js|css)?$` atau static file rules untuk Next.js — biarkan Next.js serve sendiri melalui proxy.
 
