@@ -11,6 +11,7 @@ import loansRouter from "./routes/loans";
 import uploadRouter from "./routes/upload";
 import transactionsRouter from "./routes/transactions";
 import messagesRouter from "./routes/messages";
+import repaymentsRouter from "./routes/repayments";
 
 dotenv.config();
 
@@ -55,6 +56,7 @@ app.use("/loans", loansRouter);
 app.use("/upload", uploadRouter);
 app.use("/transactions", transactionsRouter);
 app.use("/messages", messagesRouter);
+app.use("/repayments", repaymentsRouter);
 
 // 404
 app.use((_, res) => {

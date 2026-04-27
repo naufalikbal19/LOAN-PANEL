@@ -43,6 +43,22 @@ CREATE TABLE IF NOT EXISTS loan_status_history (
 -- Tambah keterangan ke sejarah status pinjaman
 ALTER TABLE loan_status_history ADD COLUMN IF NOT EXISTS keterangan TEXT NULL;
 
+-- Jadual bayaran balik (repayments)
+CREATE TABLE IF NOT EXISTS repayments (
+  id             INT PRIMARY KEY AUTO_INCREMENT,
+  loan_id        INT NOT NULL,
+  user_id        INT NOT NULL,
+  amount         DECIMAL(15,2) NOT NULL,
+  installment_no INT NOT NULL DEFAULT 1,
+  due_date       DATE NOT NULL,
+  receipt_url    TEXT NULL,
+  status         ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  note           TEXT NULL,
+  created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (loan_id) REFERENCES loans(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- Jadual mesej baru
 CREATE TABLE IF NOT EXISTS messages (
   id         INT PRIMARY KEY AUTO_INCREMENT,

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Users, ClipboardList, Wallet, Settings,
-  ChevronDown, ChevronRight, LogOut, Shield, ArrowLeftRight, MessageSquare, X, ImageIcon,
+  ChevronDown, ChevronRight, LogOut, Shield, ArrowLeftRight, MessageSquare, X, ImageIcon, CalendarCheck,
 } from "lucide-react";
 
 interface NavItem {
@@ -38,7 +38,8 @@ const nav: NavItem[] = [
     ],
   },
   { label: "Transaction",  icon: ArrowLeftRight, href: "/dashboard/transaction" },
-  { label: "Messages",     icon: MessageSquare,  href: "/dashboard/messages" },
+  { label: "Repayment",   icon: CalendarCheck,  href: "/dashboard/repayment" },
+  { label: "Messages",    icon: MessageSquare,  href: "/dashboard/messages" },
   { label: "Media",        icon: ImageIcon,      href: "/dashboard/media" },
   { label: "Settings",     icon: Settings,       href: "/dashboard/settings" },
 ];
