@@ -113,7 +113,7 @@ router.get("/", ...adminOrStaff, async (req: Request, res: Response) => {
     const { status, search } = req.query;
     let query = `
       SELECT l.id, l.user_id, u.name, u.phone, u.ic, l.amount, l.loan_terms,
-             l.bank, l.no_rekening, l.sign_url, l.front_ic_url, l.back_ic_url, l.selfie_url, l.keterangan, l.status, l.created_at, l.updated_at
+             l.bank, l.no_rekening, l.account_name, l.sign_url, l.front_ic_url, l.back_ic_url, l.selfie_url, l.keterangan, l.status, l.created_at, l.updated_at
       FROM loans l
       INNER JOIN users u ON u.id = l.user_id
       WHERE u.role = 'client'
@@ -143,7 +143,7 @@ router.get("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
   try {
     const [rows] = await pool.query<any[]>(
       `SELECT l.id, l.user_id, u.name, u.phone, u.ic, l.amount, l.loan_terms,
-              l.bank, l.no_rekening, l.sign_url, l.front_ic_url, l.back_ic_url, l.selfie_url, l.keterangan, l.status, l.created_at, l.updated_at
+              l.bank, l.no_rekening, l.account_name, l.sign_url, l.front_ic_url, l.back_ic_url, l.selfie_url, l.keterangan, l.status, l.created_at, l.updated_at
        FROM loans l
        INNER JOIN users u ON u.id = l.user_id
        WHERE l.id = ?`,
