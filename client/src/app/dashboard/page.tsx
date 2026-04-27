@@ -4,6 +4,7 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useSettings } from "@/context/SettingsContext";
 import { apiFetch } from "@/lib/api";
+import { useLanguage } from "@/context/LanguageContext";
 
 const defaultBadges = [
   { label: "PIDM", color: "#1a56db", text: "P" },
@@ -12,16 +13,6 @@ const defaultBadges = [
   { label: "BNM",  color: "#0891b2", text: "B" },
 ];
 
-const statusLabel: Record<string, string> = {
-  under_review:        "Sedang Semakan",
-  loan_approved:       "Pinjaman Diluluskan",
-  credit_frozen:       "Kredit Dibekukan",
-  unfrozen_processing: "Proses Pencairan",
-  credit_score_low:    "Skor Kredit Rendah",
-  payment_processing:  "Proses Pembayaran",
-  loan_being_canceled: "Pinjaman Dibatalkan",
-  transfer_failed:     "Pindahan Gagal",
-};
 
 const statusColor: Record<string, string> = {
   under_review:        "#c9a84c",
@@ -46,8 +37,20 @@ interface Loan {
 export default function DashboardPage() {
   const { company_name, company_tagline, diiktiraf_img_1, diiktiraf_img_2, diiktiraf_img_3, diiktiraf_img_4 } = useSettings() as any;
   const badgeImages = [diiktiraf_img_1, diiktiraf_img_2, diiktiraf_img_3, diiktiraf_img_4];
+  const { t } = useLanguage();
   const [userName, setUserName] = useState("");
   const [loan, setLoan] = useState<Loan | null | undefined>(undefined);
+
+  const statusLabel: Record<string, string> = {
+    under_review:        t("under_review"),
+    loan_approved:       t("loan_approved"),
+    credit_frozen:       t("credit_frozen"),
+    unfrozen_processing: t("unfrozen_processing"),
+    credit_score_low:    t("credit_score_low"),
+    payment_processing:  t("payment_processing"),
+    loan_being_canceled: t("loan_being_canceled"),
+    transfer_failed:     t("transfer_failed"),
+  };
 
   useEffect(() => {
     setUserName(localStorage.getItem("user_name") || "");
@@ -62,7 +65,7 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="page-header animate-fade-in-up" style={{ paddingTop: 24, paddingBottom: 20 }}>
-        <p className="page-subtitle">Premium Membership</p>
+        <p className="page-subtitle">{t("premium_membership")}</p>
         <h1 className="page-title">{company_tagline}</h1>
       </div>
 
@@ -71,16 +74,16 @@ export default function DashboardPage() {
         <div className="card" style={{ padding: 0, overflow: "hidden" }}>
           <div style={{ padding: "16px 18px 14px", borderBottom: "1px solid var(--border-color)", display: "flex", alignItems: "center", gap: 10 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent-green)", animation: "pulse-dot 2s ease infinite", flexShrink: 0 }} />
-            <span style={{ fontSize: 15, fontWeight: 600 }}>Hai, {userName || "Pengguna"} 👋</span>
+            <span style={{ fontSize: 15, fontWeight: 600 }}>{t("hi")}, {userName || "Pengguna"} 👋</span>
           </div>
           <div style={{ padding: "14px 18px" }}>
             {loan === undefined ? (
-              <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>Memuatkan...</p>
+              <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>{t("loading")}</p>
             ) : loan === null ? (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-                <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>Tiada pinjaman aktif.</p>
+                <p style={{ fontSize: 13, color: "var(--text-secondary)" }}>{t("no_active_loan")}</p>
                 <Link href="/dashboard/wallet">
-                  <button className="apply-btn" style={{ fontSize: 12, padding: "10px 14px" }}>Wallet <ArrowRight size={14} /></button>
+                  <button className="apply-btn" style={{ fontSize: 12, padding: "10px 14px" }}>{t("wallet_btn")} <ArrowRight size={14} /></button>
                 </Link>
               </div>
             ) : (
@@ -90,9 +93,9 @@ export default function DashboardPage() {
                     {statusLabel[loan.status] ?? loan.status}
                   </span>
                   <div style={{ display: "flex", gap: 16 }}>
-                    <div><p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>Jumlah</p><p style={{ fontSize: 17, fontWeight: 800 }}>RM{Number(loan.amount).toLocaleString()}</p></div>
-                    <div><p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>No. Order</p><p style={{ fontSize: 14, fontWeight: 600 }}>{orderId}</p></div>
-                    <div><p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>Tempoh</p><p style={{ fontSize: 14, fontWeight: 600 }}>{loan.loan_terms || "—"}</p></div>
+                    <div><p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>{t("amount")}</p><p style={{ fontSize: 17, fontWeight: 800 }}>RM{Number(loan.amount).toLocaleString()}</p></div>
+                    <div><p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>{t("order_no")}</p><p style={{ fontSize: 14, fontWeight: 600 }}>{orderId}</p></div>
+                    <div><p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2 }}>{t("term")}</p><p style={{ fontSize: 14, fontWeight: 600 }}>{loan.loan_terms || "—"}</p></div>
                   </div>
                   {loan.keterangan && (
                     <p style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 8, lineHeight: 1.5, borderTop: "1px solid var(--border-color)", paddingTop: 8 }}>{loan.keterangan}</p>
@@ -114,13 +117,13 @@ export default function DashboardPage() {
           <div style={{ position: "relative" }}>
             <span className="badge-available" style={{ marginBottom: 12, display: "inline-flex" }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent-green)", display: "inline-block" }} />
-              LIMIT TERSEDIA
+              {t("limit_available")}
             </span>
-            <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4 }}>Hello, {userName || "Pengguna"} 👋</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>Loan limit up to (RM)</p>
+            <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4 }}>{t("hi")}, {userName || "Pengguna"} 👋</h2>
+            <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 8 }}>{t("loan_limit")}</p>
             <p style={{ fontSize: 26, fontWeight: 900, marginBottom: 16 }}>RM 3,000 - 200,000</p>
             <Link href="/dashboard/apply">
-              <button className="apply-btn">Apply Now <ArrowRight size={16} /></button>
+              <button className="apply-btn">{t("apply_now")} <ArrowRight size={16} /></button>
             </Link>
           </div>
         </div>
@@ -134,10 +137,10 @@ export default function DashboardPage() {
               <div style={{ width: 32, height: 32, background: "rgba(201,168,76,0.12)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏢</div>
               <p style={{ fontSize: 10, color: "var(--text-secondary)", lineHeight: 1.4 }}>{company_name}</p>
             </div>
-            <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>Pinjaman <span style={{ color: "var(--accent-blue-light)" }}>Kakitangan</span><br />Kerajaan</h3>
+            <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 6 }}>{t("govt_loan")}</h3>
             <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 14, lineHeight: 1.5 }}>Pinjaman peribadi dengan tempoh bayaran fleksibel sehingga 72 bulan.</p>
             <Link href="/dashboard/apply">
-              <button className="btn-outline" style={{ width: "auto", padding: "10px 20px", fontSize: 13 }}>Mohon Sekarang</button>
+              <button className="btn-outline" style={{ width: "auto", padding: "10px 20px", fontSize: 13 }}>{t("mohon_sekarang")}</button>
             </Link>
           </div>
           <div style={{ width: 80, height: 100, background: "rgba(201,168,76,0.06)", borderRadius: 16, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, flexShrink: 0 }}>👨‍💼</div>
@@ -146,7 +149,7 @@ export default function DashboardPage() {
 
       {/* Info */}
       <div style={{ padding: "0 20px 20px" }} className="animate-fade-in-up animate-delay-4">
-        <p className="section-label">Informasi Perkhidmatan</p>
+        <p className="section-label">{t("info_service")}</p>
         <div className="card" style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{ width: 44, height: 44, background: "rgba(245,158,11,0.15)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>🤝</div>
           <div style={{ flex: 1 }}><p style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.4 }}>Professional and friendly customer support team</p></div>
@@ -156,7 +159,7 @@ export default function DashboardPage() {
 
       {/* Trust Badges */}
       <div className="animate-fade-in-up animate-delay-5">
-        <p className="section-label">Diiktiraf Oleh</p>
+        <p className="section-label">{t("diiktiraf")}</p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", padding: "0 20px 16px", flexWrap: "wrap" }}>
           {defaultBadges.map((b, i) => {
             const imgUrl = badgeImages[i];

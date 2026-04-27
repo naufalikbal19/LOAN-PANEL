@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Pinjaman Barakah",
@@ -22,9 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ms" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <ThemeProvider>
-          <SettingsProvider>
-            <div className="app-shell">{children}</div>
-          </SettingsProvider>
+          <LanguageProvider>
+            <SettingsProvider>
+              <div className="app-shell">{children}</div>
+            </SettingsProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,17 +1,27 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, ChevronDown } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import CompanyLogo from "@/components/CompanyLogo";
 import { useSettings } from "@/context/SettingsContext";
 import { normalizePhone, validatePhone } from "@/lib/phone";
+import { useLanguage } from "@/context/LanguageContext";
+import type { Lang } from "@/lib/translations";
+
+const LANGS: { code: Lang; flag: string; label: string }[] = [
+  { code: "ms", flag: "🇲🇾", label: "Melayu" },
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "zh", flag: "🇨🇳", label: "中文" },
+];
 
 export default function SignInPage() {
   const { company_name } = useSettings();
+  const { lang, setLang, t } = useLanguage();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
+  const [showLangPicker, setShowLangPicker] = useState(false);
   const [errors, setErrors] = useState<{ phone?: string; password?: string }>({});
   const [apiError, setApiError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,8 +30,8 @@ export default function SignInPage() {
   const validate = () => {
     const e: typeof errors = {};
     const phoneErr = validatePhone(phone);
-    if (phoneErr) e.phone = phoneErr;
-    if (!password.trim()) e.password = "• Kata laluan wajib diisi";
+    if (phoneErr) e.phone = t("err_phone_required");
+    if (!password.trim()) e.password = t("err_password_required");
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -57,8 +67,8 @@ export default function SignInPage() {
       <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 20px 0", gap: 16, animation: "fadeInUp 0.5s ease both" }}>
         <CompanyLogo size={90} fontSize={9} />
         <div style={{ textAlign: "center" }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 6 }}>Selamat Datang</h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Log masuk ke {company_name}</p>
+          <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 6 }}>{t("welcome")}</h1>
+          <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{t("login_to")} {company_name}</p>
         </div>
       </div>
 
@@ -70,7 +80,7 @@ export default function SignInPage() {
         )}
 
         <div style={{ marginBottom: 18 }}>
-          <label className="input-label">Nombor Telefon</label>
+          <label className="input-label">{t("phone")}</label>
           <input
             className="input-field"
             type="tel"
@@ -82,7 +92,7 @@ export default function SignInPage() {
         </div>
 
         <div style={{ marginBottom: 24 }}>
-          <label className="input-label">Kata Laluan</label>
+          <label className="input-label">{t("password")}</label>
           <div style={{ position: "relative" }}>
             <input
               className="input-field"
@@ -103,20 +113,36 @@ export default function SignInPage() {
           {loading ? (
             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
               <span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "white", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
-              Sedang log masuk...
+              {t("logging_in")}
             </span>
-          ) : "Log Masuk"}
+          ) : t("login_btn")}
         </button>
 
         <p style={{ textAlign: "center", marginTop: 20, fontSize: 14, color: "var(--text-secondary)" }}>
-          Tiada Akaun?{" "}
-          <Link href="/register" style={{ color: "var(--accent-blue-light)", fontWeight: 700 }}>Daftar Sekarang</Link>
+          {t("no_account")}{" "}
+          <Link href="/register" style={{ color: "var(--accent-blue-light)", fontWeight: 700 }}>{t("register_now")}</Link>
         </p>
 
-        <div style={{ display: "flex", justifyContent: "center", marginTop: 24 }}>
-          <button style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 10, padding: "8px 16px", color: "var(--text-secondary)", cursor: "pointer", fontSize: 13, fontFamily: "inherit" }}>
-            <span>🇲🇾</span><span>Melayu</span><ChevronDown size={14} />
+        <div style={{ display: "flex", justifyContent: "center", marginTop: 24, position: "relative" }}>
+          <button
+            onClick={() => setShowLangPicker((p) => !p)}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 10, padding: "8px 16px", color: "var(--text-secondary)", cursor: "pointer", fontSize: 13, fontFamily: "inherit" }}
+          >
+            <span>{LANGS.find((l) => l.code === lang)?.flag}</span>
+            <span>{LANGS.find((l) => l.code === lang)?.label}</span>
+            <span style={{ fontSize: 10 }}>▼</span>
           </button>
+          {showLangPicker && (
+            <div style={{ position: "absolute", bottom: "calc(100% + 8px)", background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 12, overflow: "hidden", zIndex: 10, minWidth: 140, boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}>
+              {LANGS.map((l) => (
+                <button key={l.code} onClick={() => { setLang(l.code); setShowLangPicker(false); }}
+                  style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "11px 16px", background: lang === l.code ? "rgba(201,168,76,0.1)" : "transparent", border: "none", cursor: "pointer", color: lang === l.code ? "#c9a84c" : "var(--text-primary)", fontSize: 13, fontFamily: "inherit", fontWeight: lang === l.code ? 700 : 400 }}>
+                  <span>{l.flag}</span><span>{l.label}</span>
+                  {lang === l.code && <span style={{ marginLeft: "auto", fontSize: 11, color: "#c9a84c" }}>✓</span>}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

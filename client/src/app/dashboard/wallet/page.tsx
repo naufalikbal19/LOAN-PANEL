@@ -4,25 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 import { useSettings } from "@/context/SettingsContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 
-const statusLabel: Record<string, string> = {
-  under_review:        "Sedang Semakan",
-  loan_approved:       "Pinjaman Diluluskan",
-  credit_frozen:       "Kredit Dibekukan",
-  unfrozen_processing: "Proses Pencairan",
-  credit_score_low:    "Skor Kredit Rendah",
-  payment_processing:  "Proses Pembayaran",
-  loan_being_canceled: "Pinjaman Dibatalkan",
-  transfer_failed:     "Pindahan Gagal",
-};
-
-const txTypeLabel: Record<string, string> = {
-  withdrawal:  "Pengeluaran",
-  credit:      "Kredit",
-  debit:       "Debit",
-  adjustment:  "Pelarasan",
-};
 
 const txTypeColor: Record<string, string> = {
   withdrawal:  "#ef4444",
@@ -44,6 +28,16 @@ interface Tx { id: number; type: string; amount: number; description: string | n
 
 export default function WalletPage() {
   const { withdrawal_warning, payment_methods } = useSettings() as any;
+  const { t } = useLanguage();
+  const statusLabel: Record<string, string> = {
+    under_review: t("under_review"), loan_approved: t("loan_approved"),
+    credit_frozen: t("credit_frozen"), unfrozen_processing: t("unfrozen_processing"),
+    credit_score_low: t("credit_score_low"), payment_processing: t("payment_processing"),
+    loan_being_canceled: t("loan_being_canceled"), transfer_failed: t("transfer_failed"),
+  };
+  const txTypeLabel: Record<string, string> = {
+    withdrawal: t("tx_withdrawal"), credit: t("tx_credit"), debit: t("tx_debit"), adjustment: t("tx_adjustment"),
+  };
   const paymentItems: { name: string; img: string }[] = (() => {
     try { const p = JSON.parse(payment_methods || "[]"); return Array.isArray(p) ? p : []; } catch { return []; }
   })();
@@ -122,10 +116,10 @@ export default function WalletPage() {
     <div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 20px 16px", animation: "fadeInUp 0.4s ease both" }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800 }}>Dompet Saya</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800 }}>{t("my_wallet")}</h1>
           <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--accent-blue)" }}>Financial Overview</p>
         </div>
-        <span className="badge-verified"><span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent-green)", display: "inline-block" }} />TERVERIFIKASI</span>
+        <span className="badge-verified"><span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent-green)", display: "inline-block" }} />{t("verified")}</span>
       </div>
 
       {/* Wallet Card */}
@@ -145,7 +139,7 @@ export default function WalletPage() {
               <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--accent-green)", boxShadow: "0 0 8px rgba(34,197,94,0.6)" }} />
             </div>
             <div style={{ marginBottom: 20 }}>
-              <p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6, letterSpacing: 0.5 }}>AKAUN SAYA</p>
+              <p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6, letterSpacing: 0.5 }}>{t("my_account_label")}</p>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <p style={{ fontSize: 32, fontWeight: 900, letterSpacing: -1, color: "var(--text-primary)" }}>
                   {loading ? "..." : show ? `RM ${balance !== null ? Number(balance).toLocaleString("ms-MY", { minimumFractionDigits: 2 }) : "0.00"}` : "RM ••••"}
@@ -168,7 +162,7 @@ export default function WalletPage() {
               <button
                 onClick={() => canWithdraw ? setShowWithdraw(true) : undefined}
                 disabled={!canWithdraw}
-                title={!canWithdraw ? (latestLoan?.status !== "loan_approved" ? "Pinjaman belum diluluskan" : "Tiada baki untuk dikeluarkan") : ""}
+                title={!canWithdraw ? (latestLoan?.status !== "loan_approved" ? t("loan_not_approved") : t("no_balance")) : ""}
                 style={{
                   background: canWithdraw ? "linear-gradient(135deg,#22c55e,#16a34a)" : "var(--bg-card-inner)",
                   border: "none", borderRadius: 8, padding: "8px 16px", color: canWithdraw ? "white" : "var(--text-muted)",
@@ -177,7 +171,7 @@ export default function WalletPage() {
                   transition: "all 0.2s",
                 }}
               >
-                <ArrowDownToLine size={14} /> WITHDRAW
+                <ArrowDownToLine size={14} /> {t("withdraw_btn")}
               </button>
             </div>
             {latestLoan?.keterangan && (
@@ -198,11 +192,11 @@ export default function WalletPage() {
       {/* Loan Details */}
       {latestLoan && (
         <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.25s both" }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Butiran Pinjaman</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>{t("loan_details")}</p>
           <div className="card" style={{ padding: "18px 18px 14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
               <div>
-                <p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 3 }}>NO. PERMOHONAN</p>
+                <p style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 3 }}>{t("application_no")}</p>
                 <p style={{ fontSize: 15, fontWeight: 800, letterSpacing: 0.5 }}>#ORD-{String(latestLoan.id).padStart(5,"0")}</p>
               </div>
               <span style={{
@@ -213,7 +207,7 @@ export default function WalletPage() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 8px", marginBottom: 14 }}>
               <div>
-                <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3 }}>JUMLAH PINJAMAN</p>
+                <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3 }}>{t("loan_amount")}</p>
                 <p style={{ fontSize: 14, fontWeight: 700 }}>RM {Number(latestLoan.amount).toLocaleString("ms-MY", { minimumFractionDigits: 2 })}</p>
               </div>
               <div>
@@ -249,32 +243,32 @@ export default function WalletPage() {
 
       {/* Transaction History */}
       <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.3s both" }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Sejarah Transaksi</p>
+        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>{t("tx_history")}</p>
         {loading ? (
-          <p style={{ fontSize: 13, color: "var(--text-secondary)", textAlign: "center", padding: 20 }}>Memuatkan...</p>
+          <p style={{ fontSize: 13, color: "var(--text-secondary)", textAlign: "center", padding: 20 }}>{t("loading")}</p>
         ) : transactions.length === 0 ? (
-          <p style={{ fontSize: 13, color: "var(--text-secondary)", textAlign: "center", padding: 20 }}>Tiada rekod transaksi.</p>
+          <p style={{ fontSize: 13, color: "var(--text-secondary)", textAlign: "center", padding: 20 }}>{t("no_transactions")}</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {transactions.map((t) => {
-              const color = txTypeColor[t.type] ?? "#c9a84c";
-              const sign = t.type === "credit" || t.type === "adjustment" ? "+" : "-";
+            {transactions.map((tx) => {
+              const color = txTypeColor[tx.type] ?? "#c9a84c";
+              const sign = tx.type === "credit" || tx.type === "adjustment" ? "+" : "-";
               return (
-                <div key={t.id} className="card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div key={tx.id} className="card" style={{ padding: "14px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div style={{ width: 38, height: 38, borderRadius: 12, background: `${color}18`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>
-                      {t.type === "withdrawal" ? "💸" : t.type === "credit" ? "💰" : t.type === "debit" ? "📤" : "🔄"}
+                      {tx.type === "withdrawal" ? "💸" : tx.type === "credit" ? "💰" : tx.type === "debit" ? "📤" : "🔄"}
                     </div>
                     <div>
-                      <p style={{ fontSize: 14, fontWeight: 600 }}>{txTypeLabel[t.type] ?? t.type}</p>
+                      <p style={{ fontSize: 14, fontWeight: 600 }}>{txTypeLabel[tx.type] ?? tx.type}</p>
                       <p style={{ fontSize: 12, color: "var(--text-secondary)" }}>
-                        {t.description || new Date(t.created_at).toLocaleDateString("ms-MY")}
+                        {tx.description || new Date(tx.created_at).toLocaleDateString("ms-MY")}
                       </p>
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
-                    <p style={{ fontSize: 15, fontWeight: 700, color }}>{sign}RM {Number(t.amount).toLocaleString()}</p>
-                    <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{new Date(t.created_at).toLocaleDateString("ms-MY")}</p>
+                    <p style={{ fontSize: 15, fontWeight: 700, color }}>{sign}RM {Number(tx.amount).toLocaleString()}</p>
+                    <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{new Date(tx.created_at).toLocaleDateString("ms-MY")}</p>
                   </div>
                 </div>
               );
@@ -285,9 +279,9 @@ export default function WalletPage() {
 
       {/* Loan History */}
       <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.35s both" }}>
-        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Sejarah Pinjaman</p>
+        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>{t("loan_history")}</p>
         {loans.length === 0 ? (
-          <p style={{ fontSize: 13, color: "var(--text-secondary)", textAlign: "center", padding: 20 }}>Tiada rekod pinjaman.</p>
+          <p style={{ fontSize: 13, color: "var(--text-secondary)", textAlign: "center", padding: 20 }}>{t("no_loans")}</p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {loans.map((l) => {
@@ -315,7 +309,7 @@ export default function WalletPage() {
       {/* Payment Methods */}
       {paymentItems.length > 0 && (
         <div style={{ padding: "0 20px 20px", animation: "fadeInUp 0.4s ease 0.38s both" }}>
-          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>Kaedah Pembayaran</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", marginBottom: 14 }}>{t("payment_methods")}</p>
           <div className="payment-grid">
             {paymentItems.map((item, i) => (
               <div key={i} className="payment-item">
@@ -332,7 +326,7 @@ export default function WalletPage() {
 
       <div className="info-banner" style={{ marginBottom: 16, animation: "fadeInUp 0.4s ease 0.4s both" }}>
         <Info size={16} color="var(--accent-blue-light)" style={{ flexShrink: 0, marginTop: 1 }} />
-        <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>Pengeluaran hanya dibenarkan selepas pinjaman mendapat status <strong>Diluluskan</strong>. Sila semak akaun bank anda dalam masa 10-15 minit selepas pengeluaran.</p>
+        <p style={{ fontSize: 12, color: "var(--text-secondary)", lineHeight: 1.5 }}>{t("withdraw_info")}</p>
       </div>
 
       {/* Contract Modal */}
@@ -422,10 +416,10 @@ export default function WalletPage() {
                 <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(34,197,94,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
                   <CheckCircle size={36} color="#22c55e" />
                 </div>
-                <p style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Pengeluaran Berjaya!</p>
+                <p style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>{t("withdraw_success")}</p>
                 <p style={{ fontSize: 28, fontWeight: 900, color: "#22c55e", marginBottom: 8 }}>RM {Number(wdSuccess.amount).toLocaleString("ms-MY", { minimumFractionDigits: 2 })}</p>
                 <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 24 }}>
-                  Pengeluaran berjaya dikeluarkan! Sila semak akaun bank anda dalam masa 10-15 minit.
+                  {t("withdraw_success_msg")}
                 </p>
                 <button onClick={closeWithdrawModal} style={{ width: "100%", background: "var(--accent-blue)", border: "none", borderRadius: 14, padding: 16, color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                   Tutup
@@ -436,8 +430,8 @@ export default function WalletPage() {
               <>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                   <div>
-                    <p style={{ fontSize: 18, fontWeight: 800 }}>Pengeluaran Dana</p>
-                    <p style={{ fontSize: 12, color: "var(--text-secondary)" }}>Masukkan kata laluan pengeluaran anda</p>
+                    <p style={{ fontSize: 18, fontWeight: 800 }}>{t("withdraw_funds")}</p>
+                    <p style={{ fontSize: 12, color: "var(--text-secondary)" }}>{t("withdraw_pwd_hint")}</p>
                   </div>
                   <button onClick={closeWithdrawModal} style={{ width: 32, height: 32, borderRadius: 10, background: "var(--bg-card-inner)", border: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-secondary)" }}>
                     <X size={16} />
@@ -481,7 +475,7 @@ export default function WalletPage() {
                   disabled={wdLoading}
                   style={{ width: "100%", background: wdLoading ? "var(--bg-card-inner)" : "linear-gradient(135deg,#22c55e,#16a34a)", border: "none", borderRadius: 14, padding: 16, color: wdLoading ? "var(--text-muted)" : "white", fontSize: 15, fontWeight: 700, cursor: wdLoading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
                 >
-                  {wdLoading ? "Memproses..." : (<><ArrowDownToLine size={18} /> Sahkan Pengeluaran</>)}
+                  {wdLoading ? t("processing") : (<><ArrowDownToLine size={18} /> {t("confirm_withdraw")}</>)}
                 </button>
               </>
             )}

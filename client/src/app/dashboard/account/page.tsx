@@ -1,20 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, User, Lock, Banknote, FileText, CalendarClock, History, MessageSquare, LogOut } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Lock, Banknote, FileText, CalendarClock, History, MessageSquare, LogOut, Globe } from "lucide-react";
 import Link from "next/link";
 import { useSettings } from "@/context/SettingsContext";
 import { apiFetch } from "@/lib/api";
+import { useLanguage } from "@/context/LanguageContext";
+import type { Lang } from "@/lib/translations";
 
-const menu = [
-  { icon: User,          label: "Personal Information", href: "/dashboard/account/personal-info", color: "#c9a84c" },
-  { icon: Lock,          label: "Change Password",      href: "/dashboard/account/change-password", color: "#7c3aed" },
-  { icon: Banknote,      label: "Withdrawal Account",   href: "/dashboard/account/withdrawal", color: "#059669" },
-  { icon: FileText,      label: "Loan Contract",        href: "/dashboard/account/loan-contract", color: "#f59e0b" },
-  { icon: CalendarClock, label: "Repayment",            href: "/dashboard/account/repayment", color: "#0891b2" },
-  { icon: History,       label: "Transaction History",  href: "/dashboard/account/transaction-history", color: "#6366f1" },
-  { icon: MessageSquare, label: "Messages",             href: "/dashboard/account/messages", color: "#ec4899" },
+const LANGS: { code: Lang; flag: string; label: string }[] = [
+  { code: "ms", flag: "🇲🇾", label: "Melayu" },
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "zh", flag: "🇨🇳", label: "中文" },
 ];
+
 
 function scoreBadge(score: number): { label: string; color: string } {
   if (score >= 580) return { label: "EXCELLENT", color: "#22c55e" };
@@ -39,6 +38,7 @@ function Gauge({ score, max = 600 }: { score: number; max?: number }) {
 export default function AccountPage() {
   const router = useRouter();
   const { company_name } = useSettings();
+  const { lang, setLang, t } = useLanguage();
   const [userName, setUserName] = useState("");
   const [creditScore, setCreditScore] = useState<number | null>(null);
 
@@ -57,6 +57,16 @@ export default function AccountPage() {
   };
 
   const badge = scoreBadge(creditScore ?? 500);
+
+  const menu = [
+    { icon: User,          label: t("personal_info"),      href: "/dashboard/account/personal-info",        color: "#c9a84c" },
+    { icon: Lock,          label: t("change_password"),    href: "/dashboard/account/change-password",      color: "#7c3aed" },
+    { icon: Banknote,      label: t("withdrawal_account"), href: "/dashboard/account/withdrawal",           color: "#059669" },
+    { icon: FileText,      label: t("loan_contract_menu"), href: "/dashboard/account/loan-contract",        color: "#f59e0b" },
+    { icon: CalendarClock, label: t("repayment"),          href: "/dashboard/account/repayment",            color: "#0891b2" },
+    { icon: History,       label: t("tx_history_menu"),    href: "/dashboard/account/transaction-history",  color: "#6366f1" },
+    { icon: MessageSquare, label: t("messages"),           href: "/dashboard/account/messages",             color: "#ec4899" },
+  ];
 
   return (
     <div>
@@ -78,7 +88,7 @@ export default function AccountPage() {
               {creditScore === null ? "..." : creditScore}
             </p>
             <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: 1.5, background: `${badge.color}22`, color: badge.color, borderRadius: 6, padding: "3px 10px" }}>{badge.label}</span>
-            <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 10 }}>Terakhir dikemaskini hari ini</p>
+            <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 10 }}>{t("last_updated")}</p>
           </div>
           <div style={{ width: 72, height: 72, background: "var(--bg-card-inner)", borderRadius: 18, display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-light)" }}>
             <Gauge score={creditScore ?? 500} />
@@ -87,7 +97,7 @@ export default function AccountPage() {
       </div>
 
       <div style={{ padding: "0 20px 12px" }}>
-        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-secondary)" }}>Pengurusan Akaun</p>
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--text-secondary)" }}>{t("account_management")}</p>
       </div>
 
       <div style={{ padding: "0 20px", display: "flex", flexDirection: "column", gap: 10, animation: "fadeInUp 0.4s ease 0.2s both" }}>
@@ -102,9 +112,27 @@ export default function AccountPage() {
         ))}
       </div>
 
-      <div style={{ padding: "20px 20px 8px", animation: "fadeInUp 0.4s ease 0.3s both" }}>
+      {/* Language Selector */}
+      <div style={{ padding: "16px 20px 0", animation: "fadeInUp 0.4s ease 0.28s both" }}>
+        <div className="card" style={{ padding: "14px 16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+            <div className="menu-icon-box" style={{ background: "rgba(99,102,241,0.12)" }}><Globe size={18} color="#6366f1" strokeWidth={2} /></div>
+            <span style={{ fontSize: 14, fontWeight: 600 }}>{t("language_label")}</span>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            {LANGS.map((l) => (
+              <button key={l.code} onClick={() => setLang(l.code)} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: "10px 6px", borderRadius: 10, border: `1.5px solid ${lang === l.code ? "#c9a84c" : "var(--border-color)"}`, background: lang === l.code ? "rgba(201,168,76,0.08)" : "var(--bg-card-inner)", cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s" }}>
+                <span style={{ fontSize: 20 }}>{l.flag}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: lang === l.code ? "#c9a84c" : "var(--text-secondary)" }}>{l.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding: "16px 20px 8px", animation: "fadeInUp 0.4s ease 0.3s both" }}>
         <button onClick={handleLogout} style={{ width: "100%", background: "transparent", border: "1.5px solid rgba(239,68,68,0.4)", borderRadius: 14, padding: 16, color: "#ef4444", fontSize: 14, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: "inherit", letterSpacing: 1 }}>
-          <LogOut size={16} /> LOG KELUAR AKAUN
+          <LogOut size={16} /> {t("logout")}
         </button>
       </div>
     </div>
