@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description: "Pinjaman peribadi terbaik untuk anda",
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Pinjaman Barakah" },
   formatDetection: { telephone: false },
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
