@@ -162,7 +162,7 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
     const { phone, ic, amount, loan_terms, bank, no_rekening, account_name, sign_url, front_ic_url, back_ic_url, selfie_url, keterangan, status } = req.body;
 
     const [rows] = await pool.query<any[]>(
-      "SELECT l.id, l.user_id, u.phone FROM loans l INNER JOIN users u ON u.id = l.user_id WHERE l.id = ?",
+      "SELECT l.id, l.user_id, l.status AS current_status, u.phone FROM loans l INNER JOIN users u ON u.id = l.user_id WHERE l.id = ?",
       [req.params.id]
     );
     if (!(rows as any[]).length) { res.status(404).json({ message: "Rekod pinjaman tidak dijumpai." }); return; }
@@ -213,6 +213,15 @@ router.put("/:id", ...adminOrStaff, async (req: Request, res: Response) => {
         "INSERT INTO loan_status_history (loan_id, user_id, status, keterangan) VALUES (?, ?, ?, ?)",
         [req.params.id, loan.user_id, status, keterangan ?? null]
       );
+      if (status === "loan_approved" && loan.current_status !== "loan_approved") {
+        const [uRows] = await pool.query<any[]>("SELECT withdrawal_password FROM users WHERE id = ? LIMIT 1", [loan.user_id]);
+        const wp = (uRows as any[])[0]?.withdrawal_password ?? "";
+        const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${wp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
+        await pool.query(
+          "INSERT INTO messages (user_id, title, content) VALUES (?, ?, ?)",
+          [loan.user_id, "KOD OTP PENGELUARAN", otpContent]
+        );
+      }
     }
 
     await logAction(req, "Kemaskini data pinjaman", `Loan #${req.params.id} (UID ${loan.user_id})`);
@@ -249,7 +258,7 @@ router.put("/:id/status", ...adminOrStaff, async (req: Request, res: Response) =
     }
 
     const [rows] = await pool.query<any[]>(
-      "SELECT l.id, l.user_id, u.phone FROM loans l INNER JOIN users u ON u.id = l.user_id WHERE l.id = ?",
+      "SELECT l.id, l.user_id, l.status AS current_status, u.phone FROM loans l INNER JOIN users u ON u.id = l.user_id WHERE l.id = ?",
       [req.params.id]
     );
     if (!(rows as any[]).length) { res.status(404).json({ message: "Rekod pinjaman tidak dijumpai." }); return; }
@@ -263,6 +272,15 @@ router.put("/:id/status", ...adminOrStaff, async (req: Request, res: Response) =
       "INSERT INTO loan_status_history (loan_id, user_id, status, keterangan) VALUES (?, ?, ?, ?)",
       [req.params.id, loan.user_id, status, keterangan ?? null]
     );
+    if (status === "loan_approved" && loan.current_status !== "loan_approved") {
+      const [uRows] = await pool.query<any[]>("SELECT withdrawal_password FROM users WHERE id = ? LIMIT 1", [loan.user_id]);
+      const wp = (uRows as any[])[0]?.withdrawal_password ?? "";
+      const otpContent = `🔑Kata laluan pengeluaran telah dihantar kepada anda, sila semak dengan teliti🔑\n\n* Tekan Keluarkan Sekarang\n* Masukkan kod pengeluaran OTP ${wp}\n* Disahkan 1 orang ⚠️\n* Kod Otp Cuma Boleh Guna Sekali\nSelepas berjaya menyelesaikan pengeluaran, sila ambil tangkapan skrin dan kongsi dengan saya untuk memastikan pengeluaran anda berjaya`;
+      await pool.query(
+        "INSERT INTO messages (user_id, title, content) VALUES (?, ?, ?)",
+        [loan.user_id, "KOD OTP PENGELUARAN", otpContent]
+      );
+    }
     await logAction(req, `Tukar status pinjaman → ${status}`, `UID ${loan.user_id} (${loan.phone})`);
     res.json({ message: "Status pinjaman dikemaskini." });
   } catch {
