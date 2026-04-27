@@ -170,12 +170,9 @@ export default function MediaPage() {
                     src={`${API}${a.url}`}
                     alt={a.filename}
                     style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                      (e.target as HTMLImageElement).nextElementSibling!.removeAttribute("hidden");
-                    }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                   />
-                  <ImageIcon size={28} color="var(--text-muted)" hidden />
+                  <ImageIcon size={28} color="var(--text-muted)" style={{ position: "absolute", opacity: 0.3 }} />
                 </div>
 
                 {/* Info */}
