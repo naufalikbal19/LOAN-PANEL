@@ -53,8 +53,8 @@ function formatRM(amount: string | number) {
 function FieldBlock({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p style={{ fontSize: 10, color: "#555", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{label}</p>
-      <p style={{ fontSize: 13, color: value ? "#ccc" : "#444", fontFamily: "monospace" }}>{value || "—"}</p>
+      <p style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{label}</p>
+      <p style={{ fontSize: 13, color: value ? "var(--text-primary)" : "var(--text-muted)", fontFamily: "monospace" }}>{value || "—"}</p>
     </div>
   );
 }
@@ -137,9 +137,9 @@ export default function WithdrawalPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Withdrawal Records</h1>
-          <p style={{ color: "#888", fontSize: 13 }}>Rekod pengeluaran wang dan maklumat akaun bank ahli</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Rekod pengeluaran wang dan maklumat akaun bank ahli</p>
         </div>
-        <button onClick={() => fetchData(inputSearch, filterStatus)} style={{ background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 14px", color: "#888", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
+        <button onClick={() => fetchData(inputSearch, filterStatus)} style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 14px", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
           <RefreshCw size={13} /> Muat Semula
         </button>
       </div>
@@ -148,12 +148,12 @@ export default function WithdrawalPage() {
       <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
           <div style={{ position: "relative" }}>
-            <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#555" }} />
+            <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
             <input
               value={inputSearch}
               onChange={(e) => setInputSearch(e.target.value)}
               placeholder="Cari UID atau Nombor HP..."
-              style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 12px 8px 30px", color: "#fff", fontSize: 13, outline: "none", width: 220, fontFamily: "inherit" }}
+              style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 12px 8px 30px", color: "var(--text-primary)", fontSize: 13, outline: "none", width: 220, fontFamily: "inherit" }}
             />
           </div>
           <button type="submit" style={{ background: "#c9a84c", color: "#000", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Cari</button>
@@ -163,43 +163,43 @@ export default function WithdrawalPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
-            style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 32px 8px 12px", color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", fontFamily: "inherit", appearance: "none" }}
+            style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 32px 8px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", cursor: "pointer", fontFamily: "inherit", appearance: "none" }}
           >
             <option value="all">Semua Status</option>
             {ALL_STATUSES.map(([key, m]) => (
               <option key={key} value={key}>{m.label}</option>
             ))}
           </select>
-          <ChevronDown size={13} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", color: "#666", pointerEvents: "none" }} />
+          <ChevronDown size={13} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)", pointerEvents: "none" }} />
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #1e1e1e", background: "#0c0c0c" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-color)", background: "var(--nav-bg)" }}>
                 {["UID", "Nombor HP", "Nominal Withdraw", "Bank", "No. Rekening", "Tanggal Pinjam", "Status", "Tindakan"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={8} style={{ textAlign: "center", padding: 44, color: "#555", fontSize: 13 }}>Memuatkan...</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: "center", padding: 44, color: "var(--text-muted)", fontSize: 13 }}>Memuatkan...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={8} style={{ textAlign: "center", padding: 44, color: "#555", fontSize: 13 }}>Tiada rekod dijumpai.</td></tr>
+                <tr><td colSpan={8} style={{ textAlign: "center", padding: 44, color: "var(--text-muted)", fontSize: 13 }}>Tiada rekod dijumpai.</td></tr>
               ) : rows.map((row, i) => (
-                <tr key={row.id} style={{ borderBottom: "1px solid #161616", background: i % 2 === 0 ? "transparent" : "#0a0a0a" }}>
+                <tr key={row.id} style={{ borderBottom: "1px solid var(--border-color)", background: i % 2 === 0 ? "transparent" : "var(--bg-card-inner)" }}>
                   <td style={{ padding: "13px 16px", color: "#c9a84c", fontWeight: 700, fontFamily: "monospace", fontSize: 13 }}>
                     #{String(row.user_id).padStart(4, "0")}
                   </td>
-                  <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc", fontFamily: "monospace" }}>{row.phone}</td>
-                  <td style={{ padding: "13px 16px", fontSize: 13, color: "#fff", fontWeight: 600 }}>{formatRM(row.amount)}</td>
-                  <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc" }}>{row.bank || <span style={{ color: "#444" }}>—</span>}</td>
-                  <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc", fontFamily: "monospace" }}>{row.no_rekening || <span style={{ color: "#444" }}>—</span>}</td>
-                  <td style={{ padding: "13px 16px", fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--text-primary)", fontFamily: "monospace" }}>{row.phone}</td>
+                  <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{formatRM(row.amount)}</td>
+                  <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--text-primary)" }}>{row.bank || <span style={{ color: "var(--text-muted)" }}>—</span>}</td>
+                  <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--text-primary)", fontFamily: "monospace" }}>{row.no_rekening || <span style={{ color: "var(--text-muted)" }}>—</span>}</td>
+                  <td style={{ padding: "13px 16px", fontSize: 12, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
                     {new Date(row.created_at).toLocaleDateString("ms-MY", { day: "2-digit", month: "short", year: "numeric" })}
                   </td>
                   <td style={{ padding: "13px 16px" }}><StatusBadge status={row.status} /></td>
@@ -224,21 +224,21 @@ export default function WithdrawalPage() {
             </tbody>
           </table>
         </div>
-        <div style={{ padding: "10px 16px", borderTop: "1px solid #1a1a1a" }}>
-          <span style={{ fontSize: 12, color: "#555" }}>{rows.length} rekod</span>
+        <div style={{ padding: "10px 16px", borderTop: "1px solid var(--border-color)" }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{rows.length} rekod</span>
         </div>
       </div>
 
       {/* View Modal */}
       {viewRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, padding: 28, width: "100%", maxWidth: 440 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 440 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 800 }}>Detail Withdrawal</h2>
-              <button onClick={() => setViewRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
+              <button onClick={() => setViewRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>
             </div>
 
-            <div style={{ background: "#0c0c0c", borderRadius: 10, padding: "16px", marginBottom: 16, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 20px" }}>
+            <div style={{ background: "var(--nav-bg)", borderRadius: 10, padding: "16px", marginBottom: 16, display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 20px" }}>
               <FieldBlock label="UID" value={`#${String(viewRow.user_id).padStart(4, "0")}`} />
               <FieldBlock label="Nombor HP" value={viewRow.phone} />
               <FieldBlock label="Nominal Withdraw" value={formatRM(viewRow.amount)} />
@@ -248,8 +248,8 @@ export default function WithdrawalPage() {
               <FieldBlock label="Nama Pemegang Kad" value={viewRow.account_name || ""} />
             </div>
 
-            <div style={{ background: "#0c0c0c", borderRadius: 10, padding: "14px 16px", marginBottom: 20 }}>
-              <p style={{ fontSize: 10, color: "#555", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Status</p>
+            <div style={{ background: "var(--nav-bg)", borderRadius: 10, padding: "14px 16px", marginBottom: 20 }}>
+              <p style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Status</p>
               <StatusBadge status={viewRow.status} />
             </div>
 
@@ -257,7 +257,7 @@ export default function WithdrawalPage() {
               <button onClick={() => { setViewRow(null); openEdit(viewRow); }} style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", color: "#c9a84c", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6 }}>
                 <Edit2 size={13} /> Ubah
               </button>
-              <button onClick={() => setViewRow(null)} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "#888", cursor: "pointer", fontFamily: "inherit" }}>Tutup</button>
+              <button onClick={() => setViewRow(null)} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", fontFamily: "inherit" }}>Tutup</button>
             </div>
           </div>
         </div>
@@ -266,48 +266,48 @@ export default function WithdrawalPage() {
       {/* Edit Modal */}
       {editRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24, overflowY: "auto" }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, padding: 28, width: "100%", maxWidth: 460, margin: "auto" }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 460, margin: "auto" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div>
                 <h2 style={{ fontSize: 16, fontWeight: 800 }}>Ubah Data Withdrawal</h2>
-                <p style={{ fontSize: 12, color: "#555", marginTop: 2 }}>UID #{String(editRow.user_id).padStart(4, "0")}</p>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>UID #{String(editRow.user_id).padStart(4, "0")}</p>
               </div>
-              <button onClick={() => setEditRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
+              <button onClick={() => setEditRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 16px", marginBottom: 20 }}>
               <div style={{ gridColumn: "1 / -1" }}>
-                <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nombor HP</label>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nombor HP</label>
                 <input value={editPhone} onChange={(e) => setEditPhone(e.target.value)}
-                  style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "monospace", boxSizing: "border-box" }} />
+                  style={{ width: "100%", background: "var(--nav-bg)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "9px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", fontFamily: "monospace", boxSizing: "border-box" }} />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nominal Withdraw (RM)</label>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nominal Withdraw (RM)</label>
                 <input type="number" value={editAmount} onChange={(e) => setEditAmount(e.target.value)}
-                  style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", background: "var(--nav-bg)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "9px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
               </div>
               <div>
-                <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Bank</label>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Bank</label>
                 <input value={editBank} onChange={(e) => setEditBank(e.target.value)} placeholder="Cth: Maybank"
-                  style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", background: "var(--nav-bg)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "9px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
               </div>
               <div style={{ gridColumn: "1 / -1" }}>
-                <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>No. Rekening</label>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>No. Rekening</label>
                 <input value={editNoRek} onChange={(e) => setEditNoRek(e.target.value)} placeholder="Nombor akaun bank"
-                  style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "monospace", boxSizing: "border-box" }} />
+                  style={{ width: "100%", background: "var(--nav-bg)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "9px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", fontFamily: "monospace", boxSizing: "border-box" }} />
               </div>
               <div style={{ gridColumn: "1 / -1" }}>
-                <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nama Pemegang Kad</label>
+                <label style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 6 }}>Nama Pemegang Kad</label>
                 <input value={editAccountName} onChange={(e) => setEditAccountName(e.target.value)} placeholder="Nama seperti dalam kad bank"
-                  style={{ width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
+                  style={{ width: "100%", background: "var(--nav-bg)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "9px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }} />
               </div>
             </div>
 
-            <label style={{ fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Status</label>
+            <label style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", display: "block", marginBottom: 8 }}>Status</label>
             <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 6 }}>
               {ALL_STATUSES.map(([key, m]) => (
-                <label key={key} onClick={() => setEditStatus(key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", background: editStatus === key ? "rgba(201,168,76,0.06)" : "#0c0c0c", border: `1px solid ${editStatus === key ? "rgba(201,168,76,0.3)" : "#1e1e1e"}`, borderRadius: 9, cursor: "pointer" }}>
-                  <div style={{ width: 16, height: 16, borderRadius: "50%", border: `2px solid ${editStatus === key ? "#c9a84c" : "#333"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <label key={key} onClick={() => setEditStatus(key)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "9px 14px", background: editStatus === key ? "rgba(201,168,76,0.06)" : "var(--nav-bg)", border: `1px solid ${editStatus === key ? "rgba(201,168,76,0.3)" : "var(--border-color)"}`, borderRadius: 9, cursor: "pointer" }}>
+                  <div style={{ width: 16, height: 16, borderRadius: "50%", border: `2px solid ${editStatus === key ? "#c9a84c" : "var(--border-light)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     {editStatus === key && <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#c9a84c" }} />}
                   </div>
                   <span style={{ background: m.bg, color: m.color, fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 12 }}>{m.label}</span>
@@ -318,7 +318,7 @@ export default function WithdrawalPage() {
             {editError && <p style={{ color: "#ef4444", fontSize: 13, marginTop: 12 }}>{editError}</p>}
 
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 20 }}>
-              <button onClick={() => setEditRow(null)} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "#888", cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+              <button onClick={() => setEditRow(null)} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
               <button onClick={handleSave} disabled={editLoading} style={{ background: "#c9a84c", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", color: "#000", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6, opacity: editLoading ? 0.7 : 1 }}>
                 <Save size={14} /> {editLoading ? "Menyimpan..." : "Simpan"}
               </button>

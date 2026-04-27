@@ -36,7 +36,7 @@ export default function ConsolePage() {
     <div>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Console</h1>
-        <p style={{ color: "#888", fontSize: 13 }}>Ringkasan keseluruhan data pinjaman</p>
+        <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Ringkasan keseluruhan data pinjaman</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16, marginBottom: 32 }}>
@@ -66,40 +66,40 @@ export default function ConsolePage() {
         />
       </div>
 
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 16, overflow: "hidden" }}>
-        <div style={{ padding: "18px 22px", borderBottom: "1px solid #1e1e1e", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 16, overflow: "hidden" }}>
+        <div style={{ padding: "18px 22px", borderBottom: "1px solid var(--border-color)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <h2 style={{ fontSize: 15, fontWeight: 700 }}>Pinjaman Terkini</h2>
-          <span style={{ fontSize: 12, color: "#888" }}>5 rekod terbaru</span>
+          <span style={{ fontSize: 12, color: "var(--text-secondary)" }}>5 rekod terbaru</span>
         </div>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
-              <tr style={{ background: "#0c0c0c" }}>
+              <tr style={{ background: "var(--nav-bg)" }}>
                 {["Order No.", "Nama", "Jumlah", "Status", "Tarikh"].map((h) => (
-                  <th key={h} style={{ padding: "12px 22px", textAlign: "left", color: "#888", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 22px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 600, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} style={{ padding: "28px 22px", textAlign: "center", color: "#888" }}>Memuatkan...</td></tr>
+                <tr><td colSpan={5} style={{ padding: "28px 22px", textAlign: "center", color: "var(--text-secondary)" }}>Memuatkan...</td></tr>
               ) : !stats?.recent?.length ? (
-                <tr><td colSpan={5} style={{ padding: "28px 22px", textAlign: "center", color: "#888" }}>Tiada rekod</td></tr>
+                <tr><td colSpan={5} style={{ padding: "28px 22px", textAlign: "center", color: "var(--text-secondary)" }}>Tiada rekod</td></tr>
               ) : stats.recent.map((loan: any, i: number) => {
-                const s = STATUS_MAP[loan.status] ?? { label: loan.status, bg: "rgba(128,128,128,0.12)", color: "#888" };
+                const s = STATUS_MAP[loan.status] ?? { label: loan.status, bg: "rgba(128,128,128,0.12)", color: "var(--text-secondary)" };
                 return (
-                  <tr key={loan.id} style={{ borderTop: "1px solid #1a1a1a", background: i % 2 === 0 ? "transparent" : "#0a0a0a" }}>
+                  <tr key={loan.id} style={{ borderTop: "1px solid var(--border-color)", background: i % 2 === 0 ? "transparent" : "var(--bg-card-inner)" }}>
                     <td style={{ padding: "14px 22px", fontWeight: 700, color: "#c9a84c", fontFamily: "monospace" }}>
                       #{`ORD-${String(loan.id).padStart(5, "0")}`}
                     </td>
-                    <td style={{ padding: "14px 22px", color: "#fff", fontWeight: 500 }}>{loan.name}</td>
-                    <td style={{ padding: "14px 22px", fontWeight: 700, color: "#fff" }}>
+                    <td style={{ padding: "14px 22px", color: "var(--text-primary)", fontWeight: 500 }}>{loan.name}</td>
+                    <td style={{ padding: "14px 22px", fontWeight: 700, color: "var(--text-primary)" }}>
                       RM {Number(loan.amount).toLocaleString("ms-MY")}
                     </td>
                     <td style={{ padding: "14px 22px" }}>
                       <span style={{ background: s.bg, color: s.color, borderRadius: 20, padding: "4px 12px", fontSize: 11, fontWeight: 700 }}>{s.label}</span>
                     </td>
-                    <td style={{ padding: "14px 22px", color: "#888" }}>
+                    <td style={{ padding: "14px 22px", color: "var(--text-secondary)" }}>
                       {new Date(loan.created_at).toLocaleDateString("ms-MY", { day: "numeric", month: "short", year: "numeric" })}
                     </td>
                   </tr>

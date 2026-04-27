@@ -74,9 +74,9 @@ export default function MemberApprovalPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Member Approval</h1>
-          <p style={{ color: "#888", fontSize: 13 }}>Semak dan luluskan permohonan pendaftaran baharu</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Semak dan luluskan permohonan pendaftaran baharu</p>
         </div>
-        <button onClick={fetchPending} style={{ background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 14px", color: "#888", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
+        <button onClick={fetchPending} style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 14px", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
           <RefreshCw size={13} /> Muat Semula
         </button>
       </div>
@@ -89,33 +89,33 @@ export default function MemberApprovalPage() {
         </div>
       )}
 
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #1e1e1e" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
                 {["UID", "Nama", "No. IC", "Telefon", "Tarikh Daftar", "Tindakan"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "#555", fontSize: 13 }}>Memuatkan...</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "var(--text-muted)", fontSize: 13 }}>Memuatkan...</td></tr>
               ) : members.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: "center", padding: 48, color: "#555" }}>
+                  <td colSpan={6} style={{ textAlign: "center", padding: 48, color: "var(--text-muted)" }}>
                     <CheckCircle size={32} color="#22c55e" style={{ marginBottom: 10, opacity: 0.5 }} />
                     <p style={{ fontSize: 13 }}>Tiada permohonan menunggu kelulusan.</p>
                   </td>
                 </tr>
               ) : members.map((m) => (
-                <tr key={m.id} style={{ borderBottom: "1px solid #1a1a1a" }} onMouseEnter={(e) => (e.currentTarget.style.background = "#161616")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                <tr key={m.id} style={{ borderBottom: "1px solid var(--border-color)" }} onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-card-inner)")} onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                   <td style={{ padding: "14px 16px", color: "#c9a84c", fontWeight: 700, fontFamily: "monospace", fontSize: 13 }}>#{String(m.id).padStart(4, "0")}</td>
-                  <td style={{ padding: "14px 16px", fontSize: 13, color: "#fff", fontWeight: 600 }}>{m.name}</td>
-                  <td style={{ padding: "14px 16px", fontSize: 13, color: "#aaa", fontFamily: "monospace" }}>{m.ic}</td>
-                  <td style={{ padding: "14px 16px", fontSize: 13, color: "#aaa" }}>{m.phone}</td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: "#666", whiteSpace: "nowrap" }}>{new Date(m.created_at).toLocaleString("ms-MY")}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{m.name}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 13, color: "var(--text-secondary)", fontFamily: "monospace" }}>{m.ic}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 13, color: "var(--text-secondary)" }}>{m.phone}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{new Date(m.created_at).toLocaleString("ms-MY")}</td>
                   <td style={{ padding: "14px 16px" }}>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button onClick={() => setViewMember(m)} title="Lihat detail" style={{ background: "rgba(201,168,76,0.1)", border: "none", borderRadius: 7, padding: "6px 8px", cursor: "pointer", color: "#c9a84c", display: "flex" }}>
@@ -149,10 +149,10 @@ export default function MemberApprovalPage() {
       {/* View Modal */}
       {viewMember && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, padding: 28, width: "100%", maxWidth: 420 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 420 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <h2 style={{ fontSize: 16, fontWeight: 800 }}>Detail Permohonan</h2>
-              <button onClick={() => setViewMember(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
+              <button onClick={() => setViewMember(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>
             </div>
             {[
               ["UID", `#${String(viewMember.id).padStart(4, "0")}`],
@@ -161,9 +161,9 @@ export default function MemberApprovalPage() {
               ["Nombor Telefon", viewMember.phone],
               ["Tarikh Daftar", new Date(viewMember.created_at).toLocaleString("ms-MY")],
             ].map(([label, val]) => (
-              <div key={label} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid #1e1e1e" }}>
-                <p style={{ fontSize: 11, color: "#555", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
-                <p style={{ fontSize: 14, color: "#fff" }}>{val}</p>
+              <div key={label} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid var(--border-color)" }}>
+                <p style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>{label}</p>
+                <p style={{ fontSize: 14, color: "var(--text-primary)" }}>{val}</p>
               </div>
             ))}
             <div style={{ display: "flex", gap: 10, marginTop: 4 }}>

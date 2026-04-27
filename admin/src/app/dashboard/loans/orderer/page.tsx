@@ -240,13 +240,13 @@ export default function OrdererPage() {
           <div style={{ position: "relative" }}>
             <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
             <input value={inputSearch} onChange={(e) => setInputSearch(e.target.value)} placeholder="Cari nama, UID atau nombor HP..."
-              style={{ background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 12px 8px 30px", color: "var(--text-primary)", fontSize: 13, outline: "none", width: 240, fontFamily: "inherit" }} />
+              style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 12px 8px 30px", color: "var(--text-primary)", fontSize: 13, outline: "none", width: 240, fontFamily: "inherit" }} />
           </div>
           <button type="submit" style={{ background: "#c9a84c", color: "#000", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Cari</button>
         </form>
         <div style={{ position: "relative" }}>
           <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as LoanStatus | "all")}
-            style={{ background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 30px 8px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", cursor: "pointer", fontFamily: "inherit", appearance: "none" }}>
+            style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 30px 8px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", cursor: "pointer", fontFamily: "inherit", appearance: "none" }}>
             <option value="all">Semua Status</option>
             {ALL_STATUSES.map(([k, m]) => <option key={k} value={k}>{m.label}</option>)}
           </select>
@@ -255,7 +255,7 @@ export default function OrdererPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "var(--bg-primary)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
@@ -271,7 +271,7 @@ export default function OrdererPage() {
               ) : rows.length === 0 ? (
                 <tr><td colSpan={10} style={{ textAlign: "center", padding: 44, color: "var(--text-muted)", fontSize: 13 }}>Tiada permohonan dijumpai.</td></tr>
               ) : rows.map((row, i) => (
-                <tr key={row.id} style={{ borderBottom: "1px solid var(--bg-card)", background: i % 2 === 0 ? "transparent" : "var(--bg-primary)" }}>
+                <tr key={row.id} style={{ borderBottom: "1px solid var(--border-color)", background: i % 2 === 0 ? "transparent" : "var(--bg-card-inner)" }}>
                   <td style={{ padding: "13px 16px", color: "#c9a84c", fontWeight: 700, fontFamily: "monospace", fontSize: 13, whiteSpace: "nowrap" }}>
                     #ORD-{String(row.id).padStart(5, "0")}
                   </td>
@@ -318,7 +318,7 @@ export default function OrdererPage() {
       {/* ── View Modal ── */}
       {viewRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 540, maxHeight: "88vh", display: "flex", flexDirection: "column" }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 540, maxHeight: "88vh", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 14px", borderBottom: "1px solid var(--border-color)", flexShrink: 0 }}>
               <div>
                 <h2 style={{ fontSize: 15, fontWeight: 800 }}>Detail Permohonan</h2>
@@ -392,7 +392,7 @@ export default function OrdererPage() {
       {/* ── Edit Modal ── */}
       {editRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 540, maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 540, maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 14px", borderBottom: "1px solid var(--border-color)", flexShrink: 0 }}>
               <div>
                 <h2 style={{ fontSize: 15, fontWeight: 800 }}>Edit Permohonan</h2>
@@ -511,7 +511,7 @@ export default function OrdererPage() {
       {/* ── Delete Confirm ── */}
       {deleteRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "var(--bg-primary)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 380 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 380 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 800 }}>Padam Permohonan</h2>
               <button onClick={() => setDeleteRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>

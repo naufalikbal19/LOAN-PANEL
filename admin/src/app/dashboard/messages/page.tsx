@@ -114,15 +114,15 @@ export default function MessagesPage() {
     } catch { setDeleteId(null); }
   };
 
-  const inputStyle: React.CSSProperties = { width: "100%", background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 13, fontFamily: "inherit", outline: "none" };
-  const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "#888", marginBottom: 6, display: "block" };
+  const inputStyle: React.CSSProperties = { width: "100%", background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "10px 12px", color: "var(--text-primary)", fontSize: 13, fontFamily: "inherit", outline: "none" };
+  const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "var(--text-secondary)", marginBottom: 6, display: "block" };
 
   return (
     <div style={{ padding: 24 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Mesej</h1>
-          <p style={{ color: "#888", fontSize: 13 }}>Hantar & urus mesej kepada ahli</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Hantar & urus mesej kepada ahli</p>
         </div>
         <button onClick={openModal} style={{ background: "#c9a84c", border: "none", borderRadius: 10, padding: "10px 18px", color: "white", fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "inherit" }}>
           <Plus size={16} /> Hantar Mesej
@@ -131,37 +131,37 @@ export default function MessagesPage() {
 
       {/* Search */}
       <div style={{ position: "relative", marginBottom: 20, maxWidth: 360 }}>
-        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#666" }} />
+        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)" }} />
         <input type="text" placeholder="Cari nama, telefon..." value={search} onChange={(e) => setSearch(e.target.value)}
           style={{ ...inputStyle, paddingLeft: 36 }} />
       </div>
 
       {/* Table */}
-      <div style={{ background: "#111", borderRadius: 14, border: "1px solid #1e1e1e", overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", borderRadius: 14, border: "1px solid var(--border-color)", overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #1e1e1e" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
                 {["ID","Ahli","Tajuk","Kandungan","Status","Tarikh","Tindakan"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#666", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#666" }}>Memuatkan...</td></tr>
+                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "var(--text-secondary)" }}>Memuatkan...</td></tr>
               ) : messages.length === 0 ? (
-                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#666" }}>Tiada rekod mesej.</td></tr>
+                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "var(--text-secondary)" }}>Tiada rekod mesej.</td></tr>
               ) : messages.map((msg, i) => (
                 <React.Fragment key={msg.id}>
                   <tr
-                    style={{ borderBottom: expandId === msg.id ? "none" : "1px solid #1a1a1a", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)", cursor: "pointer" }}
+                    style={{ borderBottom: expandId === msg.id ? "none" : "1px solid var(--bg-card)", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)", cursor: "pointer" }}
                     onClick={() => setExpandId(expandId === msg.id ? null : msg.id)}
                   >
-                    <td style={{ padding: "12px 16px", color: "#888", fontWeight: 600 }}>#{msg.id}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text-secondary)", fontWeight: 600 }}>#{msg.id}</td>
                     <td style={{ padding: "12px 16px" }}>
                       <p style={{ fontWeight: 700 }}>{msg.name}</p>
-                      <p style={{ color: "#888", fontSize: 11 }}>{msg.phone} · #{String(msg.user_id).padStart(4,"0")}</p>
+                      <p style={{ color: "var(--text-secondary)", fontSize: 11 }}>{msg.phone} · #{String(msg.user_id).padStart(4,"0")}</p>
                     </td>
                     <td style={{ padding: "12px 16px", fontWeight: msg.is_read ? 500 : 700, maxWidth: 180 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -169,7 +169,7 @@ export default function MessagesPage() {
                         <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{msg.title}</span>
                       </div>
                     </td>
-                    <td style={{ padding: "12px 16px", color: "#888", maxWidth: 200 }}>
+                    <td style={{ padding: "12px 16px", color: "var(--text-secondary)", maxWidth: 200 }}>
                       <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{msg.content}</span>
                     </td>
                     <td style={{ padding: "12px 16px" }}>
@@ -177,7 +177,7 @@ export default function MessagesPage() {
                         {msg.is_read ? "Dibaca" : "Belum Dibaca"}
                       </span>
                     </td>
-                    <td style={{ padding: "12px 16px", color: "#888", whiteSpace: "nowrap", fontSize: 12 }}>
+                    <td style={{ padding: "12px 16px", color: "var(--text-secondary)", whiteSpace: "nowrap", fontSize: 12 }}>
                       {new Date(msg.created_at).toLocaleDateString("ms-MY")}<br />
                       <span style={{ fontSize: 11 }}>{new Date(msg.created_at).toLocaleTimeString("ms-MY",{hour:"2-digit",minute:"2-digit"})}</span>
                     </td>
@@ -189,11 +189,11 @@ export default function MessagesPage() {
                     </td>
                   </tr>
                   {expandId === msg.id && (
-                    <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                    <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
                       <td colSpan={7} style={{ padding: "0 16px 16px" }}>
-                        <div style={{ background: "#0e0e0e", borderRadius: 10, padding: "14px 16px", border: "1px solid #1e1e1e" }}>
+                        <div style={{ background: "var(--bg-card)", borderRadius: 10, padding: "14px 16px", border: "1px solid var(--border-color)" }}>
                           <p style={{ fontSize: 11, fontWeight: 700, color: "#c9a84c", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Kandungan Penuh</p>
-                          <p style={{ fontSize: 13, color: "#ccc", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>{msg.content}</p>
+                          <p style={{ fontSize: 13, color: "var(--text-primary)", lineHeight: 1.75, whiteSpace: "pre-wrap" }}>{msg.content}</p>
                         </div>
                       </td>
                     </tr>
@@ -208,10 +208,10 @@ export default function MessagesPage() {
       {/* Send Modal */}
       {showModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, width: "100%", maxWidth: 520, padding: 28 }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 520, padding: 28 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24 }}>
               <h2 style={{ fontSize: 18, fontWeight: 800 }}>Hantar Mesej</h2>
-              <button onClick={closeModal} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#888" }}><X size={16} /></button>
+              <button onClick={closeModal} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-secondary)" }}><X size={16} /></button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -220,11 +220,11 @@ export default function MessagesPage() {
                 <label style={labelStyle}>Jenis Penerima</label>
                 <div style={{ display: "flex", gap: 8 }}>
                   <button onClick={() => { setForm((p) => ({ ...p, broadcast: false, user_id: "" })); setSelectedMember(null); setClientSearch(""); }}
-                    style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: !form.broadcast ? "rgba(201,168,76,0.15)" : "#1a1a1a", border: `1px solid ${!form.broadcast ? "#c9a84c" : "#2e2e2e"}`, borderRadius: 8, padding: "9px 12px", color: !form.broadcast ? "#c9a84c" : "#666", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                    style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: !form.broadcast ? "rgba(201,168,76,0.15)" : "var(--bg-card)", border: `1px solid ${!form.broadcast ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 8, padding: "9px 12px", color: !form.broadcast ? "#c9a84c" : "var(--text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                     <User size={13} /> Ahli Tertentu
                   </button>
                   <button onClick={() => { setForm((p) => ({ ...p, broadcast: true, user_id: "" })); setSelectedMember(null); setClientSearch(""); }}
-                    style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: form.broadcast ? "rgba(201,168,76,0.15)" : "#1a1a1a", border: `1px solid ${form.broadcast ? "#c9a84c" : "#2e2e2e"}`, borderRadius: 8, padding: "9px 12px", color: form.broadcast ? "#c9a84c" : "#666", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
+                    style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: form.broadcast ? "rgba(201,168,76,0.15)" : "var(--bg-card)", border: `1px solid ${form.broadcast ? "#c9a84c" : "var(--border-light)"}`, borderRadius: 8, padding: "9px 12px", color: form.broadcast ? "#c9a84c" : "var(--text-secondary)", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
                     <Users size={13} /> Semua Ahli
                   </button>
                 </div>
@@ -236,45 +236,45 @@ export default function MessagesPage() {
                   <label style={labelStyle}>Pilih Ahli *</label>
                   <div ref={clientRef} style={{ position: "relative" }}>
                     {selectedMember ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#1a1a1a", border: "1px solid #c9a84c", borderRadius: 8, padding: "10px 12px" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--bg-card)", border: "1px solid #c9a84c", borderRadius: 8, padding: "10px 12px" }}>
                         <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(201,168,76,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                           <User size={13} color="#c9a84c" />
                         </div>
                         <div style={{ flex: 1 }}>
-                          <p style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{selectedMember.name}</p>
-                          <p style={{ fontSize: 11, color: "#888" }}>{selectedMember.phone} · #{String(selectedMember.id).padStart(4,"0")}</p>
+                          <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>{selectedMember.name}</p>
+                          <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{selectedMember.phone} · #{String(selectedMember.id).padStart(4,"0")}</p>
                         </div>
                         <button onClick={() => { setSelectedMember(null); setForm((p) => ({ ...p, user_id: "" })); setClientSearch(""); }}
-                          style={{ background: "none", border: "none", cursor: "pointer", color: "#666", padding: 2 }}>
+                          style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", padding: 2 }}>
                           <X size={14} />
                         </button>
                       </div>
                     ) : (
                       <>
                         <div style={{ position: "relative" }}>
-                          <Search size={14} style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "#666", pointerEvents: "none" }} />
+                          <Search size={14} style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)", pointerEvents: "none" }} />
                           <input type="text" placeholder="Cari nama, telefon, atau UID..." value={clientSearch}
                             onChange={(e) => { setClientSearch(e.target.value); setClientDropdown(true); }}
                             onFocus={() => setClientDropdown(true)}
                             style={{ ...inputStyle, paddingLeft: 34 }} autoComplete="off" />
                         </div>
                         {clientDropdown && (
-                          <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10, zIndex: 50, maxHeight: 200, overflowY: "auto", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
+                          <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, zIndex: 50, maxHeight: 200, overflowY: "auto", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
                             {filteredMembers.length === 0 ? (
-                              <p style={{ padding: "14px 16px", fontSize: 13, color: "#666", textAlign: "center" }}>Tiada ahli ditemui.</p>
+                              <p style={{ padding: "14px 16px", fontSize: 13, color: "var(--text-secondary)", textAlign: "center" }}>Tiada ahli ditemui.</p>
                             ) : filteredMembers.map((u) => (
                               <button key={u.id}
                                 onClick={() => { setSelectedMember(u); setForm((p) => ({ ...p, user_id: String(u.id) })); setClientSearch(u.name); setClientDropdown(false); }}
-                                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid #222", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}
-                                onMouseEnter={(e) => (e.currentTarget.style.background = "#242424")}
+                                style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid var(--border-color)", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}
+                                onMouseEnter={(e) => (e.currentTarget.style.background = "var(--border-color)")}
                                 onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
                               >
                                 <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(201,168,76,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                   <User size={13} color="#c9a84c" />
                                 </div>
                                 <div>
-                                  <p style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{u.name}</p>
-                                  <p style={{ fontSize: 11, color: "#888" }}>{u.phone} · #{String(u.id).padStart(4,"0")}</p>
+                                  <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>{u.name}</p>
+                                  <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{u.phone} · #{String(u.id).padStart(4,"0")}</p>
                                 </div>
                               </button>
                             ))}
@@ -311,9 +311,9 @@ export default function MessagesPage() {
               {successMsg && <p style={{ color: "#22c55e", fontSize: 13 }}>✓ {successMsg}</p>}
 
               <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-                <button onClick={closeModal} style={{ flex: 1, background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10, padding: "12px", color: "#888", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+                <button onClick={closeModal} style={{ flex: 1, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, padding: "12px", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
                 <button onClick={handleSave} disabled={saving}
-                  style={{ flex: 2, background: saving ? "#1a1a1a" : "#c9a84c", border: "none", borderRadius: 10, padding: "12px", color: saving ? "#666" : "white", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
+                  style={{ flex: 2, background: saving ? "var(--bg-card)" : "#c9a84c", border: "none", borderRadius: 10, padding: "12px", color: saving ? "var(--text-secondary)" : "white", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: 7 }}>
                   <Send size={15} /> {saving ? "Menghantar..." : "Hantar Mesej"}
                 </button>
               </div>
@@ -325,14 +325,14 @@ export default function MessagesPage() {
       {/* Delete confirm */}
       {deleteId !== null && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%", textAlign: "center" }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%", textAlign: "center" }}>
             <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(239,68,68,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
               <Trash2 size={24} color="#ef4444" />
             </div>
             <p style={{ fontSize: 16, fontWeight: 800, marginBottom: 8 }}>Padam Mesej?</p>
-            <p style={{ fontSize: 13, color: "#888", marginBottom: 24 }}>Mesej #{deleteId} akan dipadam dan tidak boleh dipulihkan.</p>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 24 }}>Mesej #{deleteId} akan dipadam dan tidak boleh dipulihkan.</p>
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={() => setDeleteId(null)} style={{ flex: 1, background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10, padding: "12px", color: "#888", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+              <button onClick={() => setDeleteId(null)} style={{ flex: 1, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, padding: "12px", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
               <button onClick={handleDelete} style={{ flex: 1, background: "#ef4444", border: "none", borderRadius: 10, padding: "12px", color: "white", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Padam</button>
             </div>
           </div>

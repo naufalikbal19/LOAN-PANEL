@@ -75,15 +75,15 @@ function formatDate(d: string | null) {
 function FieldBlock({ label, value, mono, full }: { label: string; value: string; mono?: boolean; full?: boolean }) {
   return (
     <div style={full ? { gridColumn: "1 / -1" } : {}}>
-      <p style={{ fontSize: 10, color: "#555", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>{label}</p>
-      <p style={{ fontSize: 13, color: value && value !== "—" ? "#ccc" : "#444", fontFamily: mono ? "monospace" : "inherit", wordBreak: "break-word" }}>{value || "—"}</p>
+      <p style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>{label}</p>
+      <p style={{ fontSize: 13, color: value && value !== "—" ? "var(--text-primary)" : "var(--text-muted)", fontFamily: mono ? "monospace" : "inherit", wordBreak: "break-word" }}>{value || "—"}</p>
     </div>
   );
 }
 
 function SectionLabel({ children }: { children: string }) {
   return (
-    <p style={{ fontSize: 10, color: "#c9a84c", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", gridColumn: "1 / -1", marginTop: 4, paddingBottom: 6, borderBottom: "1px solid #1e1e1e" }}>
+    <p style={{ fontSize: 10, color: "#c9a84c", fontWeight: 700, letterSpacing: 1.5, textTransform: "uppercase", gridColumn: "1 / -1", marginTop: 4, paddingBottom: 6, borderBottom: "1px solid var(--border-color)" }}>
       {children}
     </p>
   );
@@ -250,9 +250,9 @@ export default function MemberListPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Member List</h1>
-          <p style={{ color: "#888", fontSize: 13 }}>Senarai ahli dan maklumat akaun</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Senarai ahli dan maklumat akaun</p>
         </div>
-        <button onClick={() => fetchMembers(inputSearch, filterStatus)} style={{ background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 14px", color: "#888", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
+        <button onClick={() => fetchMembers(inputSearch, filterStatus)} style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 14px", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
           <RefreshCw size={13} /> Muat Semula
         </button>
       </div>
@@ -261,12 +261,12 @@ export default function MemberListPage() {
       <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
           <div style={{ position: "relative" }}>
-            <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#555" }} />
+            <Search size={13} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
             <input
               value={inputSearch}
               onChange={(e) => setInputSearch(e.target.value)}
               placeholder="Cari nama, IC atau nombor HP..."
-              style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 12px 8px 30px", color: "#fff", fontSize: 13, outline: "none", width: 240, fontFamily: "inherit" }}
+              style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 12px 8px 30px", color: "var(--text-primary)", fontSize: 13, outline: "none", width: 240, fontFamily: "inherit" }}
             />
           </div>
           <button type="submit" style={{ background: "#c9a84c", color: "#000", border: "none", borderRadius: 8, padding: "8px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Cari</button>
@@ -276,40 +276,40 @@ export default function MemberListPage() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as RegStatus)}
-            style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 30px 8px 12px", color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", fontFamily: "inherit", appearance: "none" }}
+            style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 30px 8px 12px", color: "var(--text-primary)", fontSize: 13, outline: "none", cursor: "pointer", fontFamily: "inherit", appearance: "none" }}
           >
             <option value="all">Semua Status</option>
             <option value="active">Active</option>
             <option value="pending">Pending</option>
             <option value="rejected">Rejected</option>
           </select>
-          <ChevronDown size={13} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", color: "#666", pointerEvents: "none" }} />
+          <ChevronDown size={13} style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)", pointerEvents: "none" }} />
         </div>
       </div>
 
       {/* Table */}
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #1e1e1e", background: "#0c0c0c" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-color)", background: "var(--nav-bg)" }}>
                 {["UID", "Nama Lengkap", "Score Credit", "Phone Number", "Withdrawal Password", "Balance", "Pending Approval", "Status", "Tindakan"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "var(--text-secondary)", letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={9} style={{ textAlign: "center", padding: 44, color: "#555", fontSize: 13 }}>Memuatkan...</td></tr>
+                <tr><td colSpan={9} style={{ textAlign: "center", padding: 44, color: "var(--text-muted)", fontSize: 13 }}>Memuatkan...</td></tr>
               ) : rows.length === 0 ? (
-                <tr><td colSpan={9} style={{ textAlign: "center", padding: 44, color: "#555", fontSize: 13 }}>Tiada ahli dijumpai.</td></tr>
+                <tr><td colSpan={9} style={{ textAlign: "center", padding: 44, color: "var(--text-muted)", fontSize: 13 }}>Tiada ahli dijumpai.</td></tr>
               ) : rows.map((row, i) => (
-                <tr key={row.id} style={{ borderBottom: "1px solid #161616", background: i % 2 === 0 ? "transparent" : "#0a0a0a" }}>
+                <tr key={row.id} style={{ borderBottom: "1px solid var(--border-color)", background: i % 2 === 0 ? "transparent" : "var(--bg-card-inner)" }}>
                   <td style={{ padding: "13px 16px", color: "#c9a84c", fontWeight: 700, fontFamily: "monospace", fontSize: 13 }}>
                     #{String(row.id).padStart(4, "0")}
                   </td>
                   <td style={{ padding: "13px 16px" }}>
-                    <p style={{ fontSize: 13, color: "#e5e5e5", fontWeight: 600 }}>{row.name}</p>
+                    <p style={{ fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{row.name}</p>
                     <RegBadge status={row.status} />
                   </td>
                   <td style={{ padding: "13px 16px" }}>
@@ -317,13 +317,13 @@ export default function MemberListPage() {
                       {row.credit_score}
                     </span>
                   </td>
-                  <td style={{ padding: "13px 16px", fontSize: 13, color: "#ccc", fontFamily: "monospace" }}>{row.phone}</td>
+                  <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--text-primary)", fontFamily: "monospace" }}>{row.phone}</td>
                   <td style={{ padding: "13px 16px", fontSize: 13, color: "#c9a84c", fontFamily: "monospace", letterSpacing: 2 }}>{row.withdrawal_password || "—"}</td>
-                  <td style={{ padding: "13px 16px", fontSize: 13, color: "#fff", fontWeight: 600 }}>{formatRM(row.balance)}</td>
+                  <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{formatRM(row.balance)}</td>
                   <td style={{ padding: "13px 16px" }}>
                     {row.pending_loans > 0
                       ? <span style={{ background: "rgba(251,146,60,0.1)", color: "#fb923c", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>{row.pending_loans} pending</span>
-                      : <span style={{ color: "#444", fontSize: 13 }}>—</span>
+                      : <span style={{ color: "var(--text-muted)", fontSize: 13 }}>—</span>
                     }
                   </td>
                   <td style={{ padding: "13px 16px" }}><StatusBadge status={row.member_status || "normal"} /></td>
@@ -350,20 +350,20 @@ export default function MemberListPage() {
             </tbody>
           </table>
         </div>
-        <div style={{ padding: "10px 16px", borderTop: "1px solid #1a1a1a" }}>
-          <span style={{ fontSize: 12, color: "#555" }}>{rows.length} ahli</span>
+        <div style={{ padding: "10px 16px", borderTop: "1px solid var(--bg-card)" }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>{rows.length} ahli</span>
         </div>
       </div>
 
       {/* ── View Modal ── */}
       {viewRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, width: "100%", maxWidth: 560, maxHeight: "88vh", display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px 16px", borderBottom: "1px solid #1e1e1e", flexShrink: 0 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 560, maxHeight: "88vh", display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px 16px", borderBottom: "1px solid var(--border-color)", flexShrink: 0 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 {viewRow.avatar
-                  ? <img src={viewRow.avatar} alt="avatar" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "2px solid #2e2e2e" }} />
-                  : <div style={{ width: 40, height: 40, borderRadius: "50%", background: "#1e1e1e", display: "flex", alignItems: "center", justifyContent: "center", color: "#555", fontSize: 16, fontWeight: 700 }}>{viewRow.name.charAt(0).toUpperCase()}</div>
+                  ? <img src={viewRow.avatar} alt="avatar" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--border-light)" }} />
+                  : <div style={{ width: 40, height: 40, borderRadius: "50%", background: "var(--bg-card-inner)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: 16, fontWeight: 700 }}>{viewRow.name.charAt(0).toUpperCase()}</div>
                 }
                 <div>
                   <h2 style={{ fontSize: 15, fontWeight: 800 }}>{viewRow.name}</h2>
@@ -373,7 +373,7 @@ export default function MemberListPage() {
                   </div>
                 </div>
               </div>
-              <button onClick={() => setViewRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
+              <button onClick={() => setViewRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>
             </div>
 
             <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
@@ -393,8 +393,8 @@ export default function MemberListPage() {
 
                 <SectionLabel>Keselamatan</SectionLabel>
                 <div>
-                  <p style={{ fontSize: 10, color: "#555", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>Login Password</p>
-                  <p style={{ fontSize: 16, color: "#555", letterSpacing: 4 }}>••••••••</p>
+                  <p style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 3 }}>Login Password</p>
+                  <p style={{ fontSize: 16, color: "var(--text-muted)", letterSpacing: 4 }}>••••••••</p>
                 </div>
                 <FieldBlock label="Withdrawal Password" value={viewRow.withdrawal_password || ""} mono />
 
@@ -418,8 +418,8 @@ export default function MemberListPage() {
                 <FieldBlock label="Motto" value={viewRow.motto || ""} full />
                 {viewRow.avatar && (
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <p style={{ fontSize: 10, color: "#555", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Avatar</p>
-                    <img src={viewRow.avatar} alt="avatar" style={{ width: 64, height: 64, borderRadius: 10, objectFit: "cover", border: "1px solid #2e2e2e" }} />
+                    <p style={{ fontSize: 10, color: "var(--text-muted)", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Avatar</p>
+                    <img src={viewRow.avatar} alt="avatar" style={{ width: 64, height: 64, borderRadius: 10, objectFit: "cover", border: "1px solid var(--border-light)" }} />
                   </div>
                 )}
 
@@ -430,12 +430,12 @@ export default function MemberListPage() {
               </div>
             </div>
 
-            <div style={{ padding: "14px 24px", borderTop: "1px solid #1e1e1e", display: "flex", justifyContent: "flex-end", gap: 10, flexShrink: 0 }}>
+            <div style={{ padding: "14px 24px", borderTop: "1px solid var(--border-color)", display: "flex", justifyContent: "flex-end", gap: 10, flexShrink: 0 }}>
               <button onClick={() => { setViewRow(null); openEdit(viewRow); }}
                 style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", color: "#c9a84c", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6 }}>
                 <Edit2 size={13} /> Ubah
               </button>
-              <button onClick={() => setViewRow(null)} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: 13, color: "#888", cursor: "pointer", fontFamily: "inherit" }}>Tutup</button>
+              <button onClick={() => setViewRow(null)} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", fontFamily: "inherit" }}>Tutup</button>
             </div>
           </div>
         </div>
@@ -444,13 +444,13 @@ export default function MemberListPage() {
       {/* ── Edit Modal ── */}
       {editRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, width: "100%", maxWidth: 560, maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 14px", borderBottom: "1px solid #1e1e1e", flexShrink: 0 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 560, maxHeight: "90vh", display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 24px 14px", borderBottom: "1px solid var(--border-color)", flexShrink: 0 }}>
               <div>
                 <h2 style={{ fontSize: 15, fontWeight: 800 }}>Edit Ahli</h2>
-                <p style={{ fontSize: 12, color: "#555", marginTop: 2 }}>UID #{String(editRow.id).padStart(4, "0")}</p>
+                <p style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>UID #{String(editRow.id).padStart(4, "0")}</p>
               </div>
-              <button onClick={() => setEditRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
+              <button onClick={() => setEditRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>
             </div>
 
             <div style={{ overflowY: "auto", padding: "20px 24px", flex: 1 }}>
@@ -495,7 +495,7 @@ export default function MemberListPage() {
                   <div style={{ display: "flex", gap: 6 }}>
                     <input value={editWithdrawPw} onChange={(e) => setEditWithdrawPw(e.target.value)} style={{ ...inputStyle, fontFamily: "monospace", letterSpacing: 2, flex: 1 }} />
                     <button onClick={generatePassword} title="Generate baru"
-                      style={{ background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 8, padding: "0 10px", cursor: "pointer", color: "#888", display: "flex", alignItems: "center", flexShrink: 0 }}>
+                      style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "0 10px", cursor: "pointer", color: "var(--text-secondary)", display: "flex", alignItems: "center", flexShrink: 0 }}>
                       <RefreshCcw size={13} />
                     </button>
                   </div>
@@ -578,8 +578,8 @@ export default function MemberListPage() {
                 <div style={{ gridColumn: "1 / -1", display: "flex", gap: 8 }}>
                   {(Object.entries(MEMBER_STATUS_META) as [MemberStatus, typeof MEMBER_STATUS_META[MemberStatus]][]).map(([key, m]) => (
                     <label key={key} onClick={() => setEditMemberStatus(key)}
-                      style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px", background: editMemberStatus === key ? "rgba(201,168,76,0.06)" : "#0c0c0c", border: `1px solid ${editMemberStatus === key ? "rgba(201,168,76,0.3)" : "#1e1e1e"}`, borderRadius: 9, cursor: "pointer" }}>
-                      <div style={{ width: 14, height: 14, borderRadius: "50%", border: `2px solid ${editMemberStatus === key ? "#c9a84c" : "#333"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "10px", background: editMemberStatus === key ? "rgba(201,168,76,0.06)" : "var(--nav-bg)", border: `1px solid ${editMemberStatus === key ? "rgba(201,168,76,0.3)" : "var(--border-color)"}`, borderRadius: 9, cursor: "pointer" }}>
+                      <div style={{ width: 14, height: 14, borderRadius: "50%", border: `2px solid ${editMemberStatus === key ? "#c9a84c" : "var(--border-light)"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         {editMemberStatus === key && <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#c9a84c" }} />}
                       </div>
                       <span style={{ background: m.bg, color: m.color, fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 12 }}>{m.label}</span>
@@ -591,8 +591,8 @@ export default function MemberListPage() {
               {editError && <p style={{ color: "#ef4444", fontSize: 13, marginTop: 14 }}>{editError}</p>}
             </div>
 
-            <div style={{ padding: "14px 24px", borderTop: "1px solid #1e1e1e", display: "flex", gap: 10, justifyContent: "flex-end", flexShrink: 0 }}>
-              <button onClick={() => setEditRow(null)} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "#888", cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+            <div style={{ padding: "14px 24px", borderTop: "1px solid var(--border-color)", display: "flex", gap: 10, justifyContent: "flex-end", flexShrink: 0 }}>
+              <button onClick={() => setEditRow(null)} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
               <button onClick={handleSave} disabled={editLoading}
                 style={{ background: "#c9a84c", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", color: "#000", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6, opacity: editLoading ? 0.7 : 1 }}>
                 <Save size={14} /> {editLoading ? "Menyimpan..." : "Simpan"}
@@ -605,20 +605,20 @@ export default function MemberListPage() {
       {/* ── Delete Confirm ── */}
       {deleteRow && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, padding: 28, width: "100%", maxWidth: 380 }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, width: "100%", maxWidth: 380 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <h2 style={{ fontSize: 16, fontWeight: 800 }}>Padam Ahli</h2>
-              <button onClick={() => setDeleteRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", display: "flex" }}><X size={18} /></button>
+              <button onClick={() => setDeleteRow(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", display: "flex" }}><X size={18} /></button>
             </div>
-            <p style={{ fontSize: 13, color: "#888", marginBottom: 6 }}>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 6 }}>
               Anda pasti ingin memadam ahli ini? Tindakan ini tidak boleh dibatalkan.
             </p>
-            <div style={{ background: "#0c0c0c", borderRadius: 9, padding: "12px 14px", marginBottom: 20 }}>
-              <p style={{ fontSize: 13, color: "#e5e5e5", fontWeight: 600 }}>{deleteRow.name}</p>
-              <p style={{ fontSize: 12, color: "#666", fontFamily: "monospace", marginTop: 2 }}>{deleteRow.phone}</p>
+            <div style={{ background: "var(--nav-bg)", borderRadius: 9, padding: "12px 14px", marginBottom: 20 }}>
+              <p style={{ fontSize: 13, color: "var(--text-primary)", fontWeight: 600 }}>{deleteRow.name}</p>
+              <p style={{ fontSize: 12, color: "var(--text-secondary)", fontFamily: "monospace", marginTop: 2 }}>{deleteRow.phone}</p>
             </div>
             <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button onClick={() => setDeleteRow(null)} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "#888", cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+              <button onClick={() => setDeleteRow(null)} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, color: "var(--text-secondary)", cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
               <button onClick={handleDelete} disabled={deleteLoading}
                 style={{ background: "#ef4444", border: "none", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", color: "#fff", fontFamily: "inherit", display: "flex", alignItems: "center", gap: 6, opacity: deleteLoading ? 0.7 : 1 }}>
                 <Trash2 size={14} /> {deleteLoading ? "Memadamkan..." : "Ya, Padam"}
@@ -634,16 +634,16 @@ export default function MemberListPage() {
 const sectionLabelStyle: React.CSSProperties = {
   fontSize: 10, color: "#c9a84c", fontWeight: 700, letterSpacing: 1.5,
   textTransform: "uppercase", gridColumn: "1 / -1", margin: "4px 0 0",
-  paddingBottom: 6, borderBottom: "1px solid #1e1e1e",
+  paddingBottom: 6, borderBottom: "1px solid var(--border-color)",
 };
 
 const labelStyle: React.CSSProperties = {
-  fontSize: 11, color: "#666", fontWeight: 700, letterSpacing: 1,
+  fontSize: 11, color: "var(--text-secondary)", fontWeight: 700, letterSpacing: 1,
   textTransform: "uppercase", display: "block", marginBottom: 6,
 };
 
 const inputStyle: React.CSSProperties = {
-  width: "100%", background: "#0c0c0c", border: "1px solid #2e2e2e",
-  borderRadius: 8, padding: "9px 12px", color: "#fff", fontSize: 13,
+  width: "100%", background: "var(--nav-bg)", border: "1px solid var(--border-light)",
+  borderRadius: 8, padding: "9px 12px", color: "var(--text-primary)", fontSize: 13,
   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
 };

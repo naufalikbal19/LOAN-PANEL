@@ -83,9 +83,9 @@ export default function AdminLogPage() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Admin Log</h1>
-          <p style={{ color: "#888", fontSize: 13 }}>Semua aktiviti dan tindakan yang dilakukan oleh admin</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Semua aktiviti dan tindakan yang dilakukan oleh admin</p>
         </div>
-        <button onClick={() => fetchLogs(search)} style={{ background: "#1e1e1e", border: "1px solid #2e2e2e", borderRadius: 8, padding: "8px 14px", color: "#888", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
+        <button onClick={() => fetchLogs(search)} style={{ background: "var(--bg-card-inner)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "8px 14px", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontFamily: "inherit" }}>
           <RefreshCw size={13} /> Muat Semula
         </button>
       </div>
@@ -93,12 +93,12 @@ export default function AdminLogPage() {
       <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
         <form onSubmit={handleSearch} style={{ display: "flex", gap: 8 }}>
           <div style={{ position: "relative" }}>
-            <Search size={14} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "#555" }} />
+            <Search size={14} style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
             <input
               value={inputSearch}
               onChange={(e) => setInputSearch(e.target.value)}
               placeholder="Cari admin, tindakan atau sasaran..."
-              style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 8, padding: "9px 12px 9px 32px", color: "#fff", fontSize: 13, outline: "none", width: 280, fontFamily: "inherit" }}
+              style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "9px 12px 9px 32px", color: "var(--text-primary)", fontSize: 13, outline: "none", width: 280, fontFamily: "inherit" }}
             />
           </div>
           <button type="submit" style={{ background: "#c9a84c", color: "#000", border: "none", borderRadius: 8, padding: "9px 16px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>
@@ -107,43 +107,43 @@ export default function AdminLogPage() {
         </form>
       </div>
 
-      <div style={{ background: "#111", border: "1px solid #1e1e1e", borderRadius: 14, overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-color)", borderRadius: 14, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
-              <tr style={{ background: "#0c0c0c" }}>
+              <tr style={{ background: "var(--nav-bg)" }}>
                 {["#", "Admin", "Tindakan", "Sasaran", "IP Address", "Masa"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#888", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "#555" }}>Memuatkan log...</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "var(--text-muted)" }}>Memuatkan log...</td></tr>
               ) : logs.length === 0 ? (
-                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "#555" }}>Tiada rekod log dijumpai.</td></tr>
+                <tr><td colSpan={6} style={{ textAlign: "center", padding: 40, color: "var(--text-muted)" }}>Tiada rekod log dijumpai.</td></tr>
               ) : logs.map((log, i) => (
-                <tr key={log.id} style={{ borderTop: "1px solid #1a1a1a", background: i % 2 === 0 ? "transparent" : "#0a0a0a" }}>
-                  <td style={{ padding: "12px 16px", color: "#555", fontSize: 11 }}>{log.id}</td>
+                <tr key={log.id} style={{ borderTop: "1px solid var(--border-color)", background: i % 2 === 0 ? "transparent" : "var(--bg-card-inner)" }}>
+                  <td style={{ padding: "12px 16px", color: "var(--text-muted)", fontSize: 11 }}>{log.id}</td>
                   <td style={{ padding: "12px 16px" }}>
                     <span style={{ fontWeight: 700, color: "#c9a84c" }}>{log.admin_name}</span>
                   </td>
                   <td style={{ padding: "12px 16px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <ActionIcon action={log.action} />
-                      <span style={{ color: "#fff" }}>{log.action}</span>
+                      <span style={{ color: "var(--text-primary)" }}>{log.action}</span>
                     </div>
                   </td>
-                  <td style={{ padding: "12px 16px", color: "#888", fontSize: 12 }}>{log.target}</td>
-                  <td style={{ padding: "12px 16px", color: "#555", fontFamily: "monospace", fontSize: 12 }}>{log.ip_address}</td>
-                  <td style={{ padding: "12px 16px", color: "#666", whiteSpace: "nowrap", fontSize: 12 }}>{formatDate(log.created_at)}</td>
+                  <td style={{ padding: "12px 16px", color: "var(--text-secondary)", fontSize: 12 }}>{log.target}</td>
+                  <td style={{ padding: "12px 16px", color: "var(--text-muted)", fontFamily: "monospace", fontSize: 12 }}>{log.ip_address}</td>
+                  <td style={{ padding: "12px 16px", color: "var(--text-secondary)", whiteSpace: "nowrap", fontSize: 12 }}>{formatDate(log.created_at)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        <div style={{ padding: "10px 16px", borderTop: "1px solid #1a1a1a" }}>
-          <span style={{ fontSize: 12, color: "#555" }}>Menunjukkan {logs.length} rekod terkini</span>
+        <div style={{ padding: "10px 16px", borderTop: "1px solid var(--bg-card)" }}>
+          <span style={{ fontSize: 12, color: "var(--text-muted)" }}>Menunjukkan {logs.length} rekod terkini</span>
         </div>
       </div>
     </div>

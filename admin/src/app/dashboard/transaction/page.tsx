@@ -152,15 +152,15 @@ export default function TransactionPage() {
     } catch { setDeleteId(null); }
   };
 
-  const inputStyle: React.CSSProperties = { width: "100%", background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 13, fontFamily: "inherit", outline: "none" };
-  const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "#888", marginBottom: 6, display: "block" };
+  const inputStyle: React.CSSProperties = { width: "100%", background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 8, padding: "10px 12px", color: "var(--text-primary)", fontSize: 13, fontFamily: "inherit", outline: "none" };
+  const labelStyle: React.CSSProperties = { fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", color: "var(--text-secondary)", marginBottom: 6, display: "block" };
 
   return (
     <div style={{ padding: 24 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>Transaksi</h1>
-          <p style={{ color: "#888", fontSize: 13 }}>Urus sejarah transaksi setiap klien</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>Urus sejarah transaksi setiap klien</p>
         </div>
         <button onClick={openAdd} style={{ background: "#c9a84c", border: "none", borderRadius: 10, padding: "10px 18px", color: "white", fontWeight: 700, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, fontFamily: "inherit" }}>
           <Plus size={16} /> Tambah Transaksi
@@ -169,7 +169,7 @@ export default function TransactionPage() {
 
       {/* Search */}
       <div style={{ position: "relative", marginBottom: 20, maxWidth: 360 }}>
-        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#666" }} />
+        <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)" }} />
         <input
           type="text" placeholder="Cari nama, telefon, UID..."
           value={search} onChange={(e) => setSearch(e.target.value)}
@@ -178,36 +178,36 @@ export default function TransactionPage() {
       </div>
 
       {/* Table */}
-      <div style={{ background: "#111", borderRadius: 14, border: "1px solid #1e1e1e", overflow: "hidden" }}>
+      <div style={{ background: "var(--bg-card)", borderRadius: 14, border: "1px solid var(--border-color)", overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #1e1e1e" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-color)" }}>
                 {["ID","Klien","Jenis","Jumlah","Keterangan","Tarikh","Tindakan"].map((h) => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#666", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "var(--text-secondary)", fontWeight: 700, fontSize: 11, letterSpacing: 1, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#666" }}>Memuatkan...</td></tr>
+                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "var(--text-secondary)" }}>Memuatkan...</td></tr>
               ) : transactions.length === 0 ? (
-                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#666" }}>Tiada rekod transaksi.</td></tr>
+                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "var(--text-secondary)" }}>Tiada rekod transaksi.</td></tr>
               ) : transactions.map((tx, i) => (
-                <tr key={tx.id} style={{ borderBottom: "1px solid #1a1a1a", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.01)" }}>
-                  <td style={{ padding: "12px 16px", color: "#888", fontWeight: 600 }}>#{tx.id}</td>
+                <tr key={tx.id} style={{ borderBottom: "1px solid var(--border-color)", background: i % 2 === 0 ? "transparent" : "var(--bg-card-inner)" }}>
+                  <td style={{ padding: "12px 16px", color: "var(--text-secondary)", fontWeight: 600 }}>#{tx.id}</td>
                   <td style={{ padding: "12px 16px" }}>
                     <p style={{ fontWeight: 700 }}>{tx.name}</p>
-                    <p style={{ color: "#888", fontSize: 11 }}>{tx.phone} · UID #{String(tx.user_id).padStart(4,"0")}</p>
+                    <p style={{ color: "var(--text-secondary)", fontSize: 11 }}>{tx.phone} · UID #{String(tx.user_id).padStart(4,"0")}</p>
                   </td>
                   <td style={{ padding: "12px 16px" }}>{badge(tx.type)}</td>
                   <td style={{ padding: "12px 16px", fontWeight: 800, color: typeColor(tx.type) }}>
                     {tx.type === "credit" || tx.type === "adjustment" ? "+" : "-"}RM {Number(tx.amount).toLocaleString("ms-MY",{minimumFractionDigits:2})}
                   </td>
-                  <td style={{ padding: "12px 16px", color: "#888", maxWidth: 200 }}>
+                  <td style={{ padding: "12px 16px", color: "var(--text-secondary)", maxWidth: 200 }}>
                     <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tx.description || "—"}</span>
                   </td>
-                  <td style={{ padding: "12px 16px", color: "#888", whiteSpace: "nowrap" }}>
+                  <td style={{ padding: "12px 16px", color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
                     {new Date(tx.created_at).toLocaleDateString("ms-MY")}<br />
                     <span style={{ fontSize: 11 }}>{new Date(tx.created_at).toLocaleTimeString("ms-MY",{hour:"2-digit",minute:"2-digit"})}</span>
                   </td>
@@ -231,10 +231,10 @@ export default function TransactionPage() {
       {/* Add/Edit Modal */}
       {modal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, width: "100%", maxWidth: 480, padding: 28 }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, width: "100%", maxWidth: 480, padding: 28 }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24 }}>
               <h2 style={{ fontSize: 18, fontWeight: 800 }}>{modal === "add" ? "Tambah Transaksi" : "Edit Transaksi"}</h2>
-              <button onClick={closeModal} style={{ background: "#1e1e1e", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#888" }}><X size={16} /></button>
+              <button onClick={closeModal} style={{ background: "var(--bg-card-inner)", border: "none", borderRadius: 8, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "var(--text-secondary)" }}><X size={16} /></button>
             </div>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -244,22 +244,22 @@ export default function TransactionPage() {
                 <div ref={clientRef} style={{ position: "relative" }}>
                   {/* Selected badge */}
                   {selectedClient ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#1a1a1a", border: "1px solid #c9a84c", borderRadius: 8, padding: "10px 12px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, background: "var(--bg-card)", border: "1px solid #c9a84c", borderRadius: 8, padding: "10px 12px" }}>
                       <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(201,168,76,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                         <User size={15} color="#c9a84c" />
                       </div>
                       <div style={{ flex: 1 }}>
-                        <p style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{selectedClient.name}</p>
-                        <p style={{ fontSize: 11, color: "#888" }}>{selectedClient.phone} · #{String(selectedClient.id).padStart(4,"0")}</p>
+                        <p style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>{selectedClient.name}</p>
+                        <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{selectedClient.phone} · #{String(selectedClient.id).padStart(4,"0")}</p>
                       </div>
-                      <button onClick={() => { setSelectedClient(null); setForm((p) => ({ ...p, user_id: "" })); setClientSearch(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: "#666", padding: 2 }}>
+                      <button onClick={() => { setSelectedClient(null); setForm((p) => ({ ...p, user_id: "" })); setClientSearch(""); }} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-secondary)", padding: 2 }}>
                         <X size={14} />
                       </button>
                     </div>
                   ) : (
                     <>
                       <div style={{ position: "relative" }}>
-                        <Search size={14} style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "#666", pointerEvents: "none" }} />
+                        <Search size={14} style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", color: "var(--text-secondary)", pointerEvents: "none" }} />
                         <input
                           type="text"
                           placeholder="Cari nama, telefon, atau UID..."
@@ -271,23 +271,23 @@ export default function TransactionPage() {
                         />
                       </div>
                       {clientDropdown && (
-                        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10, zIndex: 50, maxHeight: 220, overflowY: "auto", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
+                        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, zIndex: 50, maxHeight: 220, overflowY: "auto", boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
                           {filteredClients.length === 0 ? (
-                            <p style={{ padding: "14px 16px", fontSize: 13, color: "#666", textAlign: "center" }}>Tiada klien ditemui.</p>
+                            <p style={{ padding: "14px 16px", fontSize: 13, color: "var(--text-secondary)", textAlign: "center" }}>Tiada klien ditemui.</p>
                           ) : filteredClients.map((u) => (
                             <button
                               key={u.id}
                               onClick={() => { setSelectedClient(u); setForm((p) => ({ ...p, user_id: String(u.id) })); setClientSearch(u.name); setClientDropdown(false); }}
-                              style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid #222", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.background = "#242424")}
+                              style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "none", border: "none", borderBottom: "1px solid var(--border-color)", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--border-color)")}
                               onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
                             >
                               <div style={{ width: 30, height: 30, borderRadius: "50%", background: "rgba(201,168,76,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                                 <User size={13} color="#c9a84c" />
                               </div>
                               <div>
-                                <p style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{u.name}</p>
-                                <p style={{ fontSize: 11, color: "#888" }}>{u.phone} · #{String(u.id).padStart(4,"0")}</p>
+                                <p style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>{u.name}</p>
+                                <p style={{ fontSize: 11, color: "var(--text-secondary)" }}>{u.phone} · #{String(u.id).padStart(4,"0")}</p>
                               </div>
                             </button>
                           ))}
@@ -304,7 +304,7 @@ export default function TransactionPage() {
                 <div style={{ display: "flex", gap: 8 }}>
                   {TX_TYPES.map(({ value, label, color }) => (
                     <button key={value} onClick={() => setForm((p) => ({ ...p, type: value }))}
-                      style={{ flex: 1, background: form.type === value ? `${color}22` : "#1a1a1a", border: `1px solid ${form.type === value ? color : "#2e2e2e"}`, borderRadius: 8, padding: "8px 4px", color: form.type === value ? color : "#666", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s" }}>
+                      style={{ flex: 1, background: form.type === value ? `${color}22` : "var(--bg-card)", border: `1px solid ${form.type === value ? color : "var(--border-light)"}`, borderRadius: 8, padding: "8px 4px", color: form.type === value ? color : "var(--text-secondary)", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all 0.15s" }}>
                       {label}
                     </button>
                   ))}
@@ -326,8 +326,8 @@ export default function TransactionPage() {
               {err && <p style={{ color: "#ef4444", fontSize: 13 }}>{err}</p>}
 
               <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
-                <button onClick={closeModal} style={{ flex: 1, background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10, padding: "12px", color: "#888", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
-                <button onClick={handleSave} disabled={saving} style={{ flex: 2, background: saving ? "#1a1a1a" : "#c9a84c", border: "none", borderRadius: 10, padding: "12px", color: saving ? "#666" : "white", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
+                <button onClick={closeModal} style={{ flex: 1, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, padding: "12px", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+                <button onClick={handleSave} disabled={saving} style={{ flex: 2, background: saving ? "var(--bg-card)" : "#c9a84c", border: "none", borderRadius: 10, padding: "12px", color: saving ? "var(--text-secondary)" : "white", fontWeight: 700, cursor: saving ? "not-allowed" : "pointer", fontFamily: "inherit" }}>
                   {saving ? "Menyimpan..." : modal === "add" ? "Simpan Transaksi" : "Kemaskini"}
                 </button>
               </div>
@@ -339,14 +339,14 @@ export default function TransactionPage() {
       {/* Delete confirm */}
       {deleteId !== null && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#111", border: "1px solid #2e2e2e", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%", textAlign: "center" }}>
+          <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 16, padding: 28, maxWidth: 380, width: "100%", textAlign: "center" }}>
             <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(239,68,68,0.12)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
               <Trash2 size={24} color="#ef4444" />
             </div>
             <p style={{ fontSize: 16, fontWeight: 800, marginBottom: 8 }}>Padam Transaksi?</p>
-            <p style={{ fontSize: 13, color: "#888", marginBottom: 24 }}>Tindakan ini tidak boleh dibuat asal. Transaksi #{deleteId} akan dipadam.</p>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 24 }}>Tindakan ini tidak boleh dibuat asal. Transaksi #{deleteId} akan dipadam.</p>
             <div style={{ display: "flex", gap: 10 }}>
-              <button onClick={() => setDeleteId(null)} style={{ flex: 1, background: "#1a1a1a", border: "1px solid #2e2e2e", borderRadius: 10, padding: "12px", color: "#888", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
+              <button onClick={() => setDeleteId(null)} style={{ flex: 1, background: "var(--bg-card)", border: "1px solid var(--border-light)", borderRadius: 10, padding: "12px", color: "var(--text-secondary)", fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>Batal</button>
               <button onClick={handleDelete} style={{ flex: 1, background: "#ef4444", border: "none", borderRadius: 10, padding: "12px", color: "white", fontWeight: 700, cursor: "pointer", fontFamily: "inherit" }}>Padam</button>
             </div>
           </div>
