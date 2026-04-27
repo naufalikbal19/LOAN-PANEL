@@ -45,7 +45,7 @@ export default function MessagesPage() {
               <span style={{ background: "#ec4899", color: "#fff", fontSize: 10, fontWeight: 800, borderRadius: 50, padding: "2px 7px", lineHeight: 1.6 }}>{unread}</span>
             )}
           </div>
-          <p style={{ fontSize: 10, letterSpacing: 1.5, color: "var(--text-secondary)", textTransform: "uppercase" }}>Messages from Admin</p>
+          <p style={{ fontSize: 10, letterSpacing: 1.5, color: "var(--text-secondary)", textTransform: "uppercase" }}>Messages from System</p>
         </div>
       </div>
 
