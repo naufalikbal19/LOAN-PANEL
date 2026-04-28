@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EasyLoans — Pinjaman Mudah, Proses Cepat</title>
+  <link id="favicon-link" rel="icon" type="image/x-icon" href="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #141414;
+      --card:     #161616;
+      --border:   #222;
+      --border2:  #2a2a2a;
+      --gold:     #c9a84c;
+      --gold-l:   #e2c060;
+      --gold-dim: rgba(201,168,76,0.12);
+      --gold-dim2:rgba(201,168,76,0.06);
+      --text:     #f0f0f0;
+      --text2:    #909090;
+      --text3:    #555;
+      --green:    #22c55e;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+      transition: background .3s, border-color .3s, backdrop-filter .3s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(8,8,8,0.93);
+      backdrop-filter: blur(20px);
+      border-bottom-color: var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-img { height: 34px; width: auto; object-fit: contain; display: none; }
+    .nav-logo-img.show { display: block; }
+    .nav-brand { font-size: 20px; font-weight: 900; color: var(--text); letter-spacing: -.5px; }
+    .nav-brand em { font-style: normal; color: var(--gold); }
+    .nav-links { display: flex; align-items: center; gap: 30px; list-style: none; }
+    .nav-links a { color: var(--text2); text-decoration: none; font-size: 14px; font-weight: 600; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-ctas { display: flex; gap: 8px; align-items: center; }
+    .btn-ghost {
+      padding: 9px 18px; border: 1px solid var(--border2); background: none;
+      color: var(--text); border-radius: 10px; font-size: 13px; font-weight: 700;
+      cursor: pointer; text-decoration: none; font-family: inherit; transition: all .2s;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-gold {
+      padding: 9px 18px; background: var(--gold); border: none;
+      color: #000; border-radius: 10px; font-size: 13px; font-weight: 800;
+      cursor: pointer; text-decoration: none; font-family: inherit; transition: all .2s;
+    }
+    .btn-gold:hover { background: var(--gold-l); transform: translateY(-1px); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; background: none; border: none; padding: 4px;
+    }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all .3s; }
+
+    /* ── MOBILE MENU ── */
+    .mob-menu {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(8,8,8,0.97); flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+    }
+    .mob-menu.open { display: flex; }
+    .mob-menu a { font-size: 24px; font-weight: 800; color: var(--text); text-decoration: none; transition: color .2s; }
+    .mob-menu a:hover { color: var(--gold); }
+    .mob-close {
+      position: absolute; top: 22px; right: 24px;
+      background: none; border: none; color: var(--text2); font-size: 26px; cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 100px 6% 80px; position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      filter: blur(100px); opacity: .1;
+    }
+    .hero-glow-1 { width: 700px; height: 700px; background: radial-gradient(circle, var(--gold), transparent 70%); top: -200px; right: -200px; }
+    .hero-glow-2 { width: 400px; height: 400px; background: radial-gradient(circle, var(--gold), transparent 70%); bottom: -100px; left: 5%; opacity: .05; }
+    .hero-grid {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(201,168,76,0.025) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(201,168,76,0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: 680px; }
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 50px; padding: 5px 14px; margin-bottom: 28px;
+    }
+    .hero-pill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .hero-pill span { font-size: 11px; font-weight: 700; color: var(--gold); letter-spacing: 1.5px; text-transform: uppercase; }
+    .hero h1 {
+      font-size: clamp(38px, 5.5vw, 68px); font-weight: 900;
+      line-height: 1.08; letter-spacing: -2px; margin-bottom: 22px;
+    }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+    .hero-sub { font-size: 17px; color: var(--text2); line-height: 1.75; margin-bottom: 40px; max-width: 500px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 56px; }
+    .btn-hero {
+      padding: 15px 30px; border-radius: 14px; font-size: 15px; font-weight: 800;
+      text-decoration: none; font-family: inherit; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; transition: all .25s;
+    }
+    .btn-hero-primary { background: var(--gold); border: none; color: #000; }
+    .btn-hero-primary:hover { background: var(--gold-l); transform: translateY(-2px); box-shadow: 0 14px 36px rgba(201,168,76,.28); }
+    .btn-hero-secondary { background: none; border: 1px solid var(--border2); color: var(--text); }
+    .btn-hero-secondary:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+    .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; }
+    .hero-stat-val { font-size: 26px; font-weight: 900; letter-spacing: -.5px; }
+    .hero-stat-val em { font-style: normal; color: var(--gold); }
+    .hero-stat-lbl { font-size: 12px; color: var(--text3); font-weight: 500; margin-top: 2px; }
+
+    /* Floating cards right side */
+    .hero-cards {
+      position: absolute; right: 6%; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 14px; z-index: 1;
+    }
+    .hero-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 18px 22px; min-width: 220px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.6);
+    }
+    .hero-card-icon { font-size: 26px; margin-bottom: 8px; }
+    .hero-card-lbl { font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .hero-card-val { font-size: 20px; font-weight: 900; }
+    .hero-card-sub { font-size: 11px; color: var(--green); font-weight: 700; margin-top: 3px; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .hero-card:first-child { animation: float 4s ease-in-out infinite; }
+    .hero-card:last-child  { animation: float 4s ease-in-out infinite .8s; }
+
+    /* ── TRUST BAR ── */
+    .trust {
+      padding: 20px 6%; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--bg2); display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 18px; border: 1px solid var(--border2);
+      border-radius: 50px; font-size: 12px; font-weight: 700; color: var(--text2);
+    }
+    .trust-item span { font-size: 16px; }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 96px 6%; }
+    .sec-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+    }
+    .sec-tag::before { content:''; display:block; width:20px; height:2px; background:var(--gold); border-radius:2px; }
+    .sec-title { font-size: clamp(26px,3.5vw,44px); font-weight: 900; letter-spacing: -1px; line-height: 1.15; margin-bottom: 14px; }
+    .sec-title em { font-style: normal; color: var(--gold); }
+    .sec-sub { font-size: 15px; color: var(--text2); line-height: 1.75; max-width: 500px; }
+    .sec-hd { margin-bottom: 56px; }
+    .sec-hd.center { text-align: center; }
+    .sec-hd.center .sec-tag { justify-content: center; }
+    .sec-hd.center .sec-sub { margin: 0 auto; }
+
+    /* ── PRODUCTS ── */
+    .products-bg { background: var(--bg2); }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
+    .prod-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 26px 22px; transition: all .3s; position: relative; overflow: hidden;
+    }
+    .prod-card::after {
+      content:''; position: absolute; top:0; left:10%; right:10%; height:1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0; transition: opacity .3s;
+    }
+    .prod-card:hover { border-color: rgba(201,168,76,.3); transform: translateY(-4px); box-shadow: 0 20px 56px rgba(0,0,0,.5); }
+    .prod-card:hover::after { opacity: 1; }
+    .prod-icon { width:48px; height:48px; border-radius:13px; background:var(--gold-dim); display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:18px; }
+    .prod-name { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+    .prod-desc { font-size: 13px; color: var(--text2); line-height: 1.65; margin-bottom: 18px; }
+    .prod-amount { font-size: 20px; font-weight: 900; color: var(--gold); }
+    .prod-range { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+    /* ── STEPS ── */
+    .steps-wrap { position: relative; }
+    .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+    .steps-line {
+      position: absolute; top: 28px; left: calc(16.67% + 28px); right: calc(16.67% + 28px);
+      height: 1px; background: linear-gradient(90deg, var(--border2), var(--border2));
+    }
+    .step { display:flex; flex-direction:column; align-items:center; text-align:center; padding: 0 28px; }
+    .step-num {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--bg); border: 2px solid rgba(201,168,76,.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; color: var(--gold);
+      margin-bottom: 22px; position: relative; z-index: 1;
+      box-shadow: 0 0 0 6px var(--bg);
+    }
+    .step-title { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+    .step-desc { font-size: 13px; color: var(--text2); line-height: 1.65; }
+
+    /* ── WHY US ── */
+    .why-bg { background: var(--bg2); }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 16px; }
+    .why-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 24px 20px;
+      display: flex; gap: 16px; transition: border-color .3s;
+    }
+    .why-card:hover { border-color: rgba(201,168,76,.3); }
+    .why-icon { width:48px; height:48px; border-radius:13px; background:var(--gold-dim); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .why-title { font-size: 15px; font-weight: 800; margin-bottom: 7px; }
+    .why-desc { font-size: 13px; color: var(--text2); line-height: 1.65; }
+
+    /* ── STATS ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+    .stat-box { background: var(--card); padding: 36px 28px; text-align: center; }
+    .stat-num { font-size: 40px; font-weight: 900; letter-spacing: -1.5px; color: var(--gold); line-height: 1; margin-bottom: 8px; }
+    .stat-lbl { font-size: 13px; color: var(--text2); font-weight: 600; }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    .faq-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .faq-q {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      padding: 17px 20px; background: none; border: none; color: var(--text);
+      font-size: 14px; font-weight: 700; cursor: pointer; text-align: left;
+      font-family: inherit; gap: 12px;
+    }
+    .faq-arr { font-size: 16px; color: var(--gold); flex-shrink: 0; transition: transform .3s; }
+    .faq-item.open .faq-arr { transform: rotate(180deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .3s; font-size: 13px; color: var(--text2); line-height: 1.75; padding: 0 20px; }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 20px 17px; }
+
+    /* ── CTA ── */
+    .cta-sec {
+      background: var(--bg2); text-align: center; position: relative; overflow: hidden;
+    }
+    .cta-sec::before {
+      content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:600px; height:300px;
+      background: radial-gradient(ellipse, rgba(201,168,76,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-sec h2 { font-size: clamp(26px,3.5vw,44px); font-weight: 900; letter-spacing: -1px; margin-bottom: 14px; }
+    .cta-sec h2 em { font-style: normal; color: var(--gold); }
+    .cta-sec p { font-size: 15px; color: var(--text2); margin-bottom: 36px; }
+    .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 64px 6% 32px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+    .footer-brand-name { font-size: 22px; font-weight: 900; margin-bottom: 12px; }
+    .footer-brand-name em { font-style: normal; color: var(--gold); }
+    .footer-brand-p { font-size: 13px; color: var(--text3); line-height: 1.75; margin-bottom: 20px; max-width: 270px; }
+    .footer-col h4 { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text2); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 13px; color: var(--text3); text-decoration: none; transition: color .2s; }
+    .footer-col ul li a:hover { color: var(--gold); }
+    .footer-bot { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-bot p { font-size: 12px; color: var(--text3); }
+    .footer-dot { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text3); }
+    .footer-dot em { font-style: normal; color: var(--green); }
+
+    /* ── REVEAL ANIMATION ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.show { opacity: 1; transform: translateY(0); }
+    .reveal:nth-child(2) { transition-delay: .1s; }
+    .reveal:nth-child(3) { transition-delay: .2s; }
+    .reveal:nth-child(4) { transition-delay: .3s; }
+    .reveal:nth-child(5) { transition-delay: .4s; }
+    .reveal:nth-child(6) { transition-delay: .5s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .hero-cards { display: none; }
+      .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+      .steps-line { display: none; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-ctas { display: none; }
+      .hamburger { display: flex; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .hero-stats { gap: 24px; }
+    }
+    @media (max-width: 520px) {
+      section { padding: 64px 5%; }
+      .hero { padding: 90px 5% 64px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Mobile Menu -->
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" onclick="closeMob()">✕</button>
+  <a href="#produk" onclick="closeMob()">Produk</a>
+  <a href="#cara-kerja" onclick="closeMob()">Cara Kerja</a>
+  <a href="#kenapa-kami" onclick="closeMob()">Kenapa Kami</a>
+  <a href="#faq" onclick="closeMob()">FAQ</a>
+  <a href="https://apps.easyloans.my/sign-in" class="btn-ghost" style="margin-top:8px">Log Masuk</a>
+  <a href="https://apps.easyloans.my/register" class="btn-gold">Mohon Sekarang</a>
+</div>
+
+<!-- Navbar -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <img id="nav-logo-img" class="nav-logo-img" src="" alt="">
+    <span class="nav-brand" id="nav-brand">Easy<em>Loans</em></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#produk">Produk</a></li>
+    <li><a href="#cara-kerja">Cara Kerja</a></li>
+    <li><a href="#kenapa-kami">Kenapa Kami</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <div class="nav-ctas">
+    <a href="https://apps.easyloans.my/sign-in" class="btn-ghost">Log Masuk</a>
+    <a href="https://apps.easyloans.my/register" class="btn-gold">Mohon Sekarang →</a>
+  </div>
+  <button class="hamburger" onclick="openMob()"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-pill">
+      <div class="hero-pill-dot"></div>
+      <span>Platform Berlesen & Dipercayai</span>
+    </div>
+    <h1 id="hero-h1">Pinjaman Mudah,<br><em>Proses Cepat</em></h1>
+    <p class="hero-sub" id="hero-sub">Dapatkan pinjaman wang tunai yang mudah, pantas dan selamat. Proses dalam talian sepenuhnya — tanpa perlu keluar rumah.</p>
+    <div class="hero-btns">
+      <a href="https://apps.easyloans.my/register" class="btn-hero btn-hero-primary">Mohon Sekarang →</a>
+      <a href="https://apps.easyloans.my/sign-in" class="btn-hero btn-hero-secondary">Log Masuk</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-val">RM <em>200K</em></div>
+        <div class="hero-stat-lbl">Had Pinjaman Maksimum</div>
+      </div>
+      <div>
+        <div class="hero-stat-val"><em>24</em> Jam</div>
+        <div class="hero-stat-lbl">Kelulusan Pantas</div>
+      </div>
+      <div>
+        <div class="hero-stat-val"><em>0.7</em>%</div>
+        <div class="hero-stat-lbl">Kadar Faedah / Bulan</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-cards">
+    <div class="hero-card">
+      <div class="hero-card-icon">✅</div>
+      <div class="hero-card-lbl">Status Permohonan</div>
+      <div class="hero-card-val">Diluluskan</div>
+      <div class="hero-card-sub">↑ Dalam masa 24 jam</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-card-icon">💳</div>
+      <div class="hero-card-lbl">Jumlah Pinjaman</div>
+      <div class="hero-card-val">RM 50,000</div>
+      <div class="hero-card-sub">Tempoh 120 bulan</div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Bar -->
+<div class="trust">
+  <div class="trust-item"><span>🔒</span> SSL Selamat</div>
+  <div class="trust-item"><span>⚡</span> Proses 24 Jam</div>
+  <div class="trust-item"><span>📱</span> 100% Dalam Talian</div>
+  <div class="trust-item"><span>🤝</span> Tanpa Cagaran</div>
+  <div class="trust-item"><span>✅</span> Berlesen</div>
+  <div class="trust-item"><span>🇲🇾</span> Buatan Malaysia</div>
+</div>
+
+<!-- Stats -->
+<section>
+  <div class="stats-grid">
+    <div class="stat-box reveal">
+      <div class="stat-num" data-target="5000">0</div>
+      <div class="stat-lbl">Ahli Berdaftar</div>
+    </div>
+    <div class="stat-box reveal">
+      <div class="stat-num" data-target="200" data-prefix="RM " data-suffix="K">0</div>
+      <div class="stat-lbl">Had Pinjaman</div>
+    </div>
+    <div class="stat-box reveal">
+      <div class="stat-num" data-target="98" data-suffix="%">0</div>
+      <div class="stat-lbl">Kadar Kelulusan</div>
+    </div>
+    <div class="stat-box reveal">
+      <div class="stat-num" data-target="24" data-suffix=" Jam">0</div>
+      <div class="stat-lbl">Masa Pemprosesan</div>
+    </div>
+  </div>
+</section>
+
+<!-- Products -->
+<section class="products-bg" id="produk">
+  <div class="sec-hd center">
+    <div class="sec-tag">Produk Kami</div>
+    <h2 class="sec-title">Pilihan Pinjaman <em>Untuk Anda</em></h2>
+    <p class="sec-sub">Kami menawarkan pelbagai jenis pinjaman yang disesuaikan mengikut keperluan anda</p>
+  </div>
+  <div class="products-grid">
+    <div class="prod-card reveal">
+      <div class="prod-icon">💼</div>
+      <div class="prod-name">Pinjaman Peribadi</div>
+      <div class="prod-desc">Untuk keperluan peribadi, kecemasan, pendidikan, perubatan dan pelbagai tujuan lain.</div>
+      <div class="prod-amount">RM 3,000 – 200,000</div>
+      <div class="prod-range">Tempoh sehingga 120 bulan</div>
+    </div>
+    <div class="prod-card reveal">
+      <div class="prod-icon">🏢</div>
+      <div class="prod-name">Pinjaman Perniagaan</div>
+      <div class="prod-desc">Modal perniagaan untuk mengembangkan atau memulakan perniagaan anda dengan mudah.</div>
+      <div class="prod-amount">RM 10,000 – 200,000</div>
+      <div class="prod-range">Tempoh sehingga 120 bulan</div>
+    </div>
+    <div class="prod-card reveal">
+      <div class="prod-icon">🏠</div>
+      <div class="prod-name">Pinjaman Renovasi</div>
+      <div class="prod-desc">Ubah suai dan naik taraf rumah anda dengan pinjaman renovasi yang kompetitif.</div>
+      <div class="prod-amount">RM 5,000 – 100,000</div>
+      <div class="prod-range">Tempoh sehingga 84 bulan</div>
+    </div>
+    <div class="prod-card reveal">
+      <div class="prod-icon">🎓</div>
+      <div class="prod-name">Pinjaman Pendidikan</div>
+      <div class="prod-desc">Pelaburan terbaik untuk masa depan anda dan keluarga melalui pendidikan berkualiti.</div>
+      <div class="prod-amount">RM 3,000 – 50,000</div>
+      <div class="prod-range">Tempoh sehingga 60 bulan</div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section id="cara-kerja">
+  <div class="sec-hd center">
+    <div class="sec-tag">Cara Kerja</div>
+    <h2 class="sec-title">Mudah Hanya <em>3 Langkah</em></h2>
+    <p class="sec-sub">Proses permohonan pinjaman sepenuhnya dalam talian, pantas dan selamat</p>
+  </div>
+  <div class="steps-wrap">
+    <div class="steps-line"></div>
+    <div class="steps-grid">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-title">Daftar Akaun</div>
+        <div class="step-desc">Daftar dengan maklumat asas anda. Proses pendaftaran hanya mengambil masa beberapa minit.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-title">Mohon Pinjaman</div>
+        <div class="step-desc">Isi borang, muat naik dokumen yang diperlukan dan tandatangan secara digital.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-title">Terima Wang</div>
+        <div class="step-desc">Selepas kelulusan, wang dikreditkan terus ke akaun bank anda dalam masa 24 jam.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why Us -->
+<section class="why-bg" id="kenapa-kami">
+  <div class="sec-hd">
+    <div class="sec-tag">Kelebihan Kami</div>
+    <h2 class="sec-title">Kenapa Pilih <em>Kami?</em></h2>
+    <p class="sec-sub">Kami komited untuk memberikan perkhidmatan pinjaman terbaik kepada setiap pelanggan</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card reveal">
+      <div class="why-icon">⚡</div>
+      <div>
+        <div class="why-title">Kelulusan Pantas</div>
+        <div class="why-desc">Permohonan diproses dalam masa 24 jam. Tiada masa terbuang, wang sampai ke tangan anda dengan cepat.</div>
+      </div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">🔒</div>
+      <div>
+        <div class="why-title">Selamat & Terjamin</div>
+        <div class="why-desc">Data peribadi anda dilindungi dengan enkripsi SSL. Keselamatan maklumat anda adalah keutamaan kami.</div>
+      </div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">📱</div>
+      <div>
+        <div class="why-title">100% Dalam Talian</div>
+        <div class="why-desc">Mohon dari mana-mana sahaja tanpa perlu hadir ke pejabat. Proses sepenuhnya dalam talian 24/7.</div>
+      </div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">💰</div>
+      <div>
+        <div class="why-title">Kadar Faedah Rendah</div>
+        <div class="why-desc">Kadar faedah kompetitif bermula dari 0.7% sebulan. Tiada bayaran tersembunyi, telus dan jelas.</div>
+      </div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">🤝</div>
+      <div>
+        <div class="why-title">Tanpa Cagaran</div>
+        <div class="why-desc">Pinjaman tanpa perlu cagaran atau penjamin. Hanya perlukan kad pengenalan dan nombor telefon.</div>
+      </div>
+    </div>
+    <div class="why-card reveal">
+      <div class="why-icon">🎯</div>
+      <div>
+        <div class="why-title">Khidmat Pelanggan 24/7</div>
+        <div class="why-desc">Pasukan kami sedia membantu pada bila-bila masa melalui WhatsApp dan telefon.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="sec-hd center">
+    <div class="sec-tag">Soalan Lazim</div>
+    <h2 class="sec-title">Ada <em>Soalan?</em></h2>
+    <p class="sec-sub">Jawapan kepada soalan yang sering ditanya oleh pelanggan kami</p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Siapa yang layak memohon pinjaman?<span class="faq-arr">▼</span></button>
+      <div class="faq-a">Warganegara Malaysia berumur 18 tahun ke atas yang mempunyai nombor telefon aktif dan kad pengenalan yang sah. Tiada sekatan pekerjaan — pekerja tetap, sambilan, swasta dan berniaga sendiri semuanya layak memohon.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Berapa lama untuk mendapat kelulusan?<span class="faq-arr">▼</span></button>
+      <div class="faq-a">Permohonan yang lengkap biasanya diproses dalam masa 24 jam bekerja. Setelah diluluskan, wang akan dikreditkan ke akaun bank anda dengan segera.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Apakah dokumen yang diperlukan?<span class="faq-arr">▼</span></button>
+      <div class="faq-a">Anda hanya perlu menyediakan: Kad Pengenalan (hadapan & belakang), selfie bersama kad pengenalan, dan maklumat akaun bank untuk pembayaran masuk.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Bagaimana cara pembayaran balik?<span class="faq-arr">▼</span></button>
+      <div class="faq-a">Bayaran balik dilakukan secara auto-debit pada setiap 10 haribulan. Anda boleh pilih tempoh bayaran balik antara 6 hingga 120 bulan mengikut kemampuan anda.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Adakah terdapat caj tersembunyi?<span class="faq-arr">▼</span></button>
+      <div class="faq-a">Tidak. Kami mengamalkan ketelusan sepenuhnya. Semua caj dan faedah akan dimaklumkan secara jelas sebelum anda menandatangani perjanjian pinjaman.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Bolehkah saya memohon lebih dari satu pinjaman?<span class="faq-arr">▼</span></button>
+      <div class="faq-a">Buat masa ini, setiap ahli hanya dibenarkan satu pinjaman aktif pada satu masa. Setelah pinjaman sedia ada diselesaikan, anda boleh memohon semula.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <h2>Sedia Untuk <em>Memohon?</em></h2>
+  <p>Daftar sekarang dan dapatkan kelulusan pinjaman dalam masa 24 jam</p>
+  <div class="cta-btns">
+    <a href="https://apps.easyloans.my/register" class="btn-hero btn-hero-primary">Mohon Sekarang →</a>
+    <a href="https://apps.easyloans.my/sign-in" class="btn-hero btn-hero-secondary">Log Masuk</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name" id="footer-brand">Easy<em>Loans</em></div>
+      <p class="footer-brand-p" id="footer-tagline-p">Platform pinjaman wang dalam talian yang dipercayai di Malaysia. Proses mudah, selamat dan pantas.</p>
+      <a href="https://apps.easyloans.my/register" class="btn-gold" style="font-size:13px;padding:9px 18px;display:inline-block">Daftar Sekarang</a>
+    </div>
+    <div class="footer-col">
+      <h4>Pautan</h4>
+      <ul>
+        <li><a href="#produk">Produk</a></li>
+        <li><a href="#cara-kerja">Cara Kerja</a></li>
+        <li><a href="#kenapa-kami">Kenapa Kami</a></li>
+        <li><a href="#faq">Soalan Lazim</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Akaun</h4>
+      <ul>
+        <li><a href="https://apps.easyloans.my/register">Daftar</a></li>
+        <li><a href="https://apps.easyloans.my/sign-in">Log Masuk</a></li>
+        <li><a href="https://apps.easyloans.my/dashboard/apply">Mohon Pinjaman</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Hubungi</h4>
+      <ul id="footer-contact">
+        <li><a href="mailto:support@easyloans.my">support@easyloans.my</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bot">
+    <p id="footer-copy">© 2025 EasyLoans. Hak Cipta Terpelihara.</p>
+    <div class="footer-dot"><em>●</em> Selamat & Terjamin</div>
+  </div>
+</footer>
+
+<script>
+const API = 'https://api.easyloans.my';
+
+/* ── Load settings ── */
+fetch(API + '/settings')
+  .then(r => r.json())
+  .then(s => {
+    const name    = (s.company_name    || 'EasyLoans').trim();
+    const tagline = (s.company_tagline || 'Pinjaman Mudah, Proses Cepat').trim();
+
+    /* title */
+    document.title = name + ' — ' + tagline;
+
+    /* favicon */
+    if (s.favicon_url) {
+      document.getElementById('favicon-link').href =
+        s.favicon_url.startsWith('http') ? s.favicon_url : API + s.favicon_url;
+    }
+
+    /* logo */
+    if (s.logo_url) {
+      const url = s.logo_url.startsWith('http') ? s.logo_url : API + s.logo_url;
+      const img = document.getElementById('nav-logo-img');
+      img.src = url;
+      img.onload = () => {
+        img.classList.add('show');
+        document.getElementById('nav-brand').style.display = 'none';
+      };
+    }
+
+    /* brand name — first word normal, rest gold */
+    const words = name.split(' ');
+    const brandHtml = words.length > 1
+      ? words[0] + '<em>' + words.slice(1).join(' ') + '</em>'
+      : name;
+    document.getElementById('nav-brand').innerHTML        = brandHtml;
+    document.getElementById('footer-brand').innerHTML     = brandHtml;
+
+    /* hero */
+    const parts = tagline.split(/[,،]/);
+    document.getElementById('hero-h1').innerHTML =
+      parts.length > 1
+        ? parts[0].trim() + ',<br><em>' + parts.slice(1).join(',').trim() + '</em>'
+        : '<em>' + tagline + '</em>';
+
+    /* footer tagline */
+    document.getElementById('footer-tagline-p').textContent =
+      'Platform pinjaman wang dalam talian yang dipercayai di Malaysia. ' + tagline + '.';
+
+    /* footer copyright */
+    document.getElementById('footer-copy').textContent =
+      '© ' + new Date().getFullYear() + ' ' + name + '. Hak Cipta Terpelihara.';
+
+    /* contact links */
+    const links = [];
+    if (s.support_phone)
+      links.push('<li><a href="tel:' + s.support_phone + '">📞 ' + s.support_phone + '</a></li>');
+    if (s.support_whatsapp)
+      links.push('<li><a href="https://wa.me/' + s.support_whatsapp.replace(/\D/g,'') + '" target="_blank">💬 WhatsApp</a></li>');
+    links.push('<li><a href="mailto:support@easyloans.my">✉️ support@easyloans.my</a></li>');
+    document.getElementById('footer-contact').innerHTML = links.join('');
+  })
+  .catch(() => {
+    document.getElementById('footer-copy').textContent =
+      '© ' + new Date().getFullYear() + ' EasyLoans. Hak Cipta Terpelihara.';
+  });
+
+/* ── Navbar scroll ── */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+/* ── Mobile menu ── */
+function openMob() { document.getElementById('mobMenu').classList.add('open'); }
+function closeMob() { document.getElementById('mobMenu').classList.remove('open'); }
+
+/* ── FAQ ── */
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+/* ── Counter animation ── */
+function animateCounter(el) {
+  const target = +el.dataset.target;
+  const prefix = el.dataset.prefix || '';
+  const suffix = el.dataset.suffix || '';
+  const dur = 1800;
+  const step = 16;
+  const inc = target / (dur / step);
+  let cur = 0;
+  const t = setInterval(() => {
+    cur = Math.min(cur + inc, target);
+    el.textContent = prefix + Math.floor(cur).toLocaleString() + suffix;
+    if (cur >= target) clearInterval(t);
+  }, step);
+}
+
+/* ── Scroll reveal + counters ── */
+const revObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add('show');
+    const counter = e.target.querySelector('[data-target]') || (e.target.dataset.target ? e.target : null);
+    if (counter) animateCounter(counter);
+    revObs.unobserve(e.target);
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+document.querySelectorAll('[data-target]').forEach(el => {
+  const parent = el.closest('.reveal');
+  if (!parent) revObs.observe(el);
+});
+</script>
+</body>
+</html>
